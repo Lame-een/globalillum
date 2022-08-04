@@ -5,33 +5,33 @@
 Camera::Camera()
 {
 }
-Camera::Camera(glm::vec3 pos, glm::vec3 dir, glm::vec3 up)
+Camera::Camera(Vec3 pos, Vec3 dir, Vec3 up)
 	: m_Position(pos), m_Dir(dir), m_Up(up)
 {
 	RecalculateVectors();
 }
 
-const glm::vec3 Camera::Position() const
+const Vec3 Camera::Position() const
 {
 	return m_Position;
 }
-const glm::vec3 Camera::Dir() const
+const Vec3 Camera::Dir() const
 {
 	return m_Dir;
 }
-const glm::vec3 Camera::Up() const
+const Vec3 Camera::Up() const
 {
 	return m_Up;
 }
-const glm::vec3 Camera::Right() const
+const Vec3 Camera::Right() const
 {
 	return m_Right;
 }
 
-void Camera::LookAt(glm::vec3 tgt)
+void Camera::LookAt(Vec3 tgt)
 {
 	m_Dir = glm::normalize(tgt - m_Position);
-	m_Right = glm::normalize(glm::cross(m_Dir, glm::vec3(0.0f, 0.0f, 1.0f)));
+	m_Right = glm::normalize(glm::cross(m_Dir, Vec3(0.0, 0.0, 1.0)));
 	m_Up = glm::normalize(glm::cross(m_Right, m_Dir));
 }
 
@@ -43,20 +43,20 @@ void Camera::RecalculateVectors()
 }
 
 
-void Camera::SetPlanes(float nearPlane, float farPlane)
+void Camera::SetPlanes(double nearPlane, double farPlane)
 {
 	m_NearPlane = nearPlane;
 	m_FarPlane = farPlane;
 }
 
-const float Camera::NearPlane()
+const double Camera::NearPlane()
 {
 	return Camera::m_NearPlane;
 }
-const float Camera::FarPlane()
+const double Camera::FarPlane()
 {
 	return Camera::m_FarPlane;
 }
 
-float Camera::m_NearPlane = 0.00001f;
-float Camera::m_FarPlane = 10000.0f;
+double Camera::m_NearPlane = 0.00001;
+double Camera::m_FarPlane = 10000.0;

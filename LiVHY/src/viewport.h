@@ -5,16 +5,16 @@ class Viewport
 {
 public:
 	Viewport();
-	Viewport(int w, int h, float fov = M_PI / 3);
+	Viewport(int w, int h, double fov = M_PI / 3);
 
 	const int Width() const;
 	const int Height() const;
 
-	const float HFOV() const;
-	const float VFOV() const;
+	const double HFOV() const;
+	const double VFOV() const;
 
 	void Resize(int w, int h);
-	void SetFOV(float hfov);
+	void SetFOV(double hfov);
 private:
 	void inline CalculateFOV();
 
@@ -22,6 +22,6 @@ private:
 	int m_Height = 256;
 
 	
-	float m_HorizFOV = M_PI / 3;
-	float m_VertFOV = M_PI / 3;
+	double m_HorizFOV = M_PI / 3;
+	double m_VertFOV = M_PI / 3;
 };

@@ -1,33 +1,33 @@
 #pragma once
-#include "glm/vec3.hpp"
+#include "types.h"
 #include <cmath>
 
 class Camera
 {
 public:
 	Camera();
-	Camera(glm::vec3 pos, glm::vec3 dir, glm::vec3 up);
+	Camera(Vec3 pos, Vec3 dir, Vec3 up);
 
-	const glm::vec3 Position() const;
-	const glm::vec3 Dir() const;
-	const glm::vec3 Up() const;
-	const glm::vec3 Right() const;
+	const Vec3 Position() const;
+	const Vec3 Dir() const;
+	const Vec3 Up() const;
+	const Vec3 Right() const;
 
-	void LookAt(glm::vec3 tgt);
+	void LookAt(Vec3 tgt);
 private:
 	void RecalculateVectors();
 
-	glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 m_Dir = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 m_Up = glm::vec3(0.0f, 0.0f, 1.0f);
-	glm::vec3 m_Right = glm::vec3(1.0f, 0.0f, 0.0f);
+	Vec3 m_Position = Vec3(0.0, 0.0, 0.0);
+	Vec3 m_Dir = Vec3(0.0, 1.0, 0.0);
+	Vec3 m_Up = Vec3(0.0, 0.0, 1.0);
+	Vec3 m_Right = Vec3(1.0, 0.0, 0.0);
 
 public:
-	static void SetPlanes(float nearPlane, float farPlane);
-	static const float NearPlane();
-	static const float FarPlane();
+	static void SetPlanes(double nearPlane, double farPlane);
+	static const double NearPlane();
+	static const double FarPlane();
 
 private:
-	static float m_NearPlane;
-	static float m_FarPlane;
+	static double m_NearPlane;
+	static double m_FarPlane;
 };
