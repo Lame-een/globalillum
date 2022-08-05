@@ -5,7 +5,8 @@ class PointLight : public Light
 {
 public:
 	PointLight();
-	PointLight(Vec3 pos, RGB color, double intensity);
+	PointLight(const Vec3& pos, const RGB& color, 
+			   double intensity);
 
 private:
 };

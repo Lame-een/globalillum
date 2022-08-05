@@ -3,7 +3,8 @@ AreaLight::AreaLight() : Light(LightType::Area)
 {
 }
 
-AreaLight::AreaLight(Vec3 pos, Vec2 rect, RGB color, float intensity)
+AreaLight::AreaLight(const Vec3& pos, const Vec2& rect,
+					 const RGB& color, double intensity)
 	: Light(pos, color, intensity, LightType::Area)
 {
 	m_Rect = rect;

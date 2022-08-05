@@ -5,30 +5,30 @@
 Camera::Camera()
 {
 }
-Camera::Camera(Vec3 pos, Vec3 dir, Vec3 up)
+Camera::Camera(const Vec3& pos, const Vec3& dir, const Vec3& up)
 	: m_Position(pos), m_Dir(dir), m_Up(up)
 {
 	RecalculateVectors();
 }
 
-const Vec3 Camera::Position() const
+const Vec3& Camera::Position() const
 {
 	return m_Position;
 }
-const Vec3 Camera::Dir() const
+const Vec3& Camera::Dir() const
 {
 	return m_Dir;
 }
-const Vec3 Camera::Up() const
+const Vec3& Camera::Up() const
 {
 	return m_Up;
 }
-const Vec3 Camera::Right() const
+const Vec3& Camera::Right() const
 {
 	return m_Right;
 }
 
-void Camera::LookAt(Vec3 tgt)
+void Camera::LookAt(const Vec3& tgt)
 {
 	m_Dir = glm::normalize(tgt - m_Position);
 	m_Right = glm::normalize(glm::cross(m_Dir, Vec3(0.0, 0.0, 1.0)));
