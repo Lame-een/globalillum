@@ -12,6 +12,7 @@ public:
 
 	const double HFOV() const;
 	const double VFOV() const;
+	const double AspectRatio() const;
 
 	void Resize(int w, int h);
 	void SetFOV(double hfov);
@@ -24,4 +25,5 @@ private:
 	
 	double m_HorizFOV = M_PI / 3;
 	double m_VertFOV = M_PI / 3;
+	double m_Aspect = 1.0;
 };

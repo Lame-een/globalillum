@@ -15,15 +15,15 @@ BRDF::BRDF(const RGB& diffuse, const RGB& specular,
 {
 }
 
-const const RGB& BRDF::Diffuse() const
+const RGB& BRDF::Diffuse() const
 {
 	return m_Diffuse;
 }
-const const RGB& BRDF::Specular() const
+const RGB& BRDF::Specular() const
 {
 	return m_Specular;
 }
-const const RGB& BRDF::Emission() const
+const RGB& BRDF::Emission() const
 {
 	return m_Emission;
 }

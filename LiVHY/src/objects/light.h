@@ -1,5 +1,5 @@
 #pragma once
-#include "../util/types.h"
+#include "util/types.h"
 
 enum LightType{
 	None,
