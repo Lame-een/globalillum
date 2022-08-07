@@ -44,7 +44,7 @@ namespace Colors
 	inline constexpr RGB crimson = stringToRGB("#dc143c");
 	inline constexpr RGB darkblue = stringToRGB("#00008b");
 	inline constexpr RGB darkcyan = stringToRGB("#008b8b");
-	inline constexpr RGB darkgray = stringToRGB("#a9a9a9");
+	inline constexpr RGB darkgray = stringToRGB("#3a3a3a");
 	inline constexpr RGB darkgreen = stringToRGB("#006400");
 	inline constexpr RGB darkmagenta = stringToRGB("#8b008b");
 	inline constexpr RGB darkred = stringToRGB("#8b0000");
