@@ -4,8 +4,8 @@
 class Sphere : public Object
 {
 public:
-	Sphere(const BRDF& brdf);
-	Sphere(const Vec3& pos, double radius, const BRDF& brdf);
+	Sphere(BRDF* brdf);
+	Sphere(const Vec3& pos, double radius, BRDF* brdf);
 
 	bool RayIntersect(const Ray& ray,
 					  double& t, Vec3& normal) override;

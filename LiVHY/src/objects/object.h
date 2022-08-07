@@ -6,11 +6,11 @@
 class Object
 {
 public:
-	Object(const BRDF& brdf);
+	Object(BRDF* brdf);
 	virtual bool RayIntersect(const Ray& ray,
 					  double& t, Vec3& normal) = 0;
 
-	const BRDF& Brdf() const;
+	BRDF* Brdf() const;
 protected:
-	BRDF m_Brdf;
+	BRDF* m_Brdf;
 };

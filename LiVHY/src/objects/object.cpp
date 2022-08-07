@@ -1,11 +1,11 @@
 #include "object.h"
 
-Object::Object(const BRDF& brdf)
+Object::Object(BRDF* brdf)
 	: m_Brdf(brdf)
 {
 }
 
-const BRDF& Object::Brdf() const
+BRDF* Object::Brdf() const
 {
 	return m_Brdf;
 }

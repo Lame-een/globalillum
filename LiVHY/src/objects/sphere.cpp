@@ -2,12 +2,12 @@
 #include "util/math.h"
 #include "glm/geometric.hpp"
 
-Sphere::Sphere(const BRDF& brdf)
+Sphere::Sphere(BRDF* brdf)
 	: Object(brdf)
 {
 }
 
-Sphere::Sphere(const Vec3& pos, double radius, const BRDF& brdf)
+Sphere::Sphere(const Vec3& pos, double radius, BRDF* brdf)
 	: Object(brdf), m_Position(pos), m_Radius(radius), m_Radius2(radius* radius)
 {
 }
