@@ -1,5 +1,6 @@
 #pragma once
 #include "util/types.h"
+#include "util/colors.h"
 
 class BRDF
 {
@@ -37,7 +38,13 @@ private:
 	double m_IOF = 0.0;
 	double m_Opacity = 1.0;
 
+#ifdef _DEBUG
+	RGB m_Diffuse = Colors::magenta;
+	RGB m_Specular = Colors::magenta;
+	RGB m_Emission = Colors::magenta;
+#else
 	RGB m_Diffuse = RGB(0.0);
 	RGB m_Specular = RGB(0.0);
 	RGB m_Emission = RGB(0.0);
+#endif
 };
