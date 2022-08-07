@@ -1,12 +1,13 @@
 #pragma once
 #include "util/types.h"
+#include "util/ray.h"
 #include "BRDF.h"
 
 class Object
 {
 public:
 	Object(const BRDF& brdf);
-	virtual bool RayIntersect(const Vec3& p, const Vec3& dir,
+	virtual bool RayIntersect(const Ray& ray,
 					  double& t, Vec3& normal) = 0;
 
 	const BRDF& Brdf() const;

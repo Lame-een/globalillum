@@ -12,12 +12,12 @@ Sphere::Sphere(const Vec3& pos, double radius, const BRDF& brdf)
 {
 }
 
-bool Sphere::RayIntersect(const Vec3& p, const Vec3& dir,
+bool Sphere::RayIntersect(const Ray& ray,
 						  double& t, Vec3& normal)
 {
-	Vec3 L = p - m_Position;
-	double a = glm::dot(dir, dir);
-	double b = 2 * glm::dot(dir, L);
+	Vec3 L = ray.Origin() - m_Position;
+	double a = glm::dot(ray.Dir(), ray.Dir());
+	double b = 2 * glm::dot(ray.Dir(), L);
 	double c = glm::dot(L, L) - m_Radius2;
 
 	double t0, t1;
@@ -42,7 +42,7 @@ bool Sphere::RayIntersect(const Vec3& p, const Vec3& dir,
 		t = t0;
 	}
 
-	normal = glm::normalize(L + t*dir);
+	normal = glm::normalize(L + t*ray.Dir());
 
 	return true;
 }

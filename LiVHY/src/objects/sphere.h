@@ -7,7 +7,7 @@ public:
 	Sphere(const BRDF& brdf);
 	Sphere(const Vec3& pos, double radius, const BRDF& brdf);
 
-	bool RayIntersect(const Vec3& p, const Vec3& dir,
+	bool RayIntersect(const Ray& ray,
 					  double& t, Vec3& normal) override;
 
 	const Vec3 Position() const;
