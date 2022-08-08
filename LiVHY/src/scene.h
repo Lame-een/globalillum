@@ -6,11 +6,12 @@
 #include "objects/object.h"
 #include "util/ray.h"
 
-class Scene{
+class Scene : public Hittable{
 public:
 	Scene();
 
-	bool Intersects(const Ray& ray, Object*& hitObject, double& dist, Vec3& normal);
+	bool Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo) override;
+    bool BoundingBox(AABB& output_box) const override;
 
 	std::vector<Object*> Objects();
 	std::vector<Light*> Lights();

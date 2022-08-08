@@ -7,8 +7,8 @@ public:
 	Sphere(BRDF* brdf);
 	Sphere(const Vec3& pos, double radius, BRDF* brdf);
 
-	bool RayIntersect(const Ray& ray,
-					  double& t, Vec3& normal) override;
+	bool Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo) override;
+    bool BoundingBox(AABB& output_box) const override;
 
 	const Vec3 Position() const;
 	const double Radius() const;

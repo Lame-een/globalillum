@@ -1,4 +1,6 @@
 #include "object.h"
+Object::Object(){
+}
 
 Object::Object(BRDF* brdf)
 	: m_Brdf(brdf)

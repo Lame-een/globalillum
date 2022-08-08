@@ -1,26 +1,28 @@
 #include "scene.h"
 
 Scene::Scene()
-{}
-
-bool Scene::Intersects(const Ray & ray, Object*& hitObject, double& dist, Vec3& normal)
 {
-	dist = std::numeric_limits<double>::max();
-	double auxDist = dist;
-	Vec3 auxNorm;
+}
+
+bool Scene::Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo)
+{
+	hitInfo.t = std::numeric_limits<double>::max();
+	HitInfo auxInfo = hitInfo;
 	bool hit = false;
 	for(auto obj : m_Objects)
 	{
-		if(obj->RayIntersect(ray, auxDist, auxNorm) && auxDist < dist)
+		if(obj->Hit(ray, near, far, auxInfo) && auxInfo.t < hitInfo.t)
 		{
-			hitObject = obj;
-			dist = auxDist;
-			normal = auxNorm;
+			hitInfo = auxInfo;
 			hit = true;
 		}
 	}
 	return hit;
 }
+bool Scene::BoundingBox(AABB& output_box) const
+{
+	return false;
+};
 
 std::vector<Object*> Scene::Objects()
 {

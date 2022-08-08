@@ -11,9 +11,7 @@ Sphere::Sphere(const Vec3& pos, double radius, BRDF* brdf)
 	: Object(brdf), m_Position(pos), m_Radius(radius), m_Radius2(radius* radius)
 {
 }
-
-bool Sphere::RayIntersect(const Ray& ray,
-						  double& t, Vec3& normal)
+bool Sphere::Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo)
 {
 	Vec3 L = ray.Origin() - m_Position;
 	double a = glm::dot(ray.Dir(), ray.Dir());
@@ -26,24 +24,31 @@ bool Sphere::RayIntersect(const Ray& ray,
 		return false;
 	}
 
-	if(t0 < 0)
+	if(t0 < near || t0 > far)
 	{
-		if(t1 < 0)
+		if(t1 < near || t0 > far)
 		{
-			return false;  //both t0 and t1 are negative
+			return false;  //both t0 and t1 aren't visible
 		}
 		else
 		{
-			t = t1;
+			hitInfo.t = t1;
 		}
 	}
 	else
 	{
-		t = t0;
+		hitInfo.t = t0;
 	}
 
-	normal = glm::normalize(L + t*ray.Dir());
+	hitInfo.normal = glm::normalize(L + hitInfo.t*ray.Dir());
+	hitInfo.object = this;
+	hitInfo.point = ray.Origin() + ray.Dir() * hitInfo.t;
 
+	return true;
+}
+bool Sphere::BoundingBox(AABB& outputBox) const
+{
+	outputBox.Set(m_Position - Vec3(m_Radius), m_Position + Vec3(m_Radius));
 	return true;
 }
 
