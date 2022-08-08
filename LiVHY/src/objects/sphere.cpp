@@ -11,7 +11,7 @@ Sphere::Sphere(const Vec3& pos, double radius, BRDF* brdf)
 	: Object(brdf), m_Position(pos), m_Radius(radius), m_Radius2(radius* radius)
 {
 }
-bool Sphere::Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo)
+bool Sphere::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
 {
 	Vec3 L = ray.Origin() - m_Position;
 	double a = glm::dot(ray.Dir(), ray.Dir());
@@ -24,9 +24,9 @@ bool Sphere::Hit(const Ray& ray, const double& near, const double& far, HitInfo&
 		return false;
 	}
 
-	if(t0 < near || t0 > far)
+	if(t0 < tMin || t0 > tMax)
 	{
-		if(t1 < near || t0 > far)
+		if(t1 < tMin || t0 > tMax)
 		{
 			return false;  //both t0 and t1 aren't visible
 		}

@@ -2,6 +2,8 @@
 //axis aligned bounding box
 //Andrew Kensler at Pixar
 
+//todo potentionally use the Roman Winche implementation for extra speed
+
 #include "util/types.h"
 #include "util/ray.h"
 

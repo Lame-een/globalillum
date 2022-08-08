@@ -9,9 +9,10 @@ public:
 
 	void Add(Hittable* obj);
 	std::vector<Hittable*>& List();
+	const std::vector<Hittable*>& List() const;
 	void Clear();
 
-	bool Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo) override;
+	bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo) override;
     bool BoundingBox(AABB& outputBox) const override;
 
 private:

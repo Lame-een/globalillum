@@ -14,19 +14,24 @@ std::vector<Hittable*>&  HittableList::List()
     return m_List;
 }
 
+const std::vector<Hittable*>&  HittableList::List() const
+{
+    return m_List;
+}
+
 void HittableList::Clear()
 {
     m_List.clear();
 }
 
-bool HittableList::Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo)
+bool HittableList::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
 {
     HitInfo auxInfo;
     bool hasHit = false;
-    double hitDistance = far;
+    double hitDistance = tMax;
 
     for (const auto& obj : m_List) {
-        if (obj->Hit(ray, near, hitDistance, auxInfo)) {
+        if (obj->Hit(ray, tMin, hitDistance, auxInfo)) {
             hasHit = true;
             hitDistance = auxInfo.t;
             hitInfo = auxInfo;

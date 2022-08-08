@@ -7,7 +7,7 @@ public:
 	Sphere(BRDF* brdf);
 	Sphere(const Vec3& pos, double radius, BRDF* brdf);
 
-	bool Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo) override;
+	bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo) override;
     bool BoundingBox(AABB& output_box) const override;
 
 	const Vec3 Position() const;

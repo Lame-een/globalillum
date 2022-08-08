@@ -17,6 +17,6 @@ public:
 
 class Hittable{
 public:
-	virtual bool Hit(const Ray& ray, const double& near, const double& far, HitInfo& hitInfo) = 0;
+	virtual bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo) = 0;
     virtual bool BoundingBox(AABB& output_box) const = 0;
 };
