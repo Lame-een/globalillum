@@ -2,30 +2,31 @@
 #include <utility>
 #include <functional>
 
+#include <iostream>
+
 
 //check for errors?
-bool BoxCompare(int axis, Hittable* a, Hittable* b)
+bool BoxCompare(int axis, Object* a, Object* b)
 {
 	AABB boxA, boxB;
 
 	a->BoundingBox(boxA);
 	b->BoundingBox(boxB);
 	return boxA.Min()[axis] < boxB.Min()[axis];
-
 }
 
-BVHNode::BVHNode(const HittableList& list)
+BVHNode::~BVHNode(){
+	delete dynamic_cast<BVHNode*>(m_Left); 
+	delete dynamic_cast<BVHNode*>(m_Right); 
+}
+BVHNode::BVHNode(const ObjectList& list)
 	: BVHNode(list.List(), 0, list.List().size())
 {
 }
 
-//look into optimizing this further
-//-maybe manually check for 2 and 3 objects inside list to avoid
-//	unnecessary function calls
-//-remove the bindings?
-BVHNode::BVHNode(const std::vector<Hittable*>& hittables, size_t start, size_t end)
+BVHNode::BVHNode(const std::vector<Object*>& Objects, size_t start, size_t end)
 {
-	std::vector<Hittable*> objects = hittables; //modifiable copy
+	std::vector<Object*> objects = Objects; //modifiable copy
 
 	int axis = m_RandGenerator.getInt(0, 2 + 1);
 	size_t span = end - start;
@@ -54,12 +55,9 @@ bool BVHNode::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInf
 {
 	if(!m_BoundingBox.Hit(ray, tMin, tMax)) return false;
 
-	return m_Left->Hit(ray, tMin, tMax, hitInfo) ||
-		m_Right->Hit(ray, tMin, tMax, hitInfo);
-
-	//bool hitLeft = m_Left->Hit(ray, tMin, tMax, hitInfo);
-	//bool hitRight = m_Right->Hit(ray, hitLeft ? hitInfo.t : tMin, tMax, hitInfo);
-	//return hitLeft || hitRight;
+	bool hitLeft = m_Left->Hit(ray, tMin, tMax, hitInfo);
+	bool hitRight = m_Right->Hit(ray, tMin, hitLeft ? hitInfo.t : tMax, hitInfo);
+	return hitLeft || hitRight;
 }
 
 bool BVHNode::BoundingBox(AABB& outputBox) const
@@ -68,12 +66,12 @@ bool BVHNode::BoundingBox(AABB& outputBox) const
 	return true;
 }
 
-Hittable* BVHNode::Left()
+Object* BVHNode::Left()
 {
 	return m_Left;
 }
 
-Hittable* BVHNode::Right()
+Object* BVHNode::Right()
 {
 	return m_Right;
 }

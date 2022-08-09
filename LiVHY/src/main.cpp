@@ -14,6 +14,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/ext.hpp"
+#include "lame/benchmark.h"
 
 int main()
 {
@@ -23,6 +24,7 @@ int main()
 	Viewport vp(640, 640, M_PI / 2);
 	Image img(vp.Width(), vp.Height());
 	BRDF brdf;
+	BRDF brdf2(Colors::blueviolet, 0, 0, 1);
 	BRDF brdf3(Colors::tomato, 0, 0, 1);
 
 	Sphere sphere({0,0,0}, 1, &brdf);
@@ -34,14 +36,14 @@ int main()
 	scene.SetBackground(Colors::darkgray);
 
 	double r = 3;
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < 10; i++)
 	{
-		Vec3 pos(cos(i * M_PI * 2 / 8) * 3, sin(i * M_PI * 2 / 8) * 3, 0);
-		spheres.push_back(new Sphere(pos, 0.5, &brdf3));
+		Vec3 pos(cos(i * M_PI * 2 / 10) * 3, sin(i * M_PI * 2 / 10) * 3, 0);
+		spheres.push_back(new Sphere(pos, 0.25, &brdf3));
 		scene.AddObject(spheres[i]);
 	}
 	scene.AddLight(&light);
-
+	scene.ConstructBvh();
 
 	for(int i = 0; i < vp.Height(); i++)
 	{
@@ -59,7 +61,7 @@ int main()
 			if(scene.Hit(ray, cam.NearPlane(), cam.FarPlane(), hitInfo))
 			{
 				double scaler = glm::dot(scene.Lights()[0]->Pos() - hitInfo.point, hitInfo.normal);
-				col = hitInfo.object->Brdf()->Diffuse() * scaler * scene.Lights()[0]->Intensity() * scene.Lights()[0]->Color();
+				col = hitInfo.object->Brdf()->Diffuse() * scaler * scene.Lights()[0]->Intensity();
 			}
 			else
 			{

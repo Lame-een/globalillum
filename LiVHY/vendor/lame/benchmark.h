@@ -23,7 +23,7 @@ Usage:
 To change the precision of the timer, redefine the global variable g_TimerPrecision
 */
 
-#if BENCHMARKING 1
+#if BENCHMARKING
 #define BENCHMARK_SCOPE(scopeName) lameutil::BenchTimer timer##__LINE__(scopeName)
 #define BENCHMARK_FUNCTION() BENCHMARK_SCOPE(__FUNCSIG__)
 #else 

@@ -11,6 +11,7 @@ Sphere::Sphere(const Vec3& pos, double radius, BRDF* brdf)
 	: Object(brdf), m_Position(pos), m_Radius(radius), m_Radius2(radius* radius)
 {
 }
+
 bool Sphere::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
 {
 	Vec3 L = ray.Origin() - m_Position;

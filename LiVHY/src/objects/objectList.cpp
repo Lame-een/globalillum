@@ -1,30 +1,30 @@
-#include "hittableList.h"
+#include "ObjectList.h"
 
-HittableList::HittableList()
+ObjectList::ObjectList()
 {
 }
 
-void HittableList::Add(Hittable* obj)
+void ObjectList::Add(Object* obj)
 {
     m_List.push_back(obj);
 }
 
-std::vector<Hittable*>&  HittableList::List()
+std::vector<Object*>&  ObjectList::List()
 {
     return m_List;
 }
 
-const std::vector<Hittable*>&  HittableList::List() const
+const std::vector<Object*>&  ObjectList::List() const
 {
     return m_List;
 }
 
-void HittableList::Clear()
+void ObjectList::Clear()
 {
     m_List.clear();
 }
 
-bool HittableList::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+bool ObjectList::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
 {
     HitInfo auxInfo;
     bool hasHit = false;
@@ -41,7 +41,7 @@ bool HittableList::Hit(const Ray& ray, const double& tMin, const double& tMax, H
     return hasHit;
 }
 
-bool HittableList::BoundingBox(AABB& outputBox) const
+bool ObjectList::BoundingBox(AABB& outputBox) const
 {
     if (m_List.empty()) return false;
 

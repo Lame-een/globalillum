@@ -1,24 +1,25 @@
 #pragma once
 #include <vector>
-#include "hittableList.h"
+#include "objectList.h"
 #include "lame/easyRandom.h"
 
-bool BoxCompare(int axis, Hittable* a, Hittable* b);
+bool BoxCompare(int axis, Object* a, Object* b);
 
-class BVHNode : public Hittable{
+class BVHNode : public Object{
 public:
-	BVHNode(const HittableList& list);
-	BVHNode(const std::vector<Hittable*>& hittables, size_t start, size_t end);
+	BVHNode(const ObjectList& list);
+	BVHNode(const std::vector<Object*>& Objects, size_t start, size_t end);
+	~BVHNode();
 
 	bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo);
     bool BoundingBox(AABB& output_box) const;
 
-	Hittable* Left();
-	Hittable* Right();
+	Object* Left();
+	Object* Right();
 
 private:
-	Hittable* m_Left;
-	Hittable* m_Right;
+	Object* m_Left;
+	Object* m_Right;
 	AABB m_BoundingBox;
 
 	lameutil::EasyRandom m_RandGenerator;
