@@ -3,10 +3,12 @@
 #include <memory>
 
 #include "util/image.h"
+#include "scene.h"
 #include "objects/sphere.h"
 #include "util/colors.h"
-#include "scene.h"
 #include "objects/pointLight.h"
+#include "objects/triangle.h"
+#include "objects/triangleMesh.h"
 
 #include "BRDF.h"
 #include "camera.h"
@@ -27,8 +29,10 @@ int main()
 	BRDF brdf2(Colors::blueviolet, 0, 0, 1);
 	BRDF brdf3(Colors::tomato, 0, 0, 1);
 
-	Sphere sphere({0,0,0}, 1, &brdf);
-	PointLight light({0,0,1}, Colors::yellow, 1);
+	Sphere sphere({0,0,0}, 0.5);
+
+	TriangleMesh quad({Vec3(-1,-1,0),Vec3(1,-1,0),Vec3(1,1,2),Vec3(-1,1,0)},{Vec3i(0,1,2),Vec3i(2,3,0)});
+	PointLight light({0,0,20}, Colors::yellow, 0.1);
 
 	std::vector<Sphere*> spheres;
 
@@ -42,6 +46,8 @@ int main()
 		spheres.push_back(new Sphere(pos, 0.25, &brdf3));
 		scene.AddObject(spheres[i]);
 	}
+	scene.AddObject(&sphere);
+	scene.AddObject(&quad);
 	scene.AddLight(&light);
 	scene.ConstructBvh();
 

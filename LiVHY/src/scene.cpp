@@ -65,6 +65,11 @@ void Scene::AddObject(Object* obj)
 	m_Objects.push_back(obj);
 }
 
+void Scene::AddObject(TriangleMesh* obj)
+{
+	m_Objects.insert(m_Objects.end(), obj->Triangles().begin(), obj->Triangles().end());
+}
+
 void Scene::AddLight(Light* light)
 {
 	m_Lights.push_back(light);

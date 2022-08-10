@@ -4,6 +4,7 @@
 #include "util/colors.h"
 #include "objects/light.h"
 #include "objects/object.h"
+#include "objects/triangleMesh.h"
 #include "util/ray.h"
 #include "objects/bvh.h"
 
@@ -19,6 +20,7 @@ public:
 	std::vector<Light*> Lights();
 
 	void AddObject(Object* obj);
+	void AddObject(TriangleMesh* obj);
 	void AddLight(Light* light);
 
 	void ConstructBvh();
@@ -29,7 +31,7 @@ public:
 private:
 	RGB m_BackgroundColor = Colors::black;
 
-	BVHNode* m_BVH;
+	BVHNode* m_BVH = nullptr;
 	std::vector<Object*> m_Objects;
 	std::vector<Light*> m_Lights;
 };
