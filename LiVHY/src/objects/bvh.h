@@ -1,13 +1,12 @@
 #pragma once
 #include <vector>
-#include "objectList.h"
+#include "object.h"
 #include "lame/easyRandom.h"
 
 bool BoxCompare(int axis, Object* a, Object* b);
 
 class BVHNode : public Object{
 public:
-	BVHNode(const ObjectList& list);
 	BVHNode(const std::vector<Object*>& Objects, size_t start, size_t end);
 	~BVHNode();
 

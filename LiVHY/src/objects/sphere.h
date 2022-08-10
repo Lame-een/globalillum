@@ -4,8 +4,8 @@
 class Sphere : public Object
 {
 public:
-	Sphere(BRDF* brdf);
-	Sphere(const Vec3& pos, double radius, BRDF* brdf);
+	Sphere(const BRDF* brdf = BRDF::Default());
+	Sphere(const Vec3& pos, double radius, const BRDF* brdf = BRDF::Default());
 
 	bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo) override;
     bool BoundingBox(AABB& output_box) const override;

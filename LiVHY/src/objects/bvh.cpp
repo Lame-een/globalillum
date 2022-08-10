@@ -19,10 +19,6 @@ BVHNode::~BVHNode(){
 	delete dynamic_cast<BVHNode*>(m_Left); 
 	delete dynamic_cast<BVHNode*>(m_Right); 
 }
-BVHNode::BVHNode(const ObjectList& list)
-	: BVHNode(list.List(), 0, list.List().size())
-{
-}
 
 BVHNode::BVHNode(const std::vector<Object*>& Objects, size_t start, size_t end)
 {

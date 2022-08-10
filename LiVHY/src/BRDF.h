@@ -33,11 +33,15 @@ public:
 	const int IsEmissive() const;
 	const int IsShiny() const;
 
+	static const BRDF* Default();
+
 private:
 	double m_Shininess = 0.0;
 	double m_IOF = 0.0;
 	double m_Opacity = 1.0;
 
+
+	static BRDF s_DefaultBrdf;
 #ifdef _DEBUG
 	RGB m_Diffuse = Colors::magenta;
 	RGB m_Specular = Colors::magenta;

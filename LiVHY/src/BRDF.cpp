@@ -86,3 +86,10 @@ const int BRDF::IsShiny() const
 {
 	return (m_Shininess > 0.0);
 }
+
+const BRDF* BRDF::Default()
+{
+	return &s_DefaultBrdf;
+}
+
+BRDF BRDF::s_DefaultBrdf = BRDF(Colors::magenta, 0, 0, 1);

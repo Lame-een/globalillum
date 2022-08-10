@@ -20,12 +20,12 @@ class Object
 {
 public:
 	Object();
-	Object(BRDF* brdf);
+	Object(const BRDF* brdf);
 
 	virtual bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo) = 0;
-    virtual bool BoundingBox(AABB& output_box) const = 0;
+    virtual bool BoundingBox(AABB& outputBox) const = 0;
 
-	BRDF* Brdf() const;
+	const BRDF* Brdf() const;
 protected:
-	BRDF* m_Brdf = nullptr;
+	const BRDF* m_Brdf = nullptr;
 };
