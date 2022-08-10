@@ -17,7 +17,7 @@ public:
 	void Resize(int w, int h);
 	void SetFOV(double hfov);
 private:
-	void inline CalculateFOV();
+	void CalculateFOV();
 
 	int m_Width = 256;
 	int m_Height = 256;

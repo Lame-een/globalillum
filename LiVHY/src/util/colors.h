@@ -1,11 +1,11 @@
 #pragma once
 #include "types.h"
-inline constexpr RGB intToRGB(int red, int green, int blue)
+constexpr RGB intToRGB(int red, int green, int blue)
 {
 	return RGB(1.0 * red / 255, 1.0 * green / 255, 1.0 * blue / 255);
 }
 
-inline constexpr int charToHex(char c)
+constexpr int charToHex(char c)
 {
 	if(c <= '9' && c >= '0')
 	{
@@ -22,7 +22,7 @@ inline constexpr int charToHex(char c)
 	assert(!"Character isn't hex.");
 }
 
-inline constexpr RGB stringToRGB(const char str[8])
+constexpr RGB stringToRGB(const char str[8])
 {
 #ifdef _DEBUG
 	assert(str[0] == '#');
@@ -35,53 +35,53 @@ inline constexpr RGB stringToRGB(const char str[8])
 
 namespace Colors
 {
-	inline constexpr RGB cyan = stringToRGB("#00ffff");
-	inline constexpr RGB beige = stringToRGB("#f5f5dc");
-	inline constexpr RGB black = stringToRGB("#000000");
-	inline constexpr RGB blue = stringToRGB("#0000ff");
-	inline constexpr RGB blueviolet = stringToRGB("#8a2be2");
-	inline constexpr RGB brown = stringToRGB("#a52a2a");
-	inline constexpr RGB crimson = stringToRGB("#dc143c");
-	inline constexpr RGB darkblue = stringToRGB("#00008b");
-	inline constexpr RGB darkcyan = stringToRGB("#008b8b");
-	inline constexpr RGB darkgray = stringToRGB("#3a3a3a");
-	inline constexpr RGB darkgreen = stringToRGB("#006400");
-	inline constexpr RGB darkmagenta = stringToRGB("#8b008b");
-	inline constexpr RGB darkred = stringToRGB("#8b0000");
-	inline constexpr RGB deeppink = stringToRGB("#ff1493");
-	inline constexpr RGB deepskyblue = stringToRGB("#00bfff");
-	inline constexpr RGB forestgreen = stringToRGB("#228b22");
-	inline constexpr RGB magenta = stringToRGB("#ff00ff");
-	inline constexpr RGB gold = stringToRGB("#ffd700");
-	inline constexpr RGB gray = stringToRGB("#808080");
-	inline constexpr RGB green = stringToRGB("#008000");
-	inline constexpr RGB hotpink = stringToRGB("#ff69b4");
-	inline constexpr RGB indigo = stringToRGB("#4b0082");
-	inline constexpr RGB ivory = stringToRGB("#fffff0");
-	inline constexpr RGB lavender = stringToRGB("#e6e6fa");
-	inline constexpr RGB lightblue = stringToRGB("#add8e6");
-	inline constexpr RGB lightgray = stringToRGB("#d3d3d3");
-	inline constexpr RGB lightgreen = stringToRGB("#90ee90");
-	inline constexpr RGB lightskyblue = stringToRGB("#87cefa");
-	inline constexpr RGB lime = stringToRGB("#00ff00");
-	inline constexpr RGB limegreen = stringToRGB("#32cd32");
-	inline constexpr RGB maroon = stringToRGB("#800000");
-	inline constexpr RGB mediumblue = stringToRGB("#0000cd");
-	inline constexpr RGB mediumpurple = stringToRGB("#9370db");
-	inline constexpr RGB midnightblue = stringToRGB("#191970");
-	inline constexpr RGB navy = stringToRGB("#000080");
-	inline constexpr RGB olive = stringToRGB("#808000");
-	inline constexpr RGB orange = stringToRGB("#ffa500");
-	inline constexpr RGB orangered = stringToRGB("#ff4500");
-	inline constexpr RGB pink = stringToRGB("#ffc0cb");
-	inline constexpr RGB purple = stringToRGB("#800080");
-	inline constexpr RGB red = stringToRGB("#ff0000");
-	inline constexpr RGB royalblue = stringToRGB("#4169e1");
-	inline constexpr RGB silver = stringToRGB("#c0c0c0");
-	inline constexpr RGB skyblue = stringToRGB("#87ceeb");
-	inline constexpr RGB tomato = stringToRGB("#ff6347");
-	inline constexpr RGB turquoise = stringToRGB("#40e0d0");
-	inline constexpr RGB violet = stringToRGB("#ee82ee");
-	inline constexpr RGB white = stringToRGB("#ffffff");
-	inline constexpr RGB yellow = stringToRGB("#ffff00");
+	constexpr RGB cyan = stringToRGB("#00ffff");
+	constexpr RGB beige = stringToRGB("#f5f5dc");
+	constexpr RGB black = stringToRGB("#000000");
+	constexpr RGB blue = stringToRGB("#0000ff");
+	constexpr RGB blueviolet = stringToRGB("#8a2be2");
+	constexpr RGB brown = stringToRGB("#a52a2a");
+	constexpr RGB crimson = stringToRGB("#dc143c");
+	constexpr RGB darkblue = stringToRGB("#00008b");
+	constexpr RGB darkcyan = stringToRGB("#008b8b");
+	constexpr RGB darkgray = stringToRGB("#3a3a3a");
+	constexpr RGB darkgreen = stringToRGB("#006400");
+	constexpr RGB darkmagenta = stringToRGB("#8b008b");
+	constexpr RGB darkred = stringToRGB("#8b0000");
+	constexpr RGB deeppink = stringToRGB("#ff1493");
+	constexpr RGB deepskyblue = stringToRGB("#00bfff");
+	constexpr RGB forestgreen = stringToRGB("#228b22");
+	constexpr RGB magenta = stringToRGB("#ff00ff");
+	constexpr RGB gold = stringToRGB("#ffd700");
+	constexpr RGB gray = stringToRGB("#808080");
+	constexpr RGB green = stringToRGB("#008000");
+	constexpr RGB hotpink = stringToRGB("#ff69b4");
+	constexpr RGB indigo = stringToRGB("#4b0082");
+	constexpr RGB ivory = stringToRGB("#fffff0");
+	constexpr RGB lavender = stringToRGB("#e6e6fa");
+	constexpr RGB lightblue = stringToRGB("#add8e6");
+	constexpr RGB lightgray = stringToRGB("#d3d3d3");
+	constexpr RGB lightgreen = stringToRGB("#90ee90");
+	constexpr RGB lightskyblue = stringToRGB("#87cefa");
+	constexpr RGB lime = stringToRGB("#00ff00");
+	constexpr RGB limegreen = stringToRGB("#32cd32");
+	constexpr RGB maroon = stringToRGB("#800000");
+	constexpr RGB mediumblue = stringToRGB("#0000cd");
+	constexpr RGB mediumpurple = stringToRGB("#9370db");
+	constexpr RGB midnightblue = stringToRGB("#191970");
+	constexpr RGB navy = stringToRGB("#000080");
+	constexpr RGB olive = stringToRGB("#808000");
+	constexpr RGB orange = stringToRGB("#ffa500");
+	constexpr RGB orangered = stringToRGB("#ff4500");
+	constexpr RGB pink = stringToRGB("#ffc0cb");
+	constexpr RGB purple = stringToRGB("#800080");
+	constexpr RGB red = stringToRGB("#ff0000");
+	constexpr RGB royalblue = stringToRGB("#4169e1");
+	constexpr RGB silver = stringToRGB("#c0c0c0");
+	constexpr RGB skyblue = stringToRGB("#87ceeb");
+	constexpr RGB tomato = stringToRGB("#ff6347");
+	constexpr RGB turquoise = stringToRGB("#40e0d0");
+	constexpr RGB violet = stringToRGB("#ee82ee");
+	constexpr RGB white = stringToRGB("#ffffff");
+	constexpr RGB yellow = stringToRGB("#ffff00");
 }
