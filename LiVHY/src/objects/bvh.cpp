@@ -4,8 +4,13 @@
 
 #include <iostream>
 
+/// @class BVHNode
+/// The binary tree is constructed in such a way that the
+/// leaves are the objects in the scene.
+/// When checking for ray intersects this should drastically 
+/// reduce the amount of checks over the objects.
 
-//check for errors?
+//TODO: add check for errors(?)
 bool BoxCompare(int axis, Object* a, Object* b)
 {
 	AABB boxA, boxB;
@@ -20,26 +25,31 @@ BVHNode::~BVHNode(){
 	delete dynamic_cast<BVHNode*>(m_Right); 
 }
 
-BVHNode::BVHNode(const std::vector<Object*>& Objects, size_t start, size_t end)
+/// A recursive constructor which builds the hierarchy binary tree from
+/// the passed dynamic array.
+//TODO: add manual checks for array sizes of 2 and 3 for additional optimization
+BVHNode::BVHNode(const std::vector<Object*>& objects, size_t start, size_t end)
 {
-	std::vector<Object*> objects = Objects; //modifiable copy
+	std::vector<Object*> objs = objects; //create a modifiable copy
 
 	int axis = m_RandGenerator.getInt(0, 2 + 1);
 	size_t span = end - start;
 
-	if(span == 1)
+	if(span == 1)	//doing a manual check for a single element
 	{
-		m_Left = m_Right = objects[start];
+		m_Left = m_Right = objs[start];
 	}
 	else{
-		std::sort(objects.begin() + start, objects.begin() + end, std::bind(BoxCompare, axis, std::placeholders::_1, std::placeholders::_2));
+		//bind has been shown to be more optimized than seperate functions
+		std::sort(objs.begin() + start, objs.begin() + end, std::bind(BoxCompare, axis, std::placeholders::_1, std::placeholders::_2));
 
-		size_t mid = start + span/2;
-		m_Left = new BVHNode(objects, start, mid);
-		m_Right = new BVHNode(objects, mid, end);
+		size_t mid = start + span/2;	//split vector into 2 subarrays
+		m_Left = new BVHNode(objs, start, mid);
+		m_Right = new BVHNode(objs, mid, end);
 	}
 
 	AABB boxLeft, boxRight;
+	//constructing the boundary box containing the children
 	m_Left->BoundingBox(boxLeft);
 	m_Right->BoundingBox(boxRight);
 	
@@ -47,7 +57,10 @@ BVHNode::BVHNode(const std::vector<Object*>& Objects, size_t start, size_t end)
 	m_BoundingBox = boxLeft;
 }
 
-bool BVHNode::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+/// The optimized ray intersect function.
+/// Only the leaves will do a complicated hit check as
+/// they are the only "true objects".
+bool BVHNode::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 {
 	if(!m_BoundingBox.Hit(ray, tMin, tMax)) return false;
 

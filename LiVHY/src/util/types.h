@@ -1,3 +1,5 @@
+/// @file util/types.h
+/// This file contains aliases for GLM vector types.
 #pragma once
 #include "glm/vec4.hpp"
 #include "glm/vec3.hpp"

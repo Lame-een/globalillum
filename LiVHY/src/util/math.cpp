@@ -1,5 +1,7 @@
 #include "math.h"
 
+/// Quadratic equation solver with catastrophic cancelation avoidance
+/// for more info see https://math.stackexchange.com/questions/866331
 bool solveQuadratic(const double& a, const double& b, const double& c, double& x0, double& x1)
 {
 	double D = b * b - 4 * a * c;

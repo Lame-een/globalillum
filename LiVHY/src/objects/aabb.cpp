@@ -6,8 +6,8 @@ AABB::AABB()
 {
 }
 
-AABB::AABB(const Vec3& a, const Vec3& b)
-	: m_Min(a), m_Max(b)
+AABB::AABB(const Vec3& min, const Vec3& max)
+	: m_Min(min), m_Max(max)
 {}
 
 const Vec3& AABB::Min() const
@@ -26,6 +26,9 @@ const void AABB::Set(const Vec3& min, const Vec3& max)
     m_Max = max;
 }
 
+//Andrew Kensler implementation of the ray intercept function
+//TODO: check the Roman Winche (medium article) implementation
+//      for a possible speed boost.
 bool AABB::Hit(const Ray& ray, double tMin, double tMax) const
 {
 	for (int axis = 0; axis < 3; axis++) {
@@ -42,6 +45,9 @@ bool AABB::Hit(const Ray& ray, double tMin, double tMax) const
     return true;
 }
 
+/// The function takes the input box and compares it to the current corners. 
+/// If the calling box is smaller than the passed box set the minimum and
+/// maximum corners to surround the passed box.
 void AABB::Surround(const AABB& box){
     m_Min = glm::min(m_Min, box.Min());
     m_Max = glm::max(m_Max, box.Max());

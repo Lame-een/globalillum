@@ -1,6 +1,8 @@
 #include "BRDF.h"
 
-BRDF::BRDF() {}
+/// @class BRDF
+/// The class describes the properties of a BRDF.
+
 BRDF::BRDF(const RGB& color, double shininess,
 		   double iof, double opacity)
 	: m_Shininess(shininess), m_IOF(iof), m_Opacity(opacity),
@@ -66,30 +68,38 @@ void BRDF::SetShininess(double shininess)
 	m_Shininess = shininess;
 }
 
-const int BRDF::IsDiffuse() const
+const bool BRDF::IsDiffuse() const
 {
-	return ((m_Diffuse.r > 0.0) | (m_Diffuse.g > 0.0) | (m_Diffuse.b > 0.0));
+	return ((m_Diffuse.r > 0.0) || (m_Diffuse.g > 0.0) || (m_Diffuse.b > 0.0));
 }
-const int BRDF::IsGlossy() const
+const bool BRDF::IsGlossy() const
 {
-	return ((m_Specular.r > 0.0) | (m_Specular.g > 0.0) | (m_Specular.b > 0.0));
+	return ((m_Specular.r > 0.0) || (m_Specular.g > 0.0) || (m_Specular.b > 0.0));
 }
-const int BRDF::IsTransparent() const
+const bool BRDF::IsTransparent() const
 {
 	return (m_Opacity < 1.0f);
 }
-const int BRDF::IsEmissive() const
+const bool BRDF::IsEmissive() const
 {
-	return ((m_Emission.r > 0.0) | (m_Emission.g > 0.0) | (m_Emission.b > 0.0));
+	return ((m_Emission.r > 0.0) || (m_Emission.g > 0.0) || (m_Emission.b > 0.0));
 }
-const int BRDF::IsShiny() const
+const bool BRDF::IsShiny() const
 {
 	return (m_Shininess > 0.0);
 }
 
+/// The default BRDF is defined depending on whether the
+/// project is in release or debug mode.
+/// If in _DEBUG it's defined as a diffuse magenta material.
+/// Otherwise it's a diffuse black material.
 const BRDF* BRDF::Default()
 {
 	return &s_DefaultBrdf;
 }
 
+#ifdef _DEBUG
 BRDF BRDF::s_DefaultBrdf = BRDF(Colors::magenta, 0, 0, 1);
+#else
+BRDF BRDF::s_DefaultBrdf = BRDF(Colors::black, 0, 0, 1);
+#endif

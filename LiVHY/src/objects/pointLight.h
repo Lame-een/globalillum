@@ -1,6 +1,9 @@
+/// @file objects/pointLight.h
 #pragma once
 #include "light.h"
 
+/// @class PointLight
+/// @brief Simplest light type.
 class PointLight : public Light
 {
 public:

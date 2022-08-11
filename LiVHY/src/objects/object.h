@@ -1,3 +1,4 @@
+/// @file objects/object.h
 #pragma once
 #include "util/types.h"
 #include "util/ray.h"
@@ -6,6 +7,9 @@
 
 class Object;
 
+
+/// @struct HitInfo
+/// @brief Struct describing the Ray intersect.
 //NOTE: optimisation check maybe don't include point in hit calculation but instead calculate it from ray and t when necessary
 struct HitInfo{
 public:
@@ -16,13 +20,24 @@ public:
 	Vec2 uv;
 };
 
+/// @class Object
+/// @brief Base class for all objects.
 class Object
 {
 public:
 	Object();
 	Object(const BRDF* brdf);
 
-	virtual bool Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo) = 0;
+	/// @brief Ray intersection checker function.
+	/// @param[in] ray Ray to check against.
+	/// @param[in] tMin Minimum ray length.
+	/// @param[in] tMax Maximum ray length.
+	/// @param[out] hitInfo Reference to the information about the hit.
+	/// @return Returns true if the ray hit the object.
+	virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) = 0;
+	/// @brief Constructs a bounding box around the object.
+    /// @param[out] outputBox The AABB of the object.
+    /// @return Returns true if able to construct an AABB.
     virtual bool BoundingBox(AABB& outputBox) const = 0;
 
 	const BRDF* Brdf() const;

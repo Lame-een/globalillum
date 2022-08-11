@@ -1,12 +1,16 @@
+/// @file objects/light.h
 #pragma once
 #include "util/types.h"
 
+/// @brief Type of the Light.
 enum LightType{
 	None,
 	Point,
 	Area
 };
 
+/// @class Light 
+/// @brief Class defining a light.
 class Light
 {
 public:
@@ -20,6 +24,7 @@ public:
 	void SetColor(const Vec3& color);
 	void SetIntensity(double intensity);
 
+	/// @brief Type of the light - set by derived classes.
 	const LightType type = LightType::None;
 
 protected:

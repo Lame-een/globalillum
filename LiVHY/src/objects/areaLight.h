@@ -1,6 +1,10 @@
+/// @file objects/areaLight.h
 #pragma once
 #include "light.h"
 
+/// @class AreaLight 
+/// @brief A simple area light
+//TODO: implement fully
 class AreaLight : public Light
 {
 public:

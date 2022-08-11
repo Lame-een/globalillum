@@ -1,6 +1,9 @@
+/// @file viewport.h
 #pragma once
 #include <cmath>
 
+/// @class Viewport
+/// @brief Class representing the output viewport of the render.
 class Viewport
 {
 public:
@@ -22,7 +25,6 @@ private:
 	int m_Width = 256;
 	int m_Height = 256;
 
-	
 	double m_HorizFOV = M_PI / 3;
 	double m_VertFOV = M_PI / 3;
 	double m_Aspect = 1.0;

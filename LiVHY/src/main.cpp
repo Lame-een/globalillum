@@ -25,7 +25,7 @@ int main()
 	//Camera cam({0,-2,0}, {0,1,0}, {0,0,1});
 	Viewport vp(640, 640, M_PI / 2);
 	Image img(vp.Width(), vp.Height());
-	BRDF brdf;
+	BRDF brdf(Colors::darkcyan, 0, 0, 1);
 	BRDF brdf2(Colors::blueviolet, 0, 0, 1);
 	BRDF brdf3(Colors::tomato, 0, 0, 1);
 

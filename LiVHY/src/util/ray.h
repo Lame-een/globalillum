@@ -1,5 +1,9 @@
+/// @file util/ray.h
 #pragma once
 #include "types.h"
+
+/// @class Ray
+/// @brief Class defining a ray.
 class Ray{
 public:
 	Ray(const Vec3& orig, const Vec3& dir);

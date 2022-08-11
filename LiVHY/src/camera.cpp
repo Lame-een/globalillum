@@ -1,5 +1,4 @@
 #include "camera.h"
-
 #include "glm/geometric.hpp"
 
 Camera::Camera()
@@ -15,13 +14,25 @@ const Vec3& Camera::Position() const
 {
 	return m_Position;
 }
+void Camera::SetPosition(const Vec3& pos)
+{
+	m_Position = pos;
+}
 const Vec3& Camera::Dir() const
 {
 	return m_Dir;
 }
+void Camera::SetDir(const Vec3& dir)
+{
+	m_Dir = dir;
+}
 const Vec3& Camera::Up() const
 {
 	return m_Up;
+}
+void Camera::SetUp(const Vec3& up)
+{
+	m_Up = up;
 }
 const Vec3& Camera::Right() const
 {
@@ -35,6 +46,9 @@ void Camera::LookAt(const Vec3& tgt)
 	m_Up = glm::normalize(glm::cross(m_Right, m_Dir));
 }
 
+///The function considers the current position of the
+///camera and the target point to calculate the
+///other vectors accordingly to look at the point.
 void Camera::RecalculateVectors()
 {
 	m_Dir = glm::normalize(m_Dir);
@@ -49,14 +63,14 @@ void Camera::SetPlanes(double nearPlane, double farPlane)
 	m_FarPlane = farPlane;
 }
 
-const double Camera::NearPlane()
+double Camera::NearPlane()
 {
 	return Camera::m_NearPlane;
 }
-const double Camera::FarPlane()
+double Camera::FarPlane()
 {
 	return Camera::m_FarPlane;
 }
 
-double Camera::m_NearPlane = 0.00001;
+double Camera::m_NearPlane = c_Epsilon;
 double Camera::m_FarPlane = 10000.0;

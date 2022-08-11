@@ -12,7 +12,7 @@ Sphere::Sphere(const Vec3& pos, double radius, const BRDF* brdf)
 {
 }
 
-bool Sphere::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+bool Sphere::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 {
 	Vec3 L = ray.Origin() - m_Position;
 	double a = glm::dot(ray.Dir(), ray.Dir());

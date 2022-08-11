@@ -1,4 +1,9 @@
 #include "viewport.h"
+
+/// @class Viewport
+/// The class by default constructs a 256x256 image with
+/// a pi/3 horizontal FOV.
+
 Viewport::Viewport()
 {
 }

@@ -1,10 +1,6 @@
 #include "triangleMesh.h"
 
-TriangleMesh::TriangleMesh(const BRDF* brdf)
-	: Object(brdf)
-{
-}
-
+/// faces should contain triples of indices describing a single triangle face.
 TriangleMesh::TriangleMesh(const std::vector<Vec3>& vertices, const std::vector<Vec3i> faces, const BRDF* brdf)
 	: Object(brdf)
 {
@@ -27,7 +23,7 @@ const std::vector<Object*>& TriangleMesh::Triangles() const
 	return m_Triangles;
 }
 
-bool TriangleMesh::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+bool TriangleMesh::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 {
 	HitInfo auxInfo;
 	bool hasHit = false;

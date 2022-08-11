@@ -10,7 +10,8 @@ Scene::~Scene()
 }
 
 /*
-bool Scene::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+* O(N) implementation which bruteforces the check against every object.
+bool Scene::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 {
 	hitInfo.t = std::numeric_limits<double>::max();
 	HitInfo auxInfo = hitInfo;
@@ -27,25 +28,14 @@ bool Scene::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo&
 }
 */
 
-bool Scene::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+/// The function uses the BVH to quickly check if the ray hits any objects in
+/// the scene.
+bool Scene::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 {
 	return m_BVH->Hit(ray, tMin, tMax, hitInfo);
-
-	hitInfo.t = std::numeric_limits<double>::max();
-	HitInfo auxInfo = hitInfo;
-	bool hit = false;
-	for(auto obj : m_Objects)
-	{
-		if(obj->Hit(ray, tMin, tMax, auxInfo) && auxInfo.t < hitInfo.t)
-		{
-			hitInfo = auxInfo;
-			hit = true;
-		}
-	}
-	return hit;
 }
 
-bool Scene::BoundingBox(AABB& output_box) const
+bool Scene::BoundingBox(AABB& outputBox) const
 {
 	return false;
 };
@@ -86,7 +76,7 @@ const BVHNode* Scene::BVHRoot() const
 	return m_BVH;
 }
 
-const RGB& Scene::Background()
+const RGB& Scene::Background() const
 {
 	return m_BackgroundColor;
 }

@@ -1,38 +1,60 @@
+/*! @file BRDF.h
+*/
 #pragma once
 #include "util/types.h"
 #include "util/colors.h"
 
+///@class BRDF
+///@brief Bidirectional reflectance distribution function class.
 class BRDF
 {
 public:
-	BRDF();
+	/// @brief Single color constructor
+	/// @param[in] color Color for all rays.
+	/// @param[in] shininess Shininess of a material.
+	/// @param[in] iof Index of Refraction of the material.
+	/// @param[in] opacity Opacity of the diffuse material.
 	BRDF(const RGB& color, double shininess, 
 		 double iof, double opacity);
+	/// @brief Seperate color constructor
+	/// @param[in] diffuse Diffuse color.
+	/// @param[in] specular Specular color.
+	/// @param[in] emission Emission color.
+	/// @param[in] shininess Shininess of a material.
+	/// @param[in] iof Index of Refraction of the material.
+	/// @param[in] opacity Opacity of the diffuse material.
 	BRDF(const RGB& diffuse, const RGB& specular, 
 		 const RGB& emission, double shininess, double iof, 
 		 double opacity);
 
   	const RGB& Diffuse() const;
-  	const RGB& Specular() const;
-  	const RGB& Emission() const;
-	const double Opacity() const;
-	const double IOF() const;
-	const double Shininess() const;
-
 	void SetDiffuse(const RGB& rgb);
-	void SetSpecular(const RGB& rgb);
-	void SetEmission(const RGB& rgb);
 
+  	const RGB& Specular() const;
+	void SetSpecular(const RGB& rgb);
+  	
+	const RGB& Emission() const;
+	void SetEmission(const RGB& rgb);
+	
+	const double Opacity() const;
 	void SetOpacity(double opacity);
+	
+	const double IOF() const;
 	void SetIOF(double iof);
+	
+	const double Shininess() const;
 	void SetShininess(double shininess);
 
-	const int IsDiffuse() const;
-	const int IsGlossy() const;
-	const int IsTransparent() const;
-	const int IsEmissive() const;
-	const int IsShiny() const;
 
+
+	const bool IsDiffuse() const;
+	const bool IsGlossy() const;
+	const bool IsTransparent() const;
+	const bool IsEmissive() const;
+	const bool IsShiny() const;
+
+	/// @brief The default BRDF.
+	/// @return Pointer to a static default BRDF.
 	static const BRDF* Default();
 
 private:
@@ -42,13 +64,8 @@ private:
 
 
 	static BRDF s_DefaultBrdf;
-#ifdef _DEBUG
-	RGB m_Diffuse = Colors::magenta;
-	RGB m_Specular = Colors::magenta;
-	RGB m_Emission = Colors::magenta;
-#else
-	RGB m_Diffuse = RGB(0.0);
-	RGB m_Specular = RGB(0.0);
-	RGB m_Emission = RGB(0.0);
-#endif
+
+	RGB m_Diffuse;
+	RGB m_Specular;
+	RGB m_Emission;
 };

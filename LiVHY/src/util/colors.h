@@ -1,11 +1,22 @@
+/// @file util/colors.h
 #pragma once
 #include "types.h"
-constexpr RGB intToRGB(int red, int green, int blue)
+#include "glm/common.hpp"
+
+/// @brief Helper function that converts 3 ints into a RGB.
+/// @param[in] red Red value of the RGB
+/// @param[in] green Green value of the RGB
+/// @param[in] blue Blue value of the RGB
+/// @return Returns an RGB type of the 
+constexpr RGB intToRGB(uint8_t red, uint8_t green, uint8_t blue)
 {
-	return RGB(1.0 * red / 255, 1.0 * green / 255, 1.0 * blue / 255);
+	return RGB(1.0 * red / 255, 1.0 * green / 255, 1.0 * blue / 255); 
 }
 
-constexpr int charToHex(char c)
+/// @brief Helper function converting a character into a hex value.
+/// @param[in] c Input character. 
+/// @return uint8_t representing a hex Value
+constexpr uint8_t charToHex(char c)
 {
 	if(c <= '9' && c >= '0')
 	{
@@ -22,6 +33,9 @@ constexpr int charToHex(char c)
 	assert(!"Character isn't hex.");
 }
 
+/// @brief Helper function converting a string into RGB.
+/// @param str 7 character long string representing a hex value (e.g. "#000000")
+/// @return Returns the equivalent RGB value of the string.
 constexpr RGB stringToRGB(const char str[8])
 {
 #ifdef _DEBUG
@@ -33,6 +47,7 @@ constexpr RGB stringToRGB(const char str[8])
 	return intToRGB(red, green, blue);
 }
 
+/// @brief Namespace containing color constants.
 namespace Colors
 {
 	constexpr RGB cyan = stringToRGB("#00ffff");

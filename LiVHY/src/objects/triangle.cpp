@@ -21,7 +21,7 @@ Triangle::Triangle(const Vec3* arr, const BRDF* brdf)
 	m_Normal = glm::normalize(glm::cross(arr[1] - arr[0], arr[2] - arr[0]));
 }
 
-bool Triangle::Hit(const Ray& ray, const double& tMin, const double& tMax, HitInfo& hitInfo)
+bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 {
 	Vec3 ab = m_Vertices[1] - m_Vertices[0];
 	Vec3 ac = m_Vertices[2] - m_Vertices[0];
@@ -64,13 +64,6 @@ bool Triangle::BoundingBox(AABB& outputBox) const
 	}
 	outputBox.Set(min, max);
 	return true;
-}
-
-void Triangle::SetVertex(const Vec3& point, size_t index)
-{
-	assert(index < 3 && "Index out of bounds.");
-
-	m_Vertices[index] = point;
 }
 
 const Vec3* Triangle::Vertices() const
