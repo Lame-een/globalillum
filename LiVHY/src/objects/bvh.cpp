@@ -30,6 +30,7 @@ BVHNode::~BVHNode(){
 //TODO: add manual checks for array sizes of 2 and 3 for additional optimization
 BVHNode::BVHNode(const std::vector<Object*>& objects, size_t start, size_t end)
 {
+	if(objects.size() == 0) return;
 	std::vector<Object*> objs = objects; //create a modifiable copy
 
 	int axis = m_RandGenerator.getInt(0, 2 + 1);

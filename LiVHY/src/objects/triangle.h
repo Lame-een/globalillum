@@ -6,10 +6,11 @@
 /// @brief Class describing a single triangle.
 class Triangle : public Object{
 public:
-	/// @brief Constructor which takes in seperate vertices.
-	/// @param a Vertex A.
-	/// @param b Vertex B.
-	/// @param c Vertex C
+	/// @brief Constructor which takes in seperate vertices, 
+	///		   vertices should be in CCW order.
+	/// @param a
+	/// @param b
+	/// @param c
 	/// @param brdf Brdf applied to the triangle.
 	Triangle(const Vec3& a, const Vec3& b, const Vec3& c, const BRDF* brdf = BRDF::Default());
 	/// @brief Constructor which takes in an array of vertices.

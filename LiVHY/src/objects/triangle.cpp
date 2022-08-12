@@ -28,19 +28,21 @@ bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 	Vec3 pvec = glm::cross(ray.Dir(), ac);
 	double det = glm::dot(ab, pvec);
 
-	if(det < c_DoubleEpsilon) return false; //either hitting backface or parallel to the triangle
+	if(det < c_DoubleEpsilon){
+		return false; //either hitting backface or parallel to the triangle
+	}
 
 	double invDet = 1 / det;
 
 	Vec3 tvec = ray.Origin() - m_Vertices[0];
 	double& u = hitInfo.uv[0];
 	u = glm::dot(tvec, pvec) * invDet;
-	if(u < 0 || u > 1) return false;
+	if(u < -c_Epsilon || u > 1) return false;	//added epsilon to reduce gaps in meshes
 
 	Vec3 qvec = glm::cross(tvec, ab);
 	double& v = hitInfo.uv[1];
 	v = glm::dot(ray.Dir(), qvec) * invDet;
-	if(v < 0 || u + v > 1) return false;
+	if(v < -c_Epsilon || u + v > 1) return false;
 
 	hitInfo.t = glm::dot(ac, qvec) * invDet;
 	hitInfo.normal = m_Normal;

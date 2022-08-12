@@ -8,6 +8,7 @@
 class TriangleMesh : public Object
 {
 public:
+	TriangleMesh();
 	/// @brief Constructs all the triangles described by the vertices and faces.
 	/// @param vertices Vertices of the triangles.
 	/// @param faces Faces of the triangles.
@@ -26,7 +27,7 @@ public:
 
 	//const std::vector<Vec3> Vertices();
 	//const std::vector<Vec3i> Faces();
-private:
+protected:
 
 	std::vector<Object*> m_Triangles;
 

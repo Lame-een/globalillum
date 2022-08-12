@@ -1,5 +1,9 @@
 #include "triangleMesh.h"
 
+TriangleMesh::TriangleMesh()
+{
+}
+
 /// faces should contain triples of indices describing a single triangle face.
 TriangleMesh::TriangleMesh(const std::vector<Vec3>& vertices, const std::vector<Vec3i> faces, const BRDF* brdf)
 	: Object(brdf)
