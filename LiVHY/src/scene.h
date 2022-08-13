@@ -11,9 +11,9 @@
 
 /// @class Scene
 /// @brief Class encapsulating the rendered scene.
-class Scene : public Object{
+class Scene{
 public:
-	Scene();
+	Scene(const std::string& name = "render");
 	~Scene();
 
 	/// @brief Ray intersection checker function
@@ -22,18 +22,20 @@ public:
 	/// @param[in] tMax Maximum ray length.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit an object in the scene.
-	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) override;
-    /// @brief Constructs a bounding box around the objects.
-    /// @param[out] outputBox The AABB of all the objects in the scene.
-    /// @return Returns true if able to construct an AABB.
-    bool BoundingBox(AABB& outputBox) const override;
+	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const;
 
-	std::vector<Object*> Objects();
-	std::vector<Light*> Lights();
+    // @brief Constructs a bounding box around the objects.
+    // @param[out] outputBox The AABB of all the objects in the scene.
+    // @return Returns true if able to construct an AABB.
+    //bool BoundingBox(AABB& outputBox) const override;
+
+	const std::vector<Object*>& Objects() const;
+	const std::vector<Light*>& Lights() const;
 
 	void AddObject(Object* obj);
 	void AddObject(TriangleMesh* obj);
 	void AddLight(Light* light);
+	void AddBrdf(BRDF* brdf);
 
 	/// @brief Constructs a BVH around the encapsulated objects.
 	void ConstructBvh();
@@ -41,10 +43,15 @@ public:
 
 	const RGB& Background() const;
 	void SetBackground(const RGB& rgb);
+
+	const std::string& Name() const;
 private:
 	RGB m_BackgroundColor = Colors::black;
 
 	BVHNode* m_BVH = nullptr;
 	std::vector<Object*> m_Objects;
 	std::vector<Light*> m_Lights;
+	std::vector<BRDF*> m_Brdfs;
+
+	std::string m_Name;
 };

@@ -3,7 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-## Ignore deocumentation files for now
+## Temporarily ignore
+out/
 docs/
 
 # User-specific files

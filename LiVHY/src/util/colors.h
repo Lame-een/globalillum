@@ -31,6 +31,7 @@ constexpr uint8_t charToHex(char c)
 		return c - 'A' + 10;
 	}
 	assert(!"Character isn't hex.");
+	return 0;
 }
 
 /// @brief Helper function converting a string into RGB.
