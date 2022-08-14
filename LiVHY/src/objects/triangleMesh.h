@@ -2,6 +2,7 @@
 #pragma once
 #include <vector>
 #include "triangle.h"
+#include <string>
 
 /// @class TriangleMesh
 /// @brief Class describing a mesh object.

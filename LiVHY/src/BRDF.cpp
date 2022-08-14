@@ -99,7 +99,7 @@ const BRDF* BRDF::Default()
 }
 
 #ifdef _DEBUG
-BRDF BRDF::s_DefaultBrdf = BRDF(Colors::magenta, 0, 0, 1);
+BRDF BRDF::s_DefaultBrdf = BRDF(Colors::magenta, 1, 1, 1);
 #else
-BRDF BRDF::s_DefaultBrdf = BRDF(Colors::black, 0, 0, 1);
+BRDF BRDF::s_DefaultBrdf = BRDF(Colors::black, 1, 1, 1);
 #endif

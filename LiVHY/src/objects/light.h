@@ -1,9 +1,14 @@
 /// @file objects/light.h
 #pragma once
 #include "util/types.h"
+#include "util/math.h"
+#include "BRDF.h"
+#include "object.h"
+#include "glm/gtx/norm.hpp"
 
 /// @brief Type of the Light.
-enum LightType{
+enum LightType
+{
 	None,
 	Point,
 	Area
@@ -27,11 +32,15 @@ public:
 	/// @brief Type of the light - set by derived classes.
 	const LightType type = LightType::None;
 
+	//virtual RGB Reflection(const HitInfo& hitInfo) const = 0;
+	virtual RGB DiffuseReflection(const HitInfo& hitInfo) const = 0;
+	virtual RGB SpecularReflection(const HitInfo& hitInfo) const = 0;
+
 protected:
 	Light(const Vec3& pos, const RGB& color, double intensity, LightType type);
 	Light(LightType type);
-	
-	Vec3 m_Pos = Vec3(1.0f,1.0f,1.0f);
-	Vec3 m_Color = Vec3(1.0f,1.0f,1.0f);
+
+	Vec3 m_Pos = Vec3(1.0f, 1.0f, 1.0f);
+	Vec3 m_Color = Vec3(1.0f, 1.0f, 1.0f);
 	double m_Intensity = 1.0f;
 };

@@ -37,13 +37,14 @@ bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 	Vec3 tvec = ray.Origin() - m_Vertices[0];
 	double& u = hitInfo.uv[0];
 	u = glm::dot(tvec, pvec) * invDet;
-	if(u < -c_Epsilon || u > 1) return false;	//added epsilon to reduce gaps in meshes
+	if(u < -c_Epsilon || u > 1 + c_Epsilon) return false;	//added epsilon to reduce gaps in meshes
 
 	Vec3 qvec = glm::cross(tvec, ab);
 	double& v = hitInfo.uv[1];
 	v = glm::dot(ray.Dir(), qvec) * invDet;
-	if(v < -c_Epsilon || u + v > 1) return false;
+	if(v < -c_Epsilon || u + v > 1 + c_Epsilon) return false;
 
+	hitInfo.ray = ray;
 	hitInfo.t = glm::dot(ac, qvec) * invDet;
 	hitInfo.normal = m_Normal;
 	hitInfo.object = this;

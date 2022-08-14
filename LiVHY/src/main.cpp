@@ -18,9 +18,46 @@
 #include "camera.h"
 #include "viewport.h"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include "glm/ext.hpp"
+#include "glm/gtx/norm.hpp"
 #include "lame/benchmark.h"
+
+//TODO add a scaling pixel error - in hit I guess?
+
+void simpleTest(){
+	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
+	Viewport vp(256, 256);
+	Image img(vp.Width(), vp.Height());
+
+	BRDF brdf0(stringToRGB("#f0f0f0"), 0.0, 0.0, 1.0);
+	BRDF brdf1(Colors::crimson, 0.0, 0.0, 1.0);
+
+	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf1);
+	Quad leftWall(Vec3(-2, -2, -1), Vec3(-2, 2, -1), Vec3(-2, 2, 3), Vec3(-2, -2, 3), &brdf1);
+	Quad ceiling(Vec3(2, -2, 3), Vec3(-2, -2, 3), Vec3(-2, 2, 3), Vec3(2, 2, 3), &brdf1);
+	Sphere sphere(Vec3(0, 0, 0), 1.0, &brdf0);
+
+	PointLight light({-1,-1,2.5}, Colors::white, 1);
+	PointLight light1({-1,1,2.5}, Colors::white, 1);
+	PointLight light2({1,-1,2.5}, Colors::white, 1);
+	PointLight light3({1,1,2.5}, Colors::white, 1);
+
+	Scene scene;
+	scene.SetBackground(Colors::lightgray);
+
+	scene.AddLight(&light);
+	scene.AddLight(&light1);
+	scene.AddLight(&light2);
+	scene.AddLight(&light3);
+
+	scene.AddObject(&floor);
+	scene.AddObject(&leftWall);
+	scene.AddObject(&ceiling);
+	scene.AddObject(&sphere);
+
+	scene.ConstructBvh();
+
+	RayTracer(cam, vp, scene);
+}
 
 void cornellBox()
 {
@@ -29,36 +66,38 @@ void cornellBox()
 	Image img(vp.Width(), vp.Height());
 
 
-	BRDF brdf0(stringToRGB("#f0f0f0"), 0.0, 0.0, 1.0);
-	BRDF brdf1(Colors::crimson, 0.0, 0.0, 1.0);
-	BRDF brdf2(Colors::limegreen, 0.0, 0.0, 1.0);
-	BRDF brdf3(Colors::blueviolet, 0.0, 0.0, 1.0);
-	BRDF brdfEmissive(Colors::white, 0.0, 0.0, 1.0);
-	brdfEmissive.SetEmission(Colors::white);
+	BRDF brdf0(stringToRGB("#f0f0f0"), 1.0, 0.0, 1.0);
+	BRDF brdf1(Colors::crimson, 150.0, 0.0, 1.0);
+	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 1.0);
+	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 1.0);
+	//BRDF brdfEmissive(Colors::white, 0.0, 0.0, 1.0);
+	//brdfEmissive.SetEmission(Colors::white);
 
 	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf0);
 	Quad ceiling(Vec3(2, -2, 3), Vec3(-2, -2, 3), Vec3(-2, 2, 3), Vec3(2, 2, 3), &brdf0);
 	Quad leftWall(Vec3(-2, -2, -1), Vec3(-2, 2, -1), Vec3(-2, 2, 3), Vec3(-2, -2, 3), &brdf1);
 	Quad backWall(Vec3(-2, 2, -1), Vec3(2, 2, -1), Vec3(2, 2, 3), Vec3(-2, 2, 3), &brdf2);
 	Quad rightWall(Vec3(2, 2, -1), Vec3(2, -2, -1), Vec3(2, -2, 3), Vec3(2, 2, 3), &brdf3);
-	Quad emissiveQuad(Vec3(0.5, -0.5, 2.99), Vec3(-0.5, -0.5, 2.99), Vec3(-0.5, 0.5, 2.99), Vec3(0.5, 0.5, 2.99), &brdfEmissive);
+	//Quad emissiveQuad(Vec3(0.5, -0.5, 2.99), Vec3(-0.5, -0.5, 2.99), Vec3(-0.5, 0.5, 2.99), Vec3(0.5, 0.5, 2.99), &brdfEmissive);
 
-	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 1);
+	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 1, &brdf1);
 	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5);
 
-	PointLight light({0,0,1}, Colors::white, 1);
+	PointLight light({0,0,2.5}, Colors::white, 2);
+	//PointLight light2({0,0,-0.9}, Colors::white, 1);
 
 	Scene scene;
 	scene.SetBackground(Colors::black);
 
 	scene.AddLight(&light);
+	//scene.AddLight(&light2);
 
 	scene.AddObject(&floor);
 	scene.AddObject(&ceiling);
 	scene.AddObject(&leftWall);
 	scene.AddObject(&rightWall);
 	scene.AddObject(&backWall);
-	scene.AddObject(&emissiveQuad);
+	//scene.AddObject(&emissiveQuad);
 	scene.AddObject(&sphere0);
 	scene.AddObject(&sphere1);
 
@@ -68,6 +107,7 @@ void cornellBox()
 }
 
 //use this, very fast and good.
+/*
 void branchlessONB(const Vec3& n, Vec3& b1, Vec3& b2)
 {
 	float sign = copysignf(1.0f, n.z);
@@ -76,12 +116,17 @@ void branchlessONB(const Vec3& n, Vec3& b1, Vec3& b2)
 	b1 = Vec3(1.0f + sign * n.x * n.x * a, sign * b, -sign * n.x);
 	b2 = Vec3(b, sign + n.y * n.y * a, -n.y);
 }
+*/
 
 
 int main()
 {
 	cornellBox();
 	return 0;
+
+	simpleTest();
+	return 0;
+	/*
 	//Camera cam({0,-5,2}, {0,1,0}, {0,0,1});
 	//cam.LookAt({0,0,0});
 
@@ -149,4 +194,5 @@ int main()
 	//img.write("./out/a.ppm");
 
 	std::cout << "Light is Very Hard, yo\n";
+	*/
 }

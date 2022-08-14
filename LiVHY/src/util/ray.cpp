@@ -1,6 +1,10 @@
 #include "ray.h"
 #include "glm/geometric.hpp"
 
+Ray::Ray()
+{
+}
+
 Ray::Ray(const Vec3& orig, const Vec3& dir)
 	: m_Origin(orig), m_Dir(dir)
 {}

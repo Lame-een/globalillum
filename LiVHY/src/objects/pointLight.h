@@ -8,8 +8,12 @@ class PointLight : public Light
 {
 public:
 	PointLight();
-	PointLight(const Vec3& pos, const RGB& color, 
+	PointLight(const Vec3& pos, const RGB& color,
 			   double intensity = 1.0);
 
+
+	//RGB Reflection(const HitInfo& hitInfo) const override;
+	RGB DiffuseReflection(const HitInfo& hitInfo) const override;
+	RGB SpecularReflection(const HitInfo& hitInfo) const override;
 private:
 };

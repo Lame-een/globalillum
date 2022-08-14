@@ -58,8 +58,8 @@ public:
 	static const BRDF* Default();
 
 private:
-	double m_Shininess = 0.0;
-	double m_IOF = 0.0;
+	double m_Shininess = 1.0;
+	double m_IOF = 1.0;
 	double m_Opacity = 1.0;
 
 

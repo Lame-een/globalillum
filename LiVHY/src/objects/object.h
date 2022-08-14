@@ -13,6 +13,7 @@ class Object;
 //NOTE: optimisation check maybe don't include point in hit calculation but instead calculate it from ray and t when necessary
 struct HitInfo{
 public:
+	Ray ray;
 	Vec3 point;
 	Vec3 normal;
 	Object* object = nullptr;
