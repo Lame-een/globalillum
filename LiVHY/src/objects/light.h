@@ -32,9 +32,9 @@ public:
 	/// @brief Type of the light - set by derived classes.
 	const LightType type = LightType::None;
 
-	//virtual RGB Reflection(const HitInfo& hitInfo) const = 0;
 	virtual RGB DiffuseReflection(const HitInfo& hitInfo) const = 0;
 	virtual RGB SpecularReflection(const HitInfo& hitInfo) const = 0;
+	virtual RGB Reflection(const HitInfo& hitInfo) const = 0;
 
 protected:
 	Light(const Vec3& pos, const RGB& color, double intensity, LightType type);

@@ -12,8 +12,8 @@ public:
 			   double intensity = 1.0);
 
 
-	//RGB Reflection(const HitInfo& hitInfo) const override;
 	RGB DiffuseReflection(const HitInfo& hitInfo) const override;
 	RGB SpecularReflection(const HitInfo& hitInfo) const override;
+	RGB Reflection(const HitInfo& hitInfo) const override;
 private:
 };

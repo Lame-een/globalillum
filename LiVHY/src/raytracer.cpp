@@ -27,8 +27,9 @@ void ComputeIllumination(const Scene& scene, const HitInfo& hitInfo, const Light
 			return;
 		}
 	}
-	color += light->DiffuseReflection(hitInfo);
-	color += light->SpecularReflection(hitInfo);
+	color += light->Reflection(hitInfo);
+	//color += light->DiffuseReflection(hitInfo);
+	//color += light->SpecularReflection(hitInfo);
 }
 
 void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, double cosTheta, RGB& color)
