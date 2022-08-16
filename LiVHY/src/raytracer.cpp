@@ -16,7 +16,7 @@ void ComputeIllumination(const Scene& scene, const HitInfo& hitInfo, const Light
 	//probably not necessary?
 	//Vec3 shadowOrig = glm::dot(hitInfo.normal, lightDir) < 0 ?
 	//hitInfo.point - hitInfo.normal * c_Epsilon : hitInfo.point + hitInfo.normal * c_Epsilon;
-	
+
 	Ray shadowRay(shadowOrig, lightDir);
 	shadowRay.Normalize();
 
@@ -40,14 +40,87 @@ void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, double cosTh
 	}
 }
 
+//return perfect reflective bounce
+Vec3 ReflectiveBounce(Vec3 normal, const Vec3& view, double cosTheta)
+{
+	// Flip normal to incident side of surface
+	if(cosTheta < 0)
+	{
+		normal = -normal;
+		cosTheta *= -1.0;
+	}
+
+	Vec3 dn = normal * cosTheta;  // dot(normal, view)
+	Vec3 refl = view + dn * 2.0;
+	return glm::normalize(refl);
+}
+
+//return direction of a perfect transmissive bounce (or reflective if internal refraction happened)
+Vec3 TransmissiveBounce(const HitInfo& hitInfo, double cosTheta)
+{
+	double eta;
+	Vec3 normal = hitInfo.normal;
+	//flip normal if angle is bigger than 90°
+	if(cosTheta < 0)
+	{
+		// exit - assuming air ior 1.0
+		eta = hitInfo.object->Brdf()->IOF() / 1.0;
+		normal = -normal;
+		cosTheta *= -1;
+	}
+	else
+	{
+		// entry
+		eta = 1.0 / hitInfo.object->Brdf()->IOF();
+	}
+
+	double theta = acos(cosTheta);
+	double sinPhi = eta * sin(theta);
+
+	//total internal reflection
+	if(sinPhi < -1.0 || 1.0 < sinPhi)
+	{
+		return ReflectiveBounce(normal, hitInfo.ray.Dir(), cosTheta);
+	}
+
+	//return refraction direction
+	double phi = asin(sinPhi);
+	Vec3 viewParallel = glm::normalize(hitInfo.ray.Dir() + normal * cosTheta);
+	return glm::normalize(viewParallel * tan(phi) - normal);
+}
+
+void TransmissiveIllumination(const Scene& scene, const HitInfo& hitInfo, double cosTheta, double transCoeff, RGB& color)
+{
+	Vec3 bounce = TransmissiveBounce(hitInfo, cosTheta);
+	//...
+}
+
 void TraceRay(const Scene& scene, const Ray& ray, const HitInfo& hitInfo, RGB& color)
 {
 	const BRDF* brdf = hitInfo.object->Brdf();
 	double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
+	double reflCoeff = 0.0;		//fresnel reflection coefficient
 
 	if(brdf->IsDiffuse())
 	{
 		DirectIllumination(scene, hitInfo, cosTheta, color);
+	}
+
+	if(brdf->IsTransparent())
+	{
+		//Schlick's approximation for the reflection coeff - assuming IoR for air 1.0
+		double r0 = pow((1.0 - brdf->IOF()) / (1.0 + brdf->IOF()), 2);
+
+		reflCoeff = r0 + (1 - r0) * pow(1 - cosTheta, 5);
+
+		if(reflCoeff < 1.0)
+		{
+			TransmissiveIllumination(scene, hitInfo, cosTheta, 1 - reflCoeff, color);
+		}
+	}
+
+	if(brdf->IsGlossy() || reflCoeff > 0)
+	{
 	}
 }
 

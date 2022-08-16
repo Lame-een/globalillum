@@ -23,7 +23,8 @@
 
 //TODO add a scaling pixel error - in hit I guess?
 
-void simpleTest(){
+void simpleTest()
+{
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
 	Viewport vp(256, 256);
 	Image img(vp.Width(), vp.Height());
@@ -116,11 +117,18 @@ void branchlessONB(const Vec3& n, Vec3& b1, Vec3& b2)
 	b1 = Vec3(1.0f + sign * n.x * n.x * a, sign * b, -sign * n.x);
 	b2 = Vec3(b, sign + n.y * n.y * a, -n.y);
 }
-*/
 
+Vec2 PointInCirclePolar()
+{
+	double theta = randd.getDouble() * 2 * M_PI;
+	double r = sqrt(randd.getDouble());
+	return Vec2(r * cos(theta), r * sin(theta));
+}
+*/
 
 int main()
 {
+
 	cornellBox();
 	return 0;
 
