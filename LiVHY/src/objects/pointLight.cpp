@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "pointLight.h"
 
 PointLight::PointLight() : Light(LightType::Point)

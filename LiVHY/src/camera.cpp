@@ -1,5 +1,6 @@
+#include "pch.h"
 #include "camera.h"
-#include "glm/geometric.hpp"
+//#include "glm/geometric.hpp"
 
 Camera::Camera()
 {

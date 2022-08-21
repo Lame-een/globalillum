@@ -1,12 +1,13 @@
-#include <iostream>
-#include <utility>
-#include <memory>
-#include <filesystem>
+#include "pch.h"
+//#include <iostream>
+//#include <utility>
+//#include <memory>
+//#include <filesystem>
 
+//#include "util/colors.h"
 #include "util/image.h"
 #include "scene.h"
 #include "objects/sphere.h"
-#include "util/colors.h"
 #include "objects/pointLight.h"
 #include "objects/triangle.h"
 #include "objects/triangleMesh.h"
@@ -18,8 +19,9 @@
 #include "camera.h"
 #include "viewport.h"
 
-#include "glm/gtx/norm.hpp"
-#include "lame/benchmark.h"
+//#include "glm/gtx/norm.hpp"
+//#include "lame/benchmark.h"
+
 
 //TODO add a scaling pixel error - in hit I guess?
 

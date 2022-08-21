@@ -38,8 +38,8 @@ public:
 	Object* Right();
 
 private:
-	Object* m_Left;
-	Object* m_Right;
+	Object* m_Left = nullptr;
+	Object* m_Right = nullptr;
 	AABB m_BoundingBox;
 
 	lameutil::EasyRandom m_RandGenerator;

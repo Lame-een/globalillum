@@ -1,5 +1,6 @@
+#include "pch.h"
 #include "ray.h"
-#include "glm/geometric.hpp"
+//#include "glm/geometric.hpp"
 
 Ray::Ray()
 {

@@ -1,6 +1,7 @@
+#include "pch.h"
 #include "triangle.h"
-#include "glm/geometric.hpp"
-#include "util/math.h"
+//#include "glm/geometric.hpp"
+//#include "util/math.h"
 
 Triangle::Triangle(const Vec3& a, const Vec3& b, const Vec3& c, const BRDF* brdf)
 	: Object(brdf)

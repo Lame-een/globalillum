@@ -1,6 +1,7 @@
+#include "pch.h"
 #include "sphere.h"
-#include "util/math.h"
-#include "glm/geometric.hpp"
+//#include "util/math.h"
+//#include "glm/geometric.hpp"
 
 Sphere::Sphere(const BRDF* brdf)
 	: Object(brdf)

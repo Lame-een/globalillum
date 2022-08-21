@@ -1,8 +1,5 @@
+#include "pch.h"
 #include "bvh.h"
-#include <utility>
-#include <functional>
-
-#include <iostream>
 
 /// @class BVHNode
 /// The binary tree is constructed in such a way that the

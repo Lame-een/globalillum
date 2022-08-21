@@ -1,6 +1,7 @@
+#include "pch.h"
 #include "aabb.h"
-#include <utility>
-#include "glm/common.hpp"
+//#include <utility>
+//#include "glm/common.hpp"
 
 AABB::AABB()
 {

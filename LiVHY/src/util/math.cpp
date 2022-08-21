@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "math.h"
 
 /// Quadratic equation solver with catastrophic cancelation avoidance

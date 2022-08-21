@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "quad.h"
 
 Quad::Quad(const Vec3& a, const Vec3& b, const Vec3& c, const Vec3& d, BRDF* brdf)

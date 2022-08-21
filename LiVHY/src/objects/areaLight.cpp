@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "areaLight.h"
+
 AreaLight::AreaLight() : Light(LightType::Area)
 {
 }

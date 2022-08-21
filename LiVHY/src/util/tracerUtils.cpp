@@ -1,7 +1,8 @@
+#include "pch.h"
 #include "tracerUtils.h"
-#include "glm/geometric.hpp"
-#include "lame/easyRandom.h"
-#include "glm/gtx/rotate_vector.hpp"
+//#include "glm/geometric.hpp"
+//#include "lame/easyRandom.h"
+//#include "glm/gtx/rotate_vector.hpp"
 
 //return perfect reflective bounce
 Vec3 ReflectiveBounce(Vec3 normal, const Vec3& view, double cosTheta)

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "triangleMesh.h"
 
 TriangleMesh::TriangleMesh()

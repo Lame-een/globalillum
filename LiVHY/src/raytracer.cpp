@@ -1,7 +1,6 @@
+#include "pch.h"
 #include "raytracer.h"
-#include "glm/geometric.hpp"
-#include "glm/ext.hpp"
-#include <filesystem>
+//#include <filesystem>
 
 // TODO add for area lights and emissive meshes
 void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
@@ -33,34 +32,34 @@ void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
 // Uses cosine-weighted hemisphere sampling
 static inline glm::vec3 sampleHemisphereWeighted(const glm::vec3& n)
 {
-    // Samples cosine weighted positions.
-    float r1    = rand() / static_cast<float>(RAND_MAX);
-    float r2    = rand() / static_cast<float>(RAND_MAX);
-    float theta = acos(sqrt(1.0f - r1));
-    float phi   = 2.0f * glm::pi<float>() * r2;
-    float xs    = sinf(theta) * cosf(phi);
-    float ys    = cosf(theta);
-    float zs    = sinf(theta) * sinf(phi);
-    glm::vec3 y(n.x, n.y, n.z);
-    glm::vec3 h = y;
+	// Samples cosine weighted positions.
+	float r1 = rand() / static_cast<float>(RAND_MAX);
+	float r2 = rand() / static_cast<float>(RAND_MAX);
+	float theta = acos(sqrt(1.0f - r1));
+	float phi = 2.0f * glm::pi<float>() * r2;
+	float xs = sinf(theta) * cosf(phi);
+	float ys = cosf(theta);
+	float zs = sinf(theta) * sinf(phi);
+	glm::vec3 y(n.x, n.y, n.z);
+	glm::vec3 h = y;
 
-    if ((abs(h.x) <= abs(h.y)) && (abs(h.x) <= abs(h.z)))
-    {
-        h.x = 1.0;
-    }
-    else if ((abs(h.y) <= abs(h.x)) && (abs(h.y) <= abs(h.z)))
-    {
-        h.y = 1.0;
-    }
-    else
-    {
-        h.z = 1.0;
-    }
+	if((abs(h.x) <= abs(h.y)) && (abs(h.x) <= abs(h.z)))
+	{
+		h.x = 1.0;
+	}
+	else if((abs(h.y) <= abs(h.x)) && (abs(h.y) <= abs(h.z)))
+	{
+		h.y = 1.0;
+	}
+	else
+	{
+		h.z = 1.0;
+	}
 
-    glm::vec3 x = glm::normalize(glm::cross(h, y));
-    glm::vec3 z = glm::normalize(glm::cross(x, y));
+	glm::vec3 x = glm::normalize(glm::cross(h, y));
+	glm::vec3 z = glm::normalize(glm::cross(x, y));
 
-    return glm::normalize(xs * x + ys * y + zs * z);
+	return glm::normalize(xs * x + ys * y + zs * z);
 }
 
 RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
@@ -101,6 +100,7 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 		DirectIllumination(scene, hitInfo, colorBuffer);
 	}
 
+	return colorBuffer;
 }
 
 void RayTracer(const Viewport& vp, const Scene& scene)
@@ -109,8 +109,13 @@ void RayTracer(const Viewport& vp, const Scene& scene)
 
 	Image img(vp.Width(), vp.Height());
 
-	for(int i = 0; i < vp.Height(); i++)
+	int i = 0;
+	int lim = vp.Height();
+	lameutil::LoadingBar bar(i, lim, "<");
+	for(; i < vp.Height(); i++)
 	{
+		bar.bar();
+#pragma omp parallel for
 		for(int j = 0; j < vp.Width(); j++)
 		{
 			double x = (2.0 * (j + 0.5) / vp.Width() - 1.0) * tan(vp.HFOV() / 2.f) * vp.AspectRatio();
