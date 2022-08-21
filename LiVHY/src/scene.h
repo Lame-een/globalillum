@@ -8,6 +8,7 @@
 #include "objects/triangleMesh.h"
 #include "util/ray.h"
 #include "objects/bvh.h"
+#include "camera.h"
 
 /// @class Scene
 /// @brief Class encapsulating the rendered scene.
@@ -44,9 +45,13 @@ public:
 	const RGB& Background() const;
 	void SetBackground(const RGB& rgb);
 
+	Camera* Cam() const;
+	void SetCamera(Camera* cam);
+
 	const std::string& Name() const;
 private:
 	RGB m_BackgroundColor = Colors::black;
+	Camera* m_Camera = nullptr;
 
 	BVHNode* m_BVH = nullptr;
 	std::vector<Object*> m_Objects;

@@ -44,6 +44,7 @@ void simpleTest()
 
 	Scene scene;
 	scene.SetBackground(Colors::lightgray);
+	scene.SetCamera(&cam);
 
 	scene.AddLight(&light);
 	scene.AddLight(&light1);
@@ -57,7 +58,7 @@ void simpleTest()
 
 	scene.ConstructBvh();
 
-	RayTracer(cam, vp, scene);
+	RayTracer(vp, scene);
 }
 
 void cornellBox()
@@ -89,6 +90,7 @@ void cornellBox()
 
 	Scene scene;
 	scene.SetBackground(Colors::black);
+	scene.SetCamera(&cam);
 
 	scene.AddLight(&light);
 	//scene.AddLight(&light2);
@@ -104,7 +106,7 @@ void cornellBox()
 
 	scene.ConstructBvh();
 
-	RayTracer(cam, vp, scene);
+	RayTracer(vp, scene);
 }
 
 //use this, very fast and good.
@@ -128,7 +130,6 @@ Vec2 PointInCirclePolar()
 
 int main()
 {
-
 	cornellBox();
 	return 0;
 

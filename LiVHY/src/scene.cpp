@@ -91,6 +91,16 @@ void Scene::SetBackground(const RGB& rgb)
 	m_BackgroundColor = rgb;
 }
 
+Camera* Scene::Cam() const
+{
+	return m_Camera;
+}
+
+void Scene::SetCamera(Camera* cam)
+{
+	m_Camera = cam;
+}
+
 const std::string& Scene::Name() const
 {
 	return m_Name;

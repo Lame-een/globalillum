@@ -119,4 +119,7 @@ namespace lameutil
 		}
 
 	};
+
+	//default basic random generator, preferably don't use this
+	inline EasyRandom g_RandGen;
 }

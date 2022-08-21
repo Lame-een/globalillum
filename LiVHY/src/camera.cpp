@@ -39,6 +39,9 @@ const Vec3& Camera::Right() const
 	return m_Right;
 }
 
+///The function considers the current position of the
+///camera and the target point to calculate the
+///other vectors accordingly to look at the point.
 void Camera::LookAt(const Vec3& tgt)
 {
 	m_Dir = glm::normalize(tgt - m_Position);
@@ -46,9 +49,6 @@ void Camera::LookAt(const Vec3& tgt)
 	m_Up = glm::normalize(glm::cross(m_Right, m_Dir));
 }
 
-///The function considers the current position of the
-///camera and the target point to calculate the
-///other vectors accordingly to look at the point.
 void Camera::RecalculateVectors()
 {
 	m_Dir = glm::normalize(m_Dir);

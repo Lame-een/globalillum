@@ -12,7 +12,10 @@ public:
 	void Normalize();
 
 	const Vec3& Origin() const;
+	void SetOrigin(const Vec3& point);
+
 	const Vec3& Dir() const;
+	void SetDir(const Vec3& dir);
 
 private:
 	Vec3 m_Origin = Vec3(0.0);

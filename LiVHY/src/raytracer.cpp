@@ -1,131 +1,112 @@
 #include "raytracer.h"
 #include "glm/geometric.hpp"
-#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/ext.hpp"
 #include <filesystem>
 
-
-//compare performance between normalizing lightDir and using glm::distance in shadowhit
-void ComputeIllumination(const Scene& scene, const HitInfo& hitInfo, const Light* light, double cosTheta, RGB& color)
-{
-	double distToLight = glm::distance(light->Pos(), hitInfo.point);
-	HitInfo shadowHit;
-	Vec3 lightDir = glm::normalize(light->Pos() - hitInfo.point);
-	Vec3 shadowOrig = hitInfo.point + hitInfo.normal * c_Epsilon;
-
-	//probably not necessary?
-	//Vec3 shadowOrig = glm::dot(hitInfo.normal, lightDir) < 0 ?
-	//hitInfo.point - hitInfo.normal * c_Epsilon : hitInfo.point + hitInfo.normal * c_Epsilon;
-
-	Ray shadowRay(shadowOrig, lightDir);
-	shadowRay.Normalize();
-
-	if(scene.Hit(shadowRay, 0, distToLight, shadowHit))
-	{
-		if(shadowHit.t < distToLight)
-		{
-			return;
-		}
-	}
-	color += light->Reflection(hitInfo);
-	//color += light->DiffuseReflection(hitInfo);
-	//color += light->SpecularReflection(hitInfo);
-}
-
-void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, double cosTheta, RGB& color)
+// TODO add for area lights and emissive meshes
+void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
 {
 	for(const Light* light : scene.Lights())
 	{
-		ComputeIllumination(scene, hitInfo, light, cosTheta, color);
+		double distToLight = glm::distance(light->Pos(), hitInfo.point);
+		HitInfo shadowHit;
+		Vec3 lightDir = glm::normalize(light->Pos() - hitInfo.point);
+		Vec3 shadowOrig = hitInfo.point + hitInfo.normal * c_Epsilon;
+
+		Ray shadowRay(shadowOrig, lightDir);
+		shadowRay.Normalize();
+
+		if(scene.Hit(shadowRay, 0, distToLight, shadowHit))
+		{
+			if(shadowHit.t < distToLight)
+			{
+				return;
+			}
+		}
+		color += light->Reflection(hitInfo);
+		//color += light->DiffuseReflection(hitInfo);
+		//color += light->SpecularReflection(hitInfo);
 	}
 }
 
-//return perfect reflective bounce
-Vec3 ReflectiveBounce(Vec3 normal, const Vec3& view, double cosTheta)
+// Returns a random direction given a normal
+// Uses cosine-weighted hemisphere sampling
+static inline glm::vec3 sampleHemisphereWeighted(const glm::vec3& n)
 {
-	// Flip normal to incident side of surface
-	if(cosTheta < 0)
-	{
-		normal = -normal;
-		cosTheta *= -1.0;
-	}
+    // Samples cosine weighted positions.
+    float r1    = rand() / static_cast<float>(RAND_MAX);
+    float r2    = rand() / static_cast<float>(RAND_MAX);
+    float theta = acos(sqrt(1.0f - r1));
+    float phi   = 2.0f * glm::pi<float>() * r2;
+    float xs    = sinf(theta) * cosf(phi);
+    float ys    = cosf(theta);
+    float zs    = sinf(theta) * sinf(phi);
+    glm::vec3 y(n.x, n.y, n.z);
+    glm::vec3 h = y;
 
-	Vec3 dn = normal * cosTheta;  // dot(normal, view)
-	Vec3 refl = view + dn * 2.0;
-	return glm::normalize(refl);
+    if ((abs(h.x) <= abs(h.y)) && (abs(h.x) <= abs(h.z)))
+    {
+        h.x = 1.0;
+    }
+    else if ((abs(h.y) <= abs(h.x)) && (abs(h.y) <= abs(h.z)))
+    {
+        h.y = 1.0;
+    }
+    else
+    {
+        h.z = 1.0;
+    }
+
+    glm::vec3 x = glm::normalize(glm::cross(h, y));
+    glm::vec3 z = glm::normalize(glm::cross(x, y));
+
+    return glm::normalize(xs * x + ys * y + zs * z);
 }
 
-//return direction of a perfect transmissive bounce (or reflective if internal refraction happened)
-Vec3 TransmissiveBounce(const HitInfo& hitInfo, double cosTheta)
+RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 {
-	double eta;
-	Vec3 normal = hitInfo.normal;
-	//flip normal if angle is bigger than 90°
-	if(cosTheta < 0)
+	if(depth == c_MaxRaytracerDepth)
 	{
-		// exit - assuming air ior 1.0
-		eta = hitInfo.object->Brdf()->IOF() / 1.0;
-		normal = -normal;
-		cosTheta *= -1;
-	}
-	else
-	{
-		// entry
-		eta = 1.0 / hitInfo.object->Brdf()->IOF();
+		return Colors::black;
 	}
 
-	double theta = acos(cosTheta);
-	double sinPhi = eta * sin(theta);
-
-	//total internal reflection
-	if(sinPhi < -1.0 || 1.0 < sinPhi)
+	HitInfo hitInfo;
+	if(!scene.Hit(ray, scene.Cam()->NearPlane(), scene.Cam()->FarPlane(), hitInfo))
 	{
-		return ReflectiveBounce(normal, hitInfo.ray.Dir(), cosTheta);
+		return scene.Background();
 	}
 
-	//return refraction direction
-	double phi = asin(sinPhi);
-	Vec3 viewParallel = glm::normalize(hitInfo.ray.Dir() + normal * cosTheta);
-	return glm::normalize(viewParallel * tan(phi) - normal);
-}
-
-void TransmissiveIllumination(const Scene& scene, const HitInfo& hitInfo, double cosTheta, double transCoeff, RGB& color)
-{
-	Vec3 bounce = TransmissiveBounce(hitInfo, cosTheta);
-	//...
-}
-
-void TraceRay(const Scene& scene, const Ray& ray, const HitInfo& hitInfo, RGB& color)
-{
 	const BRDF* brdf = hitInfo.object->Brdf();
 	double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
 	double reflCoeff = 0.0;		//fresnel reflection coefficient
 
-	if(brdf->IsDiffuse())
+	if(brdf->IsEmissive())
 	{
-		DirectIllumination(scene, hitInfo, cosTheta, color);
-	}
-
-	if(brdf->IsTransparent())
-	{
-		//Schlick's approximation for the reflection coeff - assuming IoR for air 1.0
-		double r0 = pow((1.0 - brdf->IOF()) / (1.0 + brdf->IOF()), 2);
-
-		reflCoeff = r0 + (1 - r0) * pow(1 - cosTheta, 5);
-
-		if(reflCoeff < 1.0)
+		if(depth == 0)
 		{
-			TransmissiveIllumination(scene, hitInfo, cosTheta, 1 - reflCoeff, color);
+			//direct hit from viewport to emissive surface
+			return brdf->Emission() + brdf->Emission() * cosTheta;
+		}
+		else
+		{
+			return brdf->Emission() * cosTheta;
 		}
 	}
 
-	if(brdf->IsGlossy() || reflCoeff > 0)
+	RGB colorBuffer = Colors::black;
+
+	// Direct illumination - explicit light sampling
+	if(brdf->IsDiffuse())
 	{
+		DirectIllumination(scene, hitInfo, colorBuffer);
 	}
+
 }
 
-void RayTracer(const Camera& cam, const Viewport& vp, const Scene& scene)
+void RayTracer(const Viewport& vp, const Scene& scene)
 {
+	const Camera& cam = *scene.Cam();
+
 	Image img(vp.Width(), vp.Height());
 
 	for(int i = 0; i < vp.Height(); i++)
@@ -137,18 +118,8 @@ void RayTracer(const Camera& cam, const Viewport& vp, const Scene& scene)
 
 			Ray ray(cam.Position(), x * cam.Right() + y * cam.Up() + cam.Dir());
 			ray.Normalize();
-			RGB color(0.0, 0.0, 0.0);
 
-			HitInfo hitInfo;
-
-			if(scene.Hit(ray, cam.NearPlane(), cam.FarPlane(), hitInfo))
-			{
-				TraceRay(scene, ray, hitInfo, color);
-			}
-			else
-			{
-				color = scene.Background();
-			}
+			RGB color = TraceRay(scene, ray);
 
 			img.bitmap[j + i * img.nx][0] = (char)(255 * std::max(0., std::min(1., color[0])));
 			img.bitmap[j + i * img.nx][1] = (char)(255 * std::max(0., std::min(1., color[1])));
@@ -158,3 +129,4 @@ void RayTracer(const Camera& cam, const Viewport& vp, const Scene& scene)
 
 	img.write("./out/", scene.Name());
 }
+

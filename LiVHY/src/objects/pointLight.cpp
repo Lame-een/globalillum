@@ -12,7 +12,7 @@ PointLight::PointLight(const Vec3& pos, const RGB& color,
 
 RGB PointLight::DiffuseReflection(const HitInfo& hitInfo) const
 {
-	const RGB& diffColor = hitInfo.object->Brdf()->Diffuse();
+	const RGB& diffColor = hitInfo.object->Brdf()->Color();
 
     double intensity = m_Intensity / glm::distance2(m_Pos, hitInfo.point);
 
@@ -24,7 +24,7 @@ RGB PointLight::DiffuseReflection(const HitInfo& hitInfo) const
 
 RGB PointLight::SpecularReflection(const HitInfo& hitInfo) const
 {
-    const RGB& specularColor = hitInfo.object->Brdf()->Specular();
+    const RGB& specColor = hitInfo.object->Brdf()->Color();
     const double& shininess = hitInfo.object->Brdf()->Shininess();
 
     double intensity = m_Intensity / glm::distance2(m_Pos, hitInfo.point);
@@ -37,7 +37,7 @@ RGB PointLight::SpecularReflection(const HitInfo& hitInfo) const
     double nh = glm::dot(hitInfo.normal,h);
     if (nh < c_Epsilon) return Colors::black;
 
-    return (intensity * pow(nh,shininess) * specularColor * m_Color);
+    return (intensity * pow(nh,shininess) * specColor * m_Color);
 #else
     //phong reflectance
     Vec3 r = (2.0 * nl) * hitInfo.normal - l; //reflected light ray
@@ -45,22 +45,21 @@ RGB PointLight::SpecularReflection(const HitInfo& hitInfo) const
     double vr = glm::dot(v,r);
     if (vr < c_Epsilon) return Colors::black;
     
-    return (intensity * pow(vr,shininess) * specularColor * m_Color);
+    return (intensity * pow(vr,shininess) * specColor * m_Color);
 #endif
 }
 
 RGB PointLight::Reflection(const HitInfo& hitInfo) const
 {
     
-	const RGB& diffColor = hitInfo.object->Brdf()->Diffuse();
-    const RGB& specColor = hitInfo.object->Brdf()->Specular();
+	const RGB& matColor = hitInfo.object->Brdf()->Color();
     const double& shininess = hitInfo.object->Brdf()->Shininess();
     double intensity = m_Intensity / glm::distance2(m_Pos, hitInfo.point);
 
     Vec3 l = glm::normalize(m_Pos - hitInfo.point); //vector towards the light
     double nl = glm::dot(hitInfo.normal, l);
 
-    RGB ret = (intensity * nl) * diffColor * m_Color;
+    RGB ret = (intensity * nl) * matColor * m_Color;
 
 
 #ifdef BLINN_PHONG
@@ -69,7 +68,7 @@ RGB PointLight::Reflection(const HitInfo& hitInfo) const
     double nh = glm::dot(hitInfo.normal,h);
     if (nh < c_Epsilon) return ret;
 
-    ret += (intensity * pow(nh,shininess) * specColor * m_Color);
+    ret += (intensity * pow(nh,shininess) * matColor * m_Color);
 #else
     //phong reflectance
     Vec3 r = (2.0 * nl) * hitInfo.normal - l; //reflected light ray
@@ -77,8 +76,8 @@ RGB PointLight::Reflection(const HitInfo& hitInfo) const
     double vr = glm::dot(v,r);
 
     if (vr < c_Epsilon) return ret;
-#endif
     
-    ret += (intensity * pow(vr,shininess) * specColor * m_Color);
+    ret += (intensity * pow(vr,shininess) * matColor * m_Color);
+#endif
     return ret;
 }

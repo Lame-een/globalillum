@@ -3,6 +3,32 @@
 #include "types.h"
 #include "glm/common.hpp"
 
+constexpr double maxChannelValue(const RGB& rgb)
+{
+	if(rgb.r > rgb.b)
+	{
+		if(rgb.r > rgb.g)
+		{
+			return rgb.r;
+		}
+		else
+		{
+			return rgb.g;
+		}
+	}
+	else
+	{
+		if(rgb.b > rgb.g)
+		{
+			return rgb.b;
+		}
+		else
+		{
+			return rgb.g;
+		}
+	}
+}
+
 /// @brief Helper function that converts 3 ints into a RGB.
 /// @param[in] red Red value of the RGB
 /// @param[in] green Green value of the RGB
@@ -10,7 +36,7 @@
 /// @return Returns an RGB type of the 
 constexpr RGB intToRGB(uint8_t red, uint8_t green, uint8_t blue)
 {
-	return RGB(1.0 * red / 255, 1.0 * green / 255, 1.0 * blue / 255); 
+	return RGB(1.0 * red / 255, 1.0 * green / 255, 1.0 * blue / 255);
 }
 
 /// @brief Helper function converting a character into a hex value.

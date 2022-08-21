@@ -57,7 +57,7 @@ struct Image
 		std::ofstream file(outPath, std::ios_base::binary);
 		file << "P6 " << nx << " " << ny << " 255 ";
 		for(size_t i = 0; i < ny * nx; ++i)
-			for(size_t j = 0; j < 3; j++)
+			for(auto j = 0; j < 3; j++)
 				file << bitmap[i][j];
 		file.close();
 	}
