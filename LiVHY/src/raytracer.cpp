@@ -7,15 +7,15 @@ void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
 {
 	for(const Light* light : scene.Lights())
 	{
-		double distToLight = glm::distance(light->Pos(), hitInfo.point);
+		const double distToLight = glm::distance(light->Pos(), hitInfo.point);
 		HitInfo shadowHit;
 		Vec3 lightDir = glm::normalize(light->Pos() - hitInfo.point);
-		Vec3 shadowOrig = hitInfo.point + hitInfo.normal * c_Epsilon;
+		Vec3 shadowOrig = hitInfo.point;
 
 		Ray shadowRay(shadowOrig, lightDir);
 		shadowRay.Normalize();
 
-		if(scene.Hit(shadowRay, 0, distToLight, shadowHit))
+		if(scene.Hit(shadowRay, scene.Cam()->NearPlane(), distToLight, shadowHit))
 		{
 			if(shadowHit.t < distToLight)
 			{
@@ -26,40 +26,6 @@ void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
 		//color += light->DiffuseReflection(hitInfo);
 		//color += light->SpecularReflection(hitInfo);
 	}
-}
-
-// Returns a random direction given a normal
-// Uses cosine-weighted hemisphere sampling
-static inline glm::vec3 sampleHemisphereWeighted(const glm::vec3& n)
-{
-	// Samples cosine weighted positions.
-	float r1 = rand() / static_cast<float>(RAND_MAX);
-	float r2 = rand() / static_cast<float>(RAND_MAX);
-	float theta = acos(sqrt(1.0f - r1));
-	float phi = 2.0f * glm::pi<float>() * r2;
-	float xs = sinf(theta) * cosf(phi);
-	float ys = cosf(theta);
-	float zs = sinf(theta) * sinf(phi);
-	glm::vec3 y(n.x, n.y, n.z);
-	glm::vec3 h = y;
-
-	if((abs(h.x) <= abs(h.y)) && (abs(h.x) <= abs(h.z)))
-	{
-		h.x = 1.0;
-	}
-	else if((abs(h.y) <= abs(h.x)) && (abs(h.y) <= abs(h.z)))
-	{
-		h.y = 1.0;
-	}
-	else
-	{
-		h.z = 1.0;
-	}
-
-	glm::vec3 x = glm::normalize(glm::cross(h, y));
-	glm::vec3 z = glm::normalize(glm::cross(x, y));
-
-	return glm::normalize(xs * x + ys * y + zs * z);
 }
 
 RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
@@ -76,8 +42,7 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 	}
 
 	const BRDF* brdf = hitInfo.object->Brdf();
-	double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
-	double reflCoeff = 0.0;		//fresnel reflection coefficient
+	const double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
 
 	if(brdf->IsEmissive())
 	{
@@ -100,6 +65,70 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 		DirectIllumination(scene, hitInfo, colorBuffer);
 	}
 
+
+	/*
+	// Indirect lighting - currently disable due to noise (not using stratified sampling)
+	if(brdf->IsDiffuse())
+	{
+		//shoot rays and integrate diffuse lighting
+		Ray indirectRay(hitInfo.point, DiffuseImportanceSample(hitInfo.normal));
+		RGB radiance = TraceRay(scene, indirectRay, depth + 1);
+
+		//ray carries backwards the radiance
+
+		colorBuffer += brdf->DiffuseLighting(-indirectRay.Dir(), hitInfo.normal, radiance);
+
+		//blend colors for reflective/transparent materials
+		colorBuffer *= brdf->Opacity(); //* brdf->Reflectivity();
+	}
+	*/
+
+
+
+	// Refract + Reflect
+	if(brdf->IsTransparent())
+	{
+		const double n1 = 1.0;
+		const double n2 = brdf->IOR();
+		const double schlickCoeffOutside = SchlicksApprox(ray.Dir(), hitInfo.normal, n1, n2);
+		Ray refractRay(hitInfo.point, glm::refract(ray.Dir(), hitInfo.normal, n1 / n2));
+		double refractCoeff = (1.0 - schlickCoeffOutside) * (1.0 - brdf->Opacity());
+
+
+		HitInfo refractHit;
+		if(scene.Hit(refractRay, scene.Cam()->NearPlane(), scene.Cam()->FarPlane(), refractHit))
+		{
+			//self-intersect check (only for spheres atm necessary)
+			if(hitInfo.object == refractHit.object)
+			{
+				const double schlickCoeffInside = SchlicksApprox(refractRay.Dir(), -refractHit.normal, n2, n1);
+
+				Ray refractOutRay(refractHit.point, glm::refract(refractRay.Dir(), -refractHit.normal, n2 / n1));
+				const double insideRefractCoeff = (1.0 - schlickCoeffInside);
+
+				//depth doesn't increase - same ray
+				RGB radiance = insideRefractCoeff * TraceRay(scene, refractOutRay, depth);
+				colorBuffer += refractCoeff * brdf->DiffuseLighting(refractRay.Dir(), hitInfo.normal, radiance);
+			}
+			else
+			{
+				//ISSUE double calling for hits
+				//TODO - can be fixed by splitting trace ray in a raycast/hit and a shading part
+				colorBuffer += refractCoeff * TraceRay(scene, refractRay, depth + 1);
+			}
+		}
+		else
+		{
+			colorBuffer += scene.Background();
+		}
+
+		//reflect the rest of the ray
+		Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
+		const double reflectCoeff = schlickCoeffOutside * (1.0 - brdf->Opacity());
+		colorBuffer += reflectCoeff * TraceRay(scene, specularRay, depth + 1);
+	}
+
+
 	return colorBuffer;
 }
 
@@ -115,6 +144,7 @@ void RayTracer(const Viewport& vp, const Scene& scene)
 	for(; i < vp.Height(); i++)
 	{
 		bar.bar();
+
 #pragma omp parallel for
 		for(int j = 0; j < vp.Width(); j++)
 		{

@@ -15,11 +15,11 @@ public:
 	/// @brief Single color constructor
 	/// @param[in] color Color for all rays.
 	/// @param[in] shininess Shininess of a material.
-	/// @param[in] iof Index of Refraction of the material.
+	/// @param[in] ior Index of Refraction of the material.
 	/// @param[in] opacity Opacity of the diffuse material.
 	/// @param[in] emissivity Brightness of emissive material.
 	BRDF(const RGB& color, double shininess, 
-		 double iof = 1.0, double opacity = 1.0, double emissivity = 0.0);
+		 double ior = 1.0, double opacity = 1.0, double emissivity = 0.0);
 
   	const RGB& Color() const;
 	void SetColor(const RGB& rgb);
@@ -28,18 +28,18 @@ public:
 	
 
 	const double Opacity() const;
-	const double IOF() const;
+	const double IOR() const;
 	const double Shininess() const;
 	const double Emissivity() const;
 
 	void SetOpacity(double opacity);
-	void SetIOF(double iof);
+	void SetIOR(double ior);
 	void SetShininess(double shininess);
 	void SetEmissivity(double emissivity);
 
 
 	const bool IsDiffuse() const;
-	const bool IsGlossy() const;
+	const bool IsSpecular() const;
 	const bool IsTransparent() const;
 	const bool IsEmissive() const;
 
@@ -51,7 +51,7 @@ public:
 
 private:
 	double m_Shininess = 1.0;
-	double m_IOF = 1.0;
+	double m_IOR = 1.0;
 	double m_Opacity = 1.0;
 	double m_Emissivity = 0.0;
 

@@ -15,6 +15,8 @@
 
 #include "raytracer.h"
 
+#include "glm/gtx/string_cast.hpp"
+
 #include "BRDF.h"
 #include "camera.h"
 #include "viewport.h"
@@ -74,6 +76,7 @@ void cornellBox()
 	BRDF brdf1(Colors::crimson, 150.0, 0.0, 1.0);
 	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 1.0);
 	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 1.0);
+	BRDF brdf4(Colors::white, 0.5, 1.5, 0.0);
 	//BRDF brdfEmissive(Colors::white, 0.0, 0.0, 1.0);
 	//brdfEmissive.SetEmission(Colors::white);
 
@@ -85,13 +88,14 @@ void cornellBox()
 	//Quad emissiveQuad(Vec3(0.5, -0.5, 2.99), Vec3(-0.5, -0.5, 2.99), Vec3(-0.5, 0.5, 2.99), Vec3(0.5, 0.5, 2.99), &brdfEmissive);
 
 	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 1, &brdf1);
-	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5);
+	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5, &brdf4);
 
-	PointLight light({0,0,2.5}, Colors::white, 2);
+	PointLight light({0,0,2.5}, Colors::white, 10);
 	//PointLight light2({0,0,-0.9}, Colors::white, 1);
 
 	Scene scene;
-	scene.SetBackground(Colors::black);
+	//scene.SetBackground(Colors::black);
+	scene.SetBackground(Colors::white);
 	scene.SetCamera(&cam);
 
 	scene.AddLight(&light);
@@ -132,6 +136,7 @@ Vec2 PointInCirclePolar()
 
 int main()
 {
+
 	cornellBox();
 	return 0;
 

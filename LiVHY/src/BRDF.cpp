@@ -5,8 +5,8 @@
 /// The class describes the properties of a BRDF.
 
 BRDF::BRDF(const RGB& color, double shininess,
-		   double iof, double opacity, double emissivity)
-	: m_Shininess(shininess), m_IOF(iof), m_Opacity(opacity), m_Emissivity(0.0),
+		   double ior, double opacity, double emissivity)
+	: m_Shininess(shininess), m_IOR(ior), m_Opacity(opacity), m_Emissivity(0.0),
 	m_Color(color), m_Emission(color * emissivity)
 {
 }
@@ -30,9 +30,9 @@ const double BRDF::Opacity() const
 {
 	return m_Opacity;
 }
-const double BRDF::IOF() const
+const double BRDF::IOR() const
 {
-	return m_IOF;
+	return m_IOR;
 }
 const double BRDF::Shininess() const
 {
@@ -47,9 +47,9 @@ void BRDF::SetOpacity(double opacity)
 {
 	m_Opacity = opacity;
 }
-void BRDF::SetIOF(double iof)
+void BRDF::SetIOR(double ior)
 {
-	m_IOF = iof;
+	m_IOR = ior;
 }
 void BRDF::SetShininess(double shininess)
 {
@@ -69,7 +69,7 @@ const bool BRDF::IsDiffuse() const
 {
 	return (m_Opacity > 0.0);
 }
-const bool BRDF::IsGlossy() const
+const bool BRDF::IsSpecular() const
 {
 	return (m_Shininess > 0.0);
 }

@@ -35,11 +35,11 @@ public:
 	/// @param[in] tMax Maximum ray length.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit the object.
-	virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) = 0;
+	virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo){return true;}
 	/// @brief Constructs a bounding box around the object.
     /// @param[out] outputBox The AABB of the object.
     /// @return Returns true if able to construct an AABB.
-    virtual bool BoundingBox(AABB& outputBox) const = 0;
+	virtual bool BoundingBox(AABB& outputBox) const{return true;}
 
 	const BRDF* Brdf() const;
 protected:

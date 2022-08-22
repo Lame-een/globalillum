@@ -4,55 +4,6 @@
 //#include "lame/easyRandom.h"
 //#include "glm/gtx/rotate_vector.hpp"
 
-//return perfect reflective bounce
-Vec3 ReflectiveBounce(Vec3 normal, const Vec3& view, double cosTheta)
-{
-	// Flip normal to incident side of surface
-	if(cosTheta < 0)
-	{
-		normal = -normal;
-		cosTheta *= -1.0;
-	}
-
-	Vec3 dn = normal * cosTheta;  // dot(normal, view)
-	Vec3 refl = view + dn * 2.0;
-	return glm::normalize(refl);
-}
-
-//return direction of a perfect transmissive bounce (or reflective if internal refraction happened)
-Vec3 TransmissiveBounce(const HitInfo& hitInfo, double cosTheta)
-{
-	double eta;
-	Vec3 normal = hitInfo.normal;
-	//flip normal if angle is bigger than 90°
-	if(cosTheta < 0)
-	{
-		// exit - assuming air ior 1.0
-		eta = hitInfo.object->Brdf()->IOF() / 1.0;
-		normal = -normal;
-		cosTheta *= -1;
-	}
-	else
-	{
-		// entry
-		eta = 1.0 / hitInfo.object->Brdf()->IOF();
-	}
-
-	double theta = acos(cosTheta);
-	double sinPhi = eta * sin(theta);
-
-	//total internal reflection
-	if(sinPhi < -1.0 || 1.0 < sinPhi)
-	{
-		return ReflectiveBounce(normal, hitInfo.ray.Dir(), cosTheta);
-	}
-
-	//return refraction direction
-	double phi = asin(sinPhi);
-	Vec3 viewParallel = glm::normalize(hitInfo.ray.Dir() + normal * cosTheta);
-	return glm::normalize(viewParallel * tan(phi) - normal);
-}
-
 
 //importance sampling to return a vector offset from a perfect bounce
 Vec3 SpecularImportanceSample(const Vec3& exact, double n, double cosTheta)
@@ -93,10 +44,10 @@ Vec3 DiffuseImportanceSample(Vec3 normal)
 	//vector perpendicular to the surface
 	Vec3 perpVec = glm::normalize(Vec3(normal[1], -normal[0], 0));
 	
-	//if(1.0 - abs(normal[2]) < 0.1)
-	//{
-	//	perpVec = Vec3(normal[2], 0, -normal[0]);
-	//}
+	if(1.0 - abs(normal[2]) < 0.1)
+	{
+		perpVec = Vec3(normal[2], 0, -normal[0]);
+	}
 	Vec3 ret = perpVec * sin(theta) + normal * cos(theta);
 
 	//rotate around axis by phi
