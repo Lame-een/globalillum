@@ -7,6 +7,8 @@
 
 void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color);
 
-RGB TraceRay(const Scene& scene, const Ray& ray, int depth = 0);
+RGB CastRay(const Scene& scene, const Ray& ray, int depth = 0);
+
+RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int depth = 0);
 
 void RayTracer(const Viewport& vp, const Scene& scene);

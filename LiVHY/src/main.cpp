@@ -24,17 +24,14 @@
 //#include "glm/gtx/norm.hpp"
 //#include "lame/benchmark.h"
 
-
-//TODO add a scaling pixel error - in hit I guess?
-
 void simpleTest()
 {
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
 	Viewport vp(256, 256);
 	Image img(vp.Width(), vp.Height());
 
-	BRDF brdf0(stringToRGB("#f0f0f0"), 0.0, 0.0, 1.0);
-	BRDF brdf1(Colors::crimson, 0.0, 0.0, 1.0);
+	BRDF brdf0(stringToRGB("#f0f0f0"), 0.0, 0.0, 0.0, 1.0);
+	BRDF brdf1(Colors::crimson, 0.0, 0.0, 0.0, 1.0);
 
 	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf1);
 	Quad leftWall(Vec3(-2, -2, -1), Vec3(-2, 2, -1), Vec3(-2, 2, 3), Vec3(-2, -2, 3), &brdf1);
@@ -71,12 +68,11 @@ void cornellBox()
 	Viewport vp(640, 640);
 	Image img(vp.Width(), vp.Height());
 
-
-	BRDF brdf0(stringToRGB("#f0f0f0"), 1.0, 0.0, 1.0);
-	BRDF brdf1(Colors::crimson, 150.0, 0.0, 1.0);
-	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 1.0);
-	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 1.0);
-	BRDF brdf4(Colors::white, 0.5, 1.5, 0.0);
+	BRDF brdf0(stringToRGB("#f0f0f0"), 1.0, 0.0, 0.0, 1.0);
+	BRDF brdf1(Colors::crimson, 150.0, 0.2, 0.0, 1.0);
+	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 0.0, 1.0);
+	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 0.0, 1.0);
+	BRDF brdf4(Colors::white, 0.5, 0.0, 1.5, 0.0);
 	//BRDF brdfEmissive(Colors::white, 0.0, 0.0, 1.0);
 	//brdfEmissive.SetEmission(Colors::white);
 
@@ -90,12 +86,12 @@ void cornellBox()
 	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 1, &brdf1);
 	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5, &brdf4);
 
-	PointLight light({0,0,2.5}, Colors::white, 10);
+	PointLight light({0,0,2.5}, Colors::white, 6);
 	//PointLight light2({0,0,-0.9}, Colors::white, 1);
 
 	Scene scene;
-	//scene.SetBackground(Colors::black);
-	scene.SetBackground(Colors::white);
+	scene.SetBackground(Colors::black);
+	//scene.SetBackground(Colors::white);
 	scene.SetCamera(&cam);
 
 	scene.AddLight(&light);

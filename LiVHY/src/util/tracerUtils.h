@@ -2,12 +2,11 @@
 #include "types.h"
 #include "objects/object.h"
 
-inline int c_MaxRaytracerDepth = 4;
-inline double c_RayMaxLength = 1000.0;
-inline double c_RayTerminateProbability = 0.01;
-inline int c_TransmissiveSampleNum = 16;
-inline int c_SpecularSampleNum = 16;
-inline int c_IndirectSampleNum = 16;
+inline int c_MaxRaytracerDepth = 2;
+inline int c_Samples = 640;
+inline int c_DiffuseSampleNum = 4;
+inline int c_TransmissiveSampleNum = 4;
+inline int c_SpecularSampleNum = 4;
 
 Vec3 SpecularImportanceSample(const Vec3& exact, double n, double cosTheta);
 

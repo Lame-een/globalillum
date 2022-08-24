@@ -28,7 +28,7 @@ void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
 	}
 }
 
-RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
+RGB CastRay(const Scene& scene, const Ray& ray, int depth)
 {
 	if(depth == c_MaxRaytracerDepth)
 	{
@@ -41,6 +41,11 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 		return scene.Background();
 	}
 
+	return TraceRay(scene, hitInfo, ray, depth);
+}
+
+RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int depth)
+{
 	const BRDF* brdf = hitInfo.object->Brdf();
 	const double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
 
@@ -66,22 +71,29 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 	}
 
 
-	/*
 	// Indirect lighting - currently disable due to noise (not using stratified sampling)
 	if(brdf->IsDiffuse())
 	{
-		//shoot rays and integrate diffuse lighting
-		Ray indirectRay(hitInfo.point, DiffuseImportanceSample(hitInfo.normal));
-		RGB radiance = TraceRay(scene, indirectRay, depth + 1);
+		RGB indirectColor = Colors::black;
 
-		//ray carries backwards the radiance
+		for(int i = 0; i < c_DiffuseSampleNum; i++)
+		{
+			//shoot rays and integrate diffuse lighting
+			Vec3 sampleVec = DiffuseImportanceSample(hitInfo.normal);
+			Ray indirectRay(hitInfo.point, sampleVec);
+			RGB radiance = CastRay(scene, indirectRay, depth + 1);
 
-		colorBuffer += brdf->DiffuseLighting(-indirectRay.Dir(), hitInfo.normal, radiance);
+			//add sampled color
+			//colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
+			indirectColor += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
+		}
+		//colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
+		colorBuffer += indirectColor * (1.0 / c_DiffuseSampleNum);
 
 		//blend colors for reflective/transparent materials
-		colorBuffer *= brdf->Opacity(); //* brdf->Reflectivity();
+		//colorBuffer *= brdf->Opacity() * (1 - brdf->Reflectivity());
 	}
-	*/
+
 
 
 
@@ -106,15 +118,13 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 				Ray refractOutRay(refractHit.point, glm::refract(refractRay.Dir(), -refractHit.normal, n2 / n1));
 				const double insideRefractCoeff = (1.0 - schlickCoeffInside);
 
-				//depth doesn't increase - same ray
-				RGB radiance = insideRefractCoeff * TraceRay(scene, refractOutRay, depth);
-				colorBuffer += refractCoeff * brdf->DiffuseLighting(refractRay.Dir(), hitInfo.normal, radiance);
+				//depth doesn't increase - "same ray"
+				RGB radiance = insideRefractCoeff * CastRay(scene, refractOutRay, depth);
+				colorBuffer += refractCoeff * radiance * glm::dot(refractOutRay.Dir(), refractHit.normal);//brdf->DiffuseLighting(refractOutRay.Dir(), refractHit.normal, radiance);
 			}
 			else
 			{
-				//ISSUE double calling for hits
-				//TODO - can be fixed by splitting trace ray in a raycast/hit and a shading part
-				colorBuffer += refractCoeff * TraceRay(scene, refractRay, depth + 1);
+				colorBuffer += refractCoeff * TraceRay(scene, refractHit, refractRay, depth + 1);
 			}
 		}
 		else
@@ -125,9 +135,21 @@ RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 		//reflect the rest of the ray
 		Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
 		const double reflectCoeff = schlickCoeffOutside * (1.0 - brdf->Opacity());
-		colorBuffer += reflectCoeff * TraceRay(scene, specularRay, depth + 1);
-	}
+		colorBuffer += reflectCoeff * CastRay(scene, specularRay, depth + 1);
 
+	}
+	else if(brdf->IsMetallic())	// Reflect only
+	{
+		RGB specularColor = Colors::black;
+		for(int i = 0; i < c_SpecularSampleNum; i++)
+		{
+			//Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
+			Ray specularRay(hitInfo.point, SpecularImportanceSample(glm::reflect(ray.Dir(), hitInfo.normal), brdf->Shininess(), cosTheta));
+			specularColor += brdf->Reflectivity() * CastRay(scene, specularRay, depth + 1);
+		}
+		//colorBuffer += brdf->Reflectivity() * CastRay(scene, specularRay, depth + 1);
+		colorBuffer += specularColor * (1.0 / c_SpecularSampleNum);
+	}
 
 	return colorBuffer;
 }
@@ -148,13 +170,21 @@ void RayTracer(const Viewport& vp, const Scene& scene)
 #pragma omp parallel for
 		for(int j = 0; j < vp.Width(); j++)
 		{
-			double x = (2.0 * (j + 0.5) / vp.Width() - 1.0) * tan(vp.HFOV() / 2.f) * vp.AspectRatio();
-			double y = (1 - 2.0 * (i + 0.5) / vp.Height()) * tan(vp.HFOV() / 2.f);
 
-			Ray ray(cam.Position(), x * cam.Right() + y * cam.Up() + cam.Dir());
-			ray.Normalize();
+			RGB colorBuffer = Colors::black;
+			for(int s = 0; s < c_Samples; s++)
+			{
+				double r1 = lameutil::g_RandGen.getDouble();
+				double r2 = lameutil::g_RandGen.getDouble();
+				double x = (2.0 * (j + r1) / vp.Width() - 1.0) * tan(vp.HFOV() / 2.f) * vp.AspectRatio();
+				double y = (1 - 2.0 * (i + r2) / vp.Height()) * tan(vp.HFOV() / 2.f);
 
-			RGB color = TraceRay(scene, ray);
+				Ray ray(cam.Position(), x * cam.Right() + y * cam.Up() + cam.Dir());
+				ray.Normalize();
+
+				colorBuffer += CastRay(scene, ray);
+			}
+			RGB color = colorBuffer * (1.0 / c_Samples);
 
 			img.bitmap[j + i * img.nx][0] = (char)(255 * std::max(0., std::min(1., color[0])));
 			img.bitmap[j + i * img.nx][1] = (char)(255 * std::max(0., std::min(1., color[1])));

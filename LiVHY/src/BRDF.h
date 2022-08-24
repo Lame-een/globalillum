@@ -18,7 +18,7 @@ public:
 	/// @param[in] ior Index of Refraction of the material.
 	/// @param[in] opacity Opacity of the diffuse material.
 	/// @param[in] emissivity Brightness of emissive material.
-	BRDF(const RGB& color, double shininess, 
+	BRDF(const RGB& color, double shininess, double reflectivity = 0.0,
 		 double ior = 1.0, double opacity = 1.0, double emissivity = 0.0);
 
   	const RGB& Color() const;
@@ -27,23 +27,26 @@ public:
 	const RGB& Emission() const;
 	
 
-	const double Opacity() const;
-	const double IOR() const;
-	const double Shininess() const;
-	const double Emissivity() const;
+	double Opacity() const;
+	double IOR() const;
+	double Shininess() const;
+	double Reflectivity() const;
+	double Emissivity() const;
 
 	void SetOpacity(double opacity);
 	void SetIOR(double ior);
 	void SetShininess(double shininess);
+	void SetReflectivity(double reflectivity);
 	void SetEmissivity(double emissivity);
 
 
 	const bool IsDiffuse() const;
 	const bool IsSpecular() const;
+	const bool IsMetallic() const;
 	const bool IsTransparent() const;
 	const bool IsEmissive() const;
 
-	RGB DiffuseLighting(const Vec3& incidentDir, const Vec3& normal, const RGB& radiance) const;
+	RGB DiffuseLighting(const Vec3& rayDir, const Vec3& normal, RGB radiance) const;
 
 	/// @brief The default BRDF.
 	/// @return Pointer to a static default BRDF.
@@ -51,6 +54,7 @@ public:
 
 private:
 	double m_Shininess = 1.0;
+	double m_Reflectivity = 0.0;
 	double m_IOR = 1.0;
 	double m_Opacity = 1.0;
 	double m_Emissivity = 0.0;
