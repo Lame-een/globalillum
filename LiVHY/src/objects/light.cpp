@@ -5,9 +5,10 @@ Light::Light() {}
 Light::Light(LightType type) : type(type)
 {
 }
-Light::Light(const Vec3& pos, const RGB& color, 
+
+Light::Light(const Vec3& pos, const RGB& color,
 			 double intensity, LightType type)
-	: m_Pos(pos), m_Color(color), m_Intensity(intensity), 
+	: m_Pos(pos), m_Color(color), m_Intensity(intensity),
 	type(type)
 {
 }
@@ -37,3 +38,4 @@ void Light::SetIntensity(double intensity)
 {
 	m_Intensity = intensity;
 }
+

@@ -7,24 +7,7 @@ void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
 {
 	for(const Light* light : scene.Lights())
 	{
-		const double distToLight = glm::distance(light->Pos(), hitInfo.point);
-		HitInfo shadowHit;
-		Vec3 lightDir = glm::normalize(light->Pos() - hitInfo.point);
-		Vec3 shadowOrig = hitInfo.point;
-
-		Ray shadowRay(shadowOrig, lightDir);
-		shadowRay.Normalize();
-
-		if(scene.Hit(shadowRay, scene.Cam()->NearPlane(), distToLight, shadowHit))
-		{
-			if(shadowHit.t < distToLight)
-			{
-				return;
-			}
-		}
-		color += light->Reflection(hitInfo);
-		//color += light->DiffuseReflection(hitInfo);
-		//color += light->SpecularReflection(hitInfo);
+		light->LightReflection(scene, hitInfo, color);
 	}
 }
 
@@ -70,29 +53,19 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 		DirectIllumination(scene, hitInfo, colorBuffer);
 	}
 
-
-	// Indirect lighting - currently disable due to noise (not using stratified sampling)
+	// Indirect lighting
 	if(brdf->IsDiffuse())
 	{
 		RGB indirectColor = Colors::black;
+		//shoot rays and integrate diffuse lighting
+		Vec3 sampleVec = DiffuseImportanceSample(hitInfo.normal);
+		Ray indirectRay(hitInfo.point, sampleVec);
+		RGB radiance = CastRay(scene, indirectRay, depth + 1);
 
-		for(int i = 0; i < c_DiffuseSampleNum; i++)
-		{
-			//shoot rays and integrate diffuse lighting
-			Vec3 sampleVec = DiffuseImportanceSample(hitInfo.normal);
-			Ray indirectRay(hitInfo.point, sampleVec);
-			RGB radiance = CastRay(scene, indirectRay, depth + 1);
-
-			//add sampled color
-			//colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
-			indirectColor += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
-		}
-		//colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
-		colorBuffer += indirectColor * (1.0 / c_DiffuseSampleNum);
-
-		//blend colors for reflective/transparent materials
-		//colorBuffer *= brdf->Opacity() * (1 - brdf->Reflectivity());
+		//add sampled color
+		colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
 	}
+
 
 
 
@@ -140,15 +113,8 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 	}
 	else if(brdf->IsMetallic())	// Reflect only
 	{
-		RGB specularColor = Colors::black;
-		for(int i = 0; i < c_SpecularSampleNum; i++)
-		{
-			//Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
-			Ray specularRay(hitInfo.point, SpecularImportanceSample(glm::reflect(ray.Dir(), hitInfo.normal), brdf->Shininess(), cosTheta));
-			specularColor += brdf->Reflectivity() * CastRay(scene, specularRay, depth + 1);
-		}
-		//colorBuffer += brdf->Reflectivity() * CastRay(scene, specularRay, depth + 1);
-		colorBuffer += specularColor * (1.0 / c_SpecularSampleNum);
+		Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
+		colorBuffer += brdf->Reflectivity() * CastRay(scene, specularRay, depth + 1);
 	}
 
 	return colorBuffer;

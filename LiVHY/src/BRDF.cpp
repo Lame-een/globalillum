@@ -7,7 +7,7 @@
 BRDF::BRDF(const RGB& color, double shininess, double reflectivity,
 		   double ior, double opacity, double emissivity)
 	: m_Shininess(shininess), m_Reflectivity(reflectivity), m_IOR(ior), 
-	m_Opacity(opacity), m_Emissivity(0.0), m_Color(color), m_Emission(color * emissivity)
+	m_Opacity(opacity), m_Emissivity(emissivity), m_Color(color), m_Emission(color * emissivity)
 {
 }
 

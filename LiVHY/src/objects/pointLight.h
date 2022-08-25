@@ -1,6 +1,7 @@
 /// @file objects/pointLight.h
 #pragma once
 #include "light.h"
+#include "scene.h"
 
 /// @class PointLight
 /// @brief Simplest light type.
@@ -15,5 +16,7 @@ public:
 	RGB DiffuseReflection(const HitInfo& hitInfo) const override;
 	RGB SpecularReflection(const HitInfo& hitInfo) const override;
 	RGB Reflection(const HitInfo& hitInfo) const override;
+
+	void LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB& color) const override;
 private:
 };

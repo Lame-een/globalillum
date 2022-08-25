@@ -6,6 +6,9 @@
 #include "object.h"
 #include "glm/gtx/norm.hpp"
 
+//forward declaration
+class Scene;
+
 /// @brief Type of the Light.
 enum LightType
 {
@@ -36,6 +39,7 @@ public:
 	virtual RGB SpecularReflection(const HitInfo& hitInfo) const = 0;
 	virtual RGB Reflection(const HitInfo& hitInfo) const = 0;
 
+	virtual void LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB& color) const = 0;
 protected:
 	Light(const Vec3& pos, const RGB& color, double intensity, LightType type);
 	Light(LightType type);

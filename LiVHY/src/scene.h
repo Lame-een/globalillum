@@ -48,6 +48,8 @@ public:
 	Camera* Cam() const;
 	void SetCamera(Camera* cam);
 
+	bool OcclusionTest(const Vec3& point, const Vec3& lightPoint) const;
+
 	const std::string& Name() const;
 private:
 	RGB m_BackgroundColor = Colors::black;

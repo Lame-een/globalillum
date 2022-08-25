@@ -13,6 +13,8 @@
 #include "objects/triangleMesh.h"
 #include "objects/quad.h"
 
+#include "objects/areaLight.h"
+
 #include "raytracer.h"
 
 #include "glm/gtx/string_cast.hpp"
@@ -73,28 +75,29 @@ void cornellBox()
 	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf4(Colors::white, 0.5, 0.0, 1.5, 0.0);
-	//BRDF brdfEmissive(Colors::white, 0.0, 0.0, 1.0);
-	//brdfEmissive.SetEmission(Colors::white);
+	BRDF brdfEmissive(Colors::white, 0.0, 0.0, 0.0, 1.0, 20.0);
 
 	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf0);
 	Quad ceiling(Vec3(2, -2, 3), Vec3(-2, -2, 3), Vec3(-2, 2, 3), Vec3(2, 2, 3), &brdf0);
 	Quad leftWall(Vec3(-2, -2, -1), Vec3(-2, 2, -1), Vec3(-2, 2, 3), Vec3(-2, -2, 3), &brdf1);
 	Quad backWall(Vec3(-2, 2, -1), Vec3(2, 2, -1), Vec3(2, 2, 3), Vec3(-2, 2, 3), &brdf2);
 	Quad rightWall(Vec3(2, 2, -1), Vec3(2, -2, -1), Vec3(2, -2, 3), Vec3(2, 2, 3), &brdf3);
-	//Quad emissiveQuad(Vec3(0.5, -0.5, 2.99), Vec3(-0.5, -0.5, 2.99), Vec3(-0.5, 0.5, 2.99), Vec3(0.5, 0.5, 2.99), &brdfEmissive);
+	Quad emissiveQuad(Vec3(0.5, -0.5, 2.99), Vec3(-0.5, -0.5, 2.99), Vec3(-0.5, 0.5, 2.99), Vec3(0.5, 0.5, 2.99), &brdfEmissive);
 
 	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 1, &brdf1);
 	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5, &brdf4);
 
 	PointLight light({0,0,2.5}, Colors::white, 6);
-	//PointLight light2({0,0,-0.9}, Colors::white, 1);
+	AreaLight lightArea({0,0.9,2.90}, {0,1,0}, {1,0,0}, {1,1}, Colors::white, 2);
+	PointLight light2({0,0,-0.9}, Colors::white, 1);
 
 	Scene scene;
 	scene.SetBackground(Colors::black);
 	//scene.SetBackground(Colors::white);
 	scene.SetCamera(&cam);
 
-	scene.AddLight(&light);
+	//scene.AddLight(&light);
+	scene.AddLight(&lightArea);
 	//scene.AddLight(&light2);
 
 	scene.AddObject(&floor);
@@ -102,7 +105,7 @@ void cornellBox()
 	scene.AddObject(&leftWall);
 	scene.AddObject(&rightWall);
 	scene.AddObject(&backWall);
-	//scene.AddObject(&emissiveQuad);
+	scene.AddObject(&emissiveQuad);
 	scene.AddObject(&sphere0);
 	scene.AddObject(&sphere1);
 
@@ -132,7 +135,6 @@ Vec2 PointInCirclePolar()
 
 int main()
 {
-
 	cornellBox();
 	return 0;
 

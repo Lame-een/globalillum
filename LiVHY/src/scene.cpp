@@ -102,6 +102,25 @@ void Scene::SetCamera(Camera* cam)
 	m_Camera = cam;
 }
 
+bool Scene::OcclusionTest(const Vec3& point, const Vec3& lightPoint) const
+{
+	double distToLight = glm::distance2(point, lightPoint);
+
+	Ray occlusionRay(point, lightPoint - point);
+	occlusionRay.Normalize();
+	HitInfo occlusionHit;
+
+	if(Hit(occlusionRay, Cam()->NearPlane(), distToLight, occlusionHit))
+	{
+		if((occlusionHit.t*occlusionHit.t < distToLight))
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 const std::string& Scene::Name() const
 {
 	return m_Name;
