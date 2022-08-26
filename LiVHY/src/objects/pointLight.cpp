@@ -11,6 +11,11 @@ PointLight::PointLight(const Vec3& pos, const RGB& color,
 {
 }
 
+const double PointLight::Area() const
+{
+	return 0.031; //surface area approximation of a 5mm LED
+}
+
 RGB PointLight::DiffuseReflection(const HitInfo& hitInfo) const
 {
 	const RGB& diffColor = hitInfo.object->Brdf()->Color();

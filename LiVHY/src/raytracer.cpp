@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "raytracer.h"
-//#include <filesystem>
+#include "util/tracerConsts.h"
 
 // TODO add for area lights and emissive meshes
 void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)

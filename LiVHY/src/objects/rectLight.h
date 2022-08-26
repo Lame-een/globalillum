@@ -1,16 +1,16 @@
-/// @file objects/areaLight.h
+/// @file objects/RectLight.h
 #pragma once
 #include "light.h"
 #include "scene.h"
 
-/// @class AreaLight 
+/// @class RectLight 
 /// @brief A simple area light
 //TODO: implement fully
-class AreaLight : public Light
+class RectLight : public Light
 {
 public:
-	AreaLight();
-	AreaLight(const Vec3& pos, const Vec3& edge1, const Vec3& edge2, 
+	RectLight();
+	RectLight(const Vec3& pos, const Vec3& edge1, const Vec3& edge2, 
 			  const Vec2& dimensions, const RGB& color, double intensity);
 
 	void SetEdge(int index, const Vec3& vec);
@@ -19,7 +19,7 @@ public:
 	const Vec3& Edge(int index) const;
 	const Vec2& Dimensions() const;
 	const Vec3& Normal() const;
-	const double Area() const;
+	const double Area() const override;
 
 	RGB DiffuseReflection(const HitInfo& hitInfo) const override;
 	RGB SpecularReflection(const HitInfo& hitInfo) const override;

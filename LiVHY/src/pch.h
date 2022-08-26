@@ -12,11 +12,13 @@
 #include "util/types.h"
 #include "util/ray.h"
 #include "util/math.h"
+#include "util/tracerUtils.h"
 
 #include "glm/geometric.hpp"
 #include "glm/common.hpp"
 #include "glm/gtx/norm.hpp"
 #include "glm/gtx/rotate_vector.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 #include "lame/benchmark.h"
 #include "lame/easyRandom.h"

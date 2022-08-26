@@ -10,11 +10,11 @@
 class Scene;
 
 /// @brief Type of the Light.
-enum LightType
+enum class LightType
 {
 	None,
 	Point,
-	Area
+	Rect
 };
 
 /// @class Light 
@@ -27,6 +27,7 @@ public:
 	const Vec3& Pos() const;
 	const Vec3& Color() const;
 	const double Intensity() const;
+	virtual const double Area() const = 0;
 
 	void SetPos(const Vec3& pos);
 	void SetColor(const Vec3& color);

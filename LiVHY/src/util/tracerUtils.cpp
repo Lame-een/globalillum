@@ -19,12 +19,9 @@ Vec3 SpecularImportanceSample(const Vec3& exact, double n, double cosTheta)
 
 	//vector perpendicular to the bounce
 	Vec3 perpVec = glm::normalize(Vec3(exact[1], -exact[0], 0));
-
-	/*
 	if (1.0 - abs(exact[2]) < 0.1) {
 	  perpVec = glm::normalize(Vec3(exact[2], 0, -exact[0]));
 	}
-	*/
 
 	//return vector should be perturbed by alpha from the exact
 	Vec3 ret = perpVec * sin(alpha) + exact * cos(alpha);
@@ -43,7 +40,7 @@ Vec3 DiffuseImportanceSample(Vec3 normal)
 
 	//vector perpendicular to the surface
 	Vec3 perpVec = glm::normalize(Vec3(normal[1], -normal[0], 0));
-	
+
 	if(1.0 - abs(normal[2]) < 0.1)
 	{
 		perpVec = Vec3(normal[2], 0, -normal[0]);
@@ -53,4 +50,24 @@ Vec3 DiffuseImportanceSample(Vec3 normal)
 	//rotate around axis by phi
 	ret = glm::normalize(glm::rotate(ret, phi, normal));
 	return ret;
+}
+
+Vec3 PointInUnitSphere()
+{
+	Vec3 ret;
+	do
+	{
+		// Sample direction in sphere
+		ret.x = lameutil::g_RandGen.getDouble() * 2.0 - 1.0;
+		ret.y = lameutil::g_RandGen.getDouble() * 2.0 - 1.0;
+		ret.z = lameutil::g_RandGen.getDouble() * 2.0 - 1.0;
+	} while(ret.x * ret.x + ret.y * ret.y + ret.z * ret.z > 1.0);
+	return ret;
+}
+
+Vec2 PointInUnitCircle()	//this appreas faster than rejection?
+{
+	double theta = lameutil::g_RandGen.getDouble() * 2 * M_PI;
+	double r = sqrt(lameutil::g_RandGen.getDouble());
+	return Vec2(r * cos(theta), r * sin(theta));
 }

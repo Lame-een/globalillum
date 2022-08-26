@@ -1,67 +1,67 @@
 #include "pch.h"
-#include "areaLight.h"
-#include "util/tracerUtils.h"
+#include "RectLight.h"
+#include "util/tracerConsts.h"
 
-AreaLight::AreaLight() : Light(LightType::Area)
+RectLight::RectLight() : Light(LightType::Rect)
 {
 	m_Normal = glm::normalize(glm::cross(m_Edges[0], m_Edges[1]));
 }
 
-AreaLight::AreaLight(const Vec3& pos, const Vec3& edge1, const Vec3& edge2, const Vec2& dimensions, const RGB& color, double intensity)
-	: Light(pos, color, intensity, LightType::Area), m_Dim(dimensions),
+RectLight::RectLight(const Vec3& pos, const Vec3& edge1, const Vec3& edge2, const Vec2& dimensions, const RGB& color, double intensity)
+	: Light(pos, color, intensity, LightType::Rect), m_Dim(dimensions),
 	m_Edges{glm::normalize(edge1) * dimensions[0], glm::normalize(edge2) * dimensions[1]},
 	m_Area(glm::length(glm::cross(m_Edges[0], m_Edges[1])))
 {
 	m_Normal = glm::normalize(glm::cross(m_Edges[0], m_Edges[1]));
 }
 
-void AreaLight::SetEdge(int index, const Vec3& vec)
+void RectLight::SetEdge(int index, const Vec3& vec)
 {
 	m_Edges[index] = vec;
 	m_Normal = glm::normalize(glm::cross(m_Edges[0], m_Edges[1]));
 }
 
-void AreaLight::SetDimension(const Vec2& dim)
+void RectLight::SetDimension(const Vec2& dim)
 {
 	m_Dim = dim;
 }
 
-const Vec3& AreaLight::Edge(int index) const
+const Vec3& RectLight::Edge(int index) const
 {
 	return m_Edges[index];
 }
 
-const Vec2& AreaLight::Dimensions() const
+const Vec2& RectLight::Dimensions() const
 {
 	return m_Dim;
 }
 
-const Vec3& AreaLight::Normal() const
+const Vec3& RectLight::Normal() const
 {
 	return m_Normal;
 }
 
-const double AreaLight::Area() const
+const double RectLight::Area() const
 {
 	return m_Area;
 }
 
-RGB AreaLight::DiffuseReflection(const HitInfo& hitInfo) const
+RGB RectLight::DiffuseReflection(const HitInfo& hitInfo) const
 {
 	return RGB();
 }
 
-RGB AreaLight::SpecularReflection(const HitInfo& hitInfo) const
+RGB RectLight::SpecularReflection(const HitInfo& hitInfo) const
 {
 	return RGB();
 }
 
-RGB AreaLight::Reflection(const HitInfo& hitInfo) const
+RGB RectLight::Reflection(const HitInfo& hitInfo) const
 {
 	return RGB();
 }
 
-void AreaLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB& color) const
+void RectLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB& color) const
 {
 	const BRDF& brdf = *hitInfo.object->Brdf();
 
@@ -82,11 +82,11 @@ void AreaLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB&
 		double weight = 0;
 		for(int i = 0; i < sampleNum; i++)
 		{
+			double r0 = lameutil::g_RandGen.getDouble() - 0.5;
 			double r1 = lameutil::g_RandGen.getDouble() - 0.5;
-			double r2 = lameutil::g_RandGen.getDouble() - 0.5;
 
 			//computing random sample point on the light
-			Vec3 samplePoint = r1 * m_Edges[0] + r2 * m_Edges[1] + m_Pos;
+			Vec3 samplePoint = r0 * m_Edges[0] + r1 * m_Edges[1] + m_Pos;
 			if(!scene.OcclusionTest(hitInfo.point, samplePoint))
 			{
 				hits++;
@@ -120,11 +120,10 @@ void AreaLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB&
 
 		for(int i = 0; i < sampleNum; i++)
 		{
-			double r1 = lameutil::g_RandGen.getDouble() - 0.5;
-			double r2 = lameutil::g_RandGen.getDouble() - 0.5;
-
 			//computing random sample point on the light
-			Vec3 samplePoint = r1 * m_Edges[0] + r2 * m_Edges[1] + m_Pos;
+			double r0 = lameutil::g_RandGen.getDouble() - 0.5;
+			double r1 = lameutil::g_RandGen.getDouble() - 0.5;
+			Vec3 samplePoint = r0 * m_Edges[0] + r1 * m_Edges[1] + m_Pos;
 
 			if(!scene.OcclusionTest(hitInfo.point, samplePoint))
 			{
@@ -158,10 +157,10 @@ void AreaLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB&
 	int extraShadowSamples = c_LightSampleNum * 2;
 	for(int i = 0; i < extraShadowSamples; i++)
 	{
+		double r0 = lameutil::g_RandGen.getDouble() - 0.5;
 		double r1 = lameutil::g_RandGen.getDouble() - 0.5;
-		double r2 = lameutil::g_RandGen.getDouble() - 0.5;
 
-		Vec3 samplePoint = r1 * m_Edges[0] + r2 * m_Edges[1] + m_Pos;
+		Vec3 samplePoint = r0 * m_Edges[0] + r1 * m_Edges[1] + m_Pos;
 
 		if(!scene.OcclusionTest(hitInfo.point, samplePoint))
 		{

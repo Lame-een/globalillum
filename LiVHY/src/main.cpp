@@ -13,7 +13,7 @@
 #include "objects/triangleMesh.h"
 #include "objects/quad.h"
 
-#include "objects/areaLight.h"
+#include "objects/RectLight.h"
 
 #include "raytracer.h"
 
@@ -22,6 +22,9 @@
 #include "BRDF.h"
 #include "camera.h"
 #include "viewport.h"
+
+#include "nanoflann.hpp"
+#include "photonmap.h"
 
 //#include "glm/gtx/norm.hpp"
 //#include "lame/benchmark.h"
@@ -75,7 +78,7 @@ void cornellBox()
 	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf4(Colors::white, 0.5, 0.0, 1.5, 0.0);
-	BRDF brdfEmissive(Colors::white, 0.0, 0.0, 0.0, 1.0, 20.0);
+	BRDF brdfEmissive(Colors::white, 0.0, 0.0, 0.0, 1.0, 4.0);
 
 	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf0);
 	Quad ceiling(Vec3(2, -2, 3), Vec3(-2, -2, 3), Vec3(-2, 2, 3), Vec3(2, 2, 3), &brdf0);
@@ -88,7 +91,7 @@ void cornellBox()
 	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5, &brdf4);
 
 	PointLight light({0,0,2.5}, Colors::white, 6);
-	AreaLight lightArea({0,0.9,2.90}, {0,1,0}, {1,0,0}, {1,1}, Colors::white, 2);
+	RectLight lightArea({0,0,2.90}, {0,1,0}, {1,0,0}, {1,1}, Colors::white, 2);
 	PointLight light2({0,0,-0.9}, Colors::white, 1);
 
 	Scene scene;
@@ -111,10 +114,13 @@ void cornellBox()
 
 	scene.ConstructBvh();
 
+	MapPhotons(scene);
+
+	return;
+
 	RayTracer(vp, scene);
 }
 
-//use this, very fast and good.
 /*
 void branchlessONB(const Vec3& n, Vec3& b1, Vec3& b2)
 {
@@ -124,17 +130,12 @@ void branchlessONB(const Vec3& n, Vec3& b1, Vec3& b2)
 	b1 = Vec3(1.0f + sign * n.x * n.x * a, sign * b, -sign * n.x);
 	b2 = Vec3(b, sign + n.y * n.y * a, -n.y);
 }
-
-Vec2 PointInCirclePolar()
-{
-	double theta = randd.getDouble() * 2 * M_PI;
-	double r = sqrt(randd.getDouble());
-	return Vec2(r * cos(theta), r * sin(theta));
-}
 */
+
 
 int main()
 {
+
 	cornellBox();
 	return 0;
 

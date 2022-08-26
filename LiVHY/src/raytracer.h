@@ -3,7 +3,6 @@
 #include "viewport.h"
 #include "util/image.h"
 #include "scene.h"
-#include "util/tracerUtils.h"
 
 void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color);
 

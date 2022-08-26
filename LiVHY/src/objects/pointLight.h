@@ -12,6 +12,7 @@ public:
 	PointLight(const Vec3& pos, const RGB& color,
 			   double intensity = 1.0);
 
+	const double Area() const override;
 
 	RGB DiffuseReflection(const HitInfo& hitInfo) const override;
 	RGB SpecularReflection(const HitInfo& hitInfo) const override;
