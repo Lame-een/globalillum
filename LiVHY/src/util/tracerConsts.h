@@ -5,7 +5,7 @@ inline const unsigned int c_ThreadCount = std::thread::hardware_concurrency();
 
 //inline unecessary for constexpr
 constexpr unsigned int c_MaxRaytracerDepth = 3;
-constexpr unsigned int c_Samples = 500;
+constexpr unsigned int c_Samples = 100;
 constexpr unsigned int c_LightSampleNum = 5;
 
 constexpr unsigned int c_MaxMonteCarloDepth = 100;

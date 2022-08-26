@@ -58,7 +58,7 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 	{
 		RGB indirectColor = Colors::black;
 		//shoot rays and integrate diffuse lighting
-		Vec3 sampleVec = DiffuseImportanceSample(hitInfo.normal);
+		Vec3 sampleVec = DiffuseSample(hitInfo.normal);
 		Ray indirectRay(hitInfo.point, sampleVec);
 		RGB radiance = CastRay(scene, indirectRay, depth + 1);
 

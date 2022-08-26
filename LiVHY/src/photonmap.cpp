@@ -27,7 +27,7 @@ void AddPhoton(RGB photon, std::vector<Photon*>& photonStorage, const HitInfo& h
 	photonStorage.push_back(emittedPhoton);
 }
 
-void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& photonStorage, PhotonType type)
+void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& photonStorage, PhotonType type, int photonCount)
 {
 	//do not store first bounce in a caustic map
 	bool store = (type != PhotonType::Caustic);
@@ -37,6 +37,11 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 	for(int i = 0; i < c_MaxPhotonDepth &&
 		scene.Hit(ray, scene.Cam()->NearPlane(), scene.Cam()->FarPlane(), hitInfo); i++)
 	{
+		if(photonStorage.size() >= photonCount)
+		{
+			return;
+		}
+
 		const BRDF& brdf = *hitInfo.object->Brdf();
 		const double cosTheta = glm::dot(hitInfo.normal, -hitInfo.ray.Dir());
 
@@ -87,7 +92,7 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 				store = true;	//always store global photons
 			}
 
-			sampledDir = DiffuseImportanceSample(hitInfo.normal);
+			sampledDir = DiffuseSample(hitInfo.normal);
 
 			photon *= brdf.Color() / probDiffuse;
 		}
@@ -99,11 +104,11 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 				store = true;
 			}
 			//exact refraction
-			//TODO use transmissive sampling which can have total internal refraction
-			Vec3 exactDir = glm::refract(ray.Dir(), hitInfo.normal, 1.0 / brdf.IOR());
+			
+			Vec3 exactDir = TransmissiveRefract(hitInfo);
 
 			//importance sampled refraction
-			sampledDir = SpecularImportanceSample(exactDir, brdf.Shininess(), cosTheta);
+			sampledDir = SpecularSample(exactDir, brdf.Shininess(), cosTheta);
 
 			photon *= (1.0 - reflCoeff) * brdf.Color() / probTransmission;
 		}
@@ -118,7 +123,7 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 			//exact reflection
 			Vec3 exactDir = glm::reflect(ray.Dir(), hitInfo.normal);
 			//importance sampled reflection
-			sampledDir = SpecularImportanceSample(exactDir, brdf.Shininess(), cosTheta);
+			sampledDir = SpecularSample(exactDir, brdf.Shininess(), cosTheta);
 
 			photon *= (brdf.Color() + reflCoeff * brdf.Color()) / probSpecular;
 		}
@@ -156,8 +161,8 @@ void EmitPhotons(const Scene& scene, const Light* light, PhotonType type, int co
 			Vec3 samplePoint = r0 * rect->Edge(0) + r1 * rect->Edge(1) + rect->Pos();
 
 			//pick ray direction based on diffuse importance sample
-			Ray ray(samplePoint, DiffuseImportanceSample(rect->Normal()));
-			TracePhoton(scene, ray, photon, stackStorage, type);
+			Ray ray(samplePoint, DiffuseSample(rect->Normal()));
+			TracePhoton(scene, ray, photon, stackStorage, type, count);
 		}
 	}
 	else if(light->type == LightType::Point)
@@ -167,7 +172,7 @@ void EmitPhotons(const Scene& scene, const Light* light, PhotonType type, int co
 		for(int i = 0; i < count; i++)
 		{
 			Ray ray(point->Pos(), glm::normalize(PointInUnitSphere()));
-			TracePhoton(scene, ray, photon, stackStorage, type);
+			TracePhoton(scene, ray, photon, stackStorage, type, count);
 		}
 	}
 
@@ -184,24 +189,23 @@ void EmitPhotons(const Scene& scene, const Light* light, PhotonType type, int co
 
 void PhotonTracer(const Scene& scene, int globalNum, int causticNum, const std::vector<double>& lightPowers, double totalPower)
 {
-	std::cout << (lightPowers[0] / totalPower) * globalNum << "\n";
-	//TODO add estimation for number of photons to send etc...
 	//global photon casting
 	for(int i = 0; i < scene.Lights().size(); i++)
 	{
-		EmitPhotons(scene, scene.Lights()[i], PhotonType::Global, (lightPowers[i] / totalPower) * globalNum);
+		EmitPhotons(scene, scene.Lights()[i], PhotonType::Global, (lightPowers[i] / totalPower) * (double)globalNum);
 	}
 
 	//caustic photon casting
 	for(int i = 0; i < scene.Lights().size(); i++)
 	{
-		EmitPhotons(scene, scene.Lights()[i], PhotonType::Caustic, (lightPowers[i] / totalPower) * globalNum);
+		EmitPhotons(scene, scene.Lights()[i], PhotonType::Caustic, (lightPowers[i] / totalPower) * (double)globalNum);
 	}
 }
 
 void MapPhotons(const Scene& scene)
 {
 	ClearMaps();
+
 	//calculating total power in scene
 	const std::vector<Light*>& lights = scene.Lights();
 	std::vector<double> lightPowers(lights.size());
@@ -232,18 +236,5 @@ void MapPhotons(const Scene& scene)
 		PhotonTracer(scene, photonsPerThread, causticPhotonsPerThread, lightPowers, totalPower);
 	}
 
-	std::cout << g_GlobalPhotons.size();
-	/*
-	for(int i = 0; i < g_GlobalPhotons.size(); i++)
-	{
-		std::cout << glm::to_string(g_GlobalPhotons[i]->position) << "\n";
-	}
 
-	for(int i = 0; i < g_GlobalPhotons.size(); i++)
-	{
-		std::cout << glm::to_string(g_CausticPhotons[i]->position) << "\n";
-	}
-	*/
 }
-
-

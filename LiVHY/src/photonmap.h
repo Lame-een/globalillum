@@ -29,7 +29,7 @@ void RNRgb_to_RGBE(RGB& rgb_src, unsigned char* rgbe_target);
 
 void AddPhoton(RGB photon, std::vector<Photon*>& photonStorage, const HitInfo& hitInfo, PhotonType type);
 
-void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& photonStorage, PhotonType type);
+void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& photonStorage, PhotonType type, int photonCount);
 
 void EmitPhotons(const Scene& scene, const Light* light, PhotonType type, int count);
 

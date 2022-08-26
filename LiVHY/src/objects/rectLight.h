@@ -5,7 +5,6 @@
 
 /// @class RectLight 
 /// @brief A simple area light
-//TODO: implement fully
 class RectLight : public Light
 {
 public:

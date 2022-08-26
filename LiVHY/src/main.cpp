@@ -114,9 +114,7 @@ void cornellBox()
 
 	scene.ConstructBvh();
 
-	MapPhotons(scene);
-
-	return;
+	//MapPhotons(scene);
 
 	RayTracer(vp, scene);
 }
