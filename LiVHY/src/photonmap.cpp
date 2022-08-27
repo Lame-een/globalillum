@@ -7,16 +7,19 @@
 
 void ClearMaps()
 {
-	for(auto photon : g_GlobalPhotons)
+	for(auto& photon : g_GlobalPhotons.pts)
 	{
 		delete photon;
 	}
-	g_GlobalPhotons.clear();
-	for(auto photon : g_CausticPhotons)
+	g_GlobalPhotons.pts.clear();
+	for(auto& photon : g_CausticPhotons.pts)
 	{
 		delete photon;
 	}
-	g_CausticPhotons.clear();
+	g_CausticPhotons.pts.clear();
+
+	delete g_GlobalPhotonMap;
+	delete g_CausticPhotonMap;
 }
 
 void AddPhoton(RGB photon, std::vector<Photon*>& photonStorage, const HitInfo& hitInfo, PhotonType type)
@@ -104,7 +107,7 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 				store = true;
 			}
 			//exact refraction
-			
+
 			Vec3 exactDir = TransmissiveRefract(hitInfo);
 
 			//importance sampled refraction
@@ -179,11 +182,11 @@ void EmitPhotons(const Scene& scene, const Light* light, PhotonType type, int co
 	// add local photons to global
 	if(type == PhotonType::Global)
 	{
-		g_GlobalPhotons.insert(g_GlobalPhotons.end(), stackStorage.begin(), stackStorage.end());
+		g_GlobalPhotons.pts.insert(g_GlobalPhotons.pts.end(), stackStorage.begin(), stackStorage.end());
 	}
 	else if(type == PhotonType::Caustic)
 	{
-		g_CausticPhotons.insert(g_CausticPhotons.end(), stackStorage.begin(), stackStorage.end());
+		g_CausticPhotons.pts.insert(g_CausticPhotons.pts.end(), stackStorage.begin(), stackStorage.end());
 	}
 }
 
@@ -236,5 +239,23 @@ void MapPhotons(const Scene& scene)
 		PhotonTracer(scene, photonsPerThread, causticPhotonsPerThread, lightPowers, totalPower);
 	}
 
+	//scaling photon colors by power
+	double globalPhotonPower = totalPower / g_GlobalPhotons.pts.size();
+	for(int i = 0; i < g_GlobalPhotons.pts.size(); i++)
+	{
+		RGB color = RGBEtoRGB(g_GlobalPhotons.pts[i]->rgbe) * globalPhotonPower;
+		RGBtoRGBE(color, g_GlobalPhotons.pts[i]->rgbe);
+	}
+	double causticPhotonPower = totalPower / g_CausticPhotons.pts.size();
+	for(int i = 0; i < g_CausticPhotons.pts.size(); i++)
+	{
+		RGB color = RGBEtoRGB(g_CausticPhotons.pts[i]->rgbe) * causticPhotonPower;
+		RGBtoRGBE(color, g_CausticPhotons.pts[i]->rgbe);
+	}
 
+	//TODO potentially add irradiance cache?
+
+	//creating photonmaps
+	g_GlobalPhotonMap = new PhotonMapTree(3, g_GlobalPhotons, {10});
+	g_CausticPhotonMap = new PhotonMapTree(3, g_CausticPhotons, {10});
 }

@@ -29,20 +29,6 @@ constexpr double maxChannelValue(const RGB& rgb)
 	}
 }
 
-// Convert color from RGB to Ward's packed RGBE format; copies result into char[4]
-// array - code from ReillyBova
-inline void RGBtoRGBE(RGB& rgbSrc, unsigned char* rgbeTarget)
-{
-	double max = maxChannelValue(rgbSrc);
-
-	int exponent;
-	double mantissa = frexp(max, &exponent);
-	rgbeTarget[0] = (unsigned char)(256.0 * rgbSrc.r / max * mantissa);
-	rgbeTarget[1] = (unsigned char)(256.0 * rgbSrc.g / max * mantissa);
-	rgbeTarget[2] = (unsigned char)(256.0 * rgbSrc.b / max * mantissa);
-	rgbeTarget[3] = (unsigned char)(exponent + 128);
-}
-
 /// @brief Helper function that converts 3 ints into a RGB.
 /// @param[in] red Red value of the RGB
 /// @param[in] green Green value of the RGB
@@ -140,4 +126,35 @@ namespace Colors
 	constexpr RGB violet = stringToRGB("#ee82ee");
 	constexpr RGB white = stringToRGB("#ffffff");
 	constexpr RGB yellow = stringToRGB("#ffff00");
+}
+
+// Convert color from RGB to Ward's packed RGBE format; copies result into char[4]
+// array - code from ReillyBova
+inline void RGBtoRGBE(RGB& rgbSrc, unsigned char* rgbeTarget)
+{
+	double max = maxChannelValue(rgbSrc);
+
+	int exponent;
+	double mantissa = frexp(max, &exponent);
+	rgbeTarget[0] = (unsigned char)(256.0 * rgbSrc.r / max * mantissa);
+	rgbeTarget[1] = (unsigned char)(256.0 * rgbSrc.g / max * mantissa);
+	rgbeTarget[2] = (unsigned char)(256.0 * rgbSrc.b / max * mantissa);
+	rgbeTarget[3] = (unsigned char)(exponent + 128);
+}
+
+// Convert color from Ward's packed char[4] RGBE format to an RGB class - code from ReillyBova
+inline RGB RGBEtoRGB(unsigned char* rgbeSrc)
+{
+  // Corner case for black
+  if (!rgbeSrc[3]) {
+    return Colors::black;
+  }
+
+  // Find inverse
+  double inverse = ldexp(1.0, ((int) rgbeSrc[3]) - 128 - 8);
+
+  // Copy, scale, and return
+  RGB color(rgbeSrc[0], rgbeSrc[1], rgbeSrc[2]);
+  color *= inverse;
+  return color;
 }

@@ -74,10 +74,10 @@ void cornellBox()
 	Image img(vp.Width(), vp.Height());
 
 	BRDF brdf0(stringToRGB("#f0f0f0"), 1.0, 0.0, 0.0, 1.0);
-	BRDF brdf1(Colors::crimson, 150.0, 0.2, 0.0, 1.0);
+	BRDF brdf1(Colors::crimson, 150.0, 0., 0.0, 1.0);
 	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 0.0, 1.0);
-	BRDF brdf4(Colors::white, 0.5, 0.0, 1.5, 0.0);
+	BRDF brdf4(Colors::white, 0.9, 0.0, 1.5, 0.0);
 	BRDF brdfEmissive(Colors::white, 0.0, 0.0, 0.0, 1.0, 4.0);
 
 	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf0);
@@ -114,8 +114,35 @@ void cornellBox()
 
 	scene.ConstructBvh();
 
-	//MapPhotons(scene);
+	for(int i = 0; i < 1000; i++)
+	{
+		MapPhotons(scene);
+	}
 
+	/*
+	{
+		Vec3 query_pt(0, 0, 0);
+		size_t num_results = 5;
+		std::vector<uint32_t> ret_index(num_results);
+		std::vector<double> out_dist_sqr(num_results);
+
+		num_results = g_GlobalPhotonMap->knnSearch(&query_pt[0], num_results, &ret_index[0], &out_dist_sqr[0]);
+
+		// In case of less points in the tree than requested:
+		ret_index.resize(num_results);
+		out_dist_sqr.resize(num_results);
+
+		std::cout << "knnSearch(): num_results=" << num_results << "\n";
+		for(size_t i = 0; i < num_results; i++)
+			std::cout << "idx[" << i << "]=" << ret_index[i] << " dist[" << i
+			<< "]=" << out_dist_sqr[i] << std::endl;
+		std::cout << "\n";
+		std::cout << glm::to_string(g_GlobalPhotons.pts[ret_index[0]]->position) << std::endl;
+		std::cout << glm::distance2(g_GlobalPhotons.pts[ret_index[0]]->position, Vec3(0., 0., 0.)) << std::endl;
+	}
+	*/
+	ClearMaps();
+	return;
 	RayTracer(vp, scene);
 }
 

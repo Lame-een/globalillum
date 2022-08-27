@@ -8,7 +8,7 @@ Vec3 TransmissiveRefract(const HitInfo& hitInfo)
 {
 	const double airIOR = 1.0;
 	Vec3 normal = hitInfo.normal; //copy normal
-	Vec3 view = hitInfo.ray.Dir();
+	Vec3 view = -hitInfo.ray.Dir();
 	double eta;
 	double cosTheta = glm::dot(view, normal);
 

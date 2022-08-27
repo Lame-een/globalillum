@@ -52,7 +52,7 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 	{
 		DirectIllumination(scene, hitInfo, colorBuffer);
 	}
-
+	/*
 	// Indirect lighting
 	if(brdf->IsDiffuse())
 	{
@@ -65,10 +65,7 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 		//add sampled color
 		colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
 	}
-
-
-
-
+	*/
 
 	// Refract + Reflect
 	if(brdf->IsTransparent())
@@ -97,7 +94,7 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 			}
 			else
 			{
-				colorBuffer += refractCoeff * TraceRay(scene, refractHit, refractRay, depth + 1);
+				colorBuffer += refractCoeff * TraceRay(scene, refractHit, refractRay, depth);
 			}
 		}
 		else
