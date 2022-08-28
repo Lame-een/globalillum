@@ -9,3 +9,5 @@ Vec3 SpecularSample(const Vec3& exact, double n, double cosTheta);
 Vec3 DiffuseSample(Vec3 normal);
 
 Vec3 PointInUnitSphere();
+
+Vec3 GetDisplacedPoint(const HitInfo& hitInfo);

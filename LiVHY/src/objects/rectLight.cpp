@@ -87,7 +87,7 @@ void RectLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB&
 
 			//computing random sample point on the light
 			Vec3 samplePoint = r0 * m_Edges[0] + r1 * m_Edges[1] + m_Pos;
-			if(!scene.OcclusionTest(hitInfo.point, samplePoint))
+			if(!scene.OcclusionTest(GetDisplacedPoint(hitInfo), samplePoint))
 			{
 				hits++;
 
@@ -125,7 +125,7 @@ void RectLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB&
 			double r1 = lameutil::g_RandGen.getDouble() - 0.5;
 			Vec3 samplePoint = r0 * m_Edges[0] + r1 * m_Edges[1] + m_Pos;
 
-			if(!scene.OcclusionTest(hitInfo.point, samplePoint))
+			if(!scene.OcclusionTest(GetDisplacedPoint(hitInfo), samplePoint))
 			{
 				hits++;
 

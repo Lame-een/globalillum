@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "raytracer.h"
 #include "util/tracerConsts.h"
+#include "photonmap.h"
 
 // TODO add for area lights and emissive meshes
 void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
@@ -29,6 +30,54 @@ RGB CastRay(const Scene& scene, const Ray& ray, int depth)
 
 RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int depth)
 {
+	RGB retColor = Colors::black;
+	/**/
+	{
+		const Vec3& queryPoint = hitInfo.point;
+		size_t num_results = 10;
+		std::vector<uint32_t> ret_index(num_results);
+		std::vector<double> out_dist_sqr(num_results);
+
+		num_results = g_GlobalPhotonMap->knnSearch(&queryPoint[0], num_results, &ret_index[0], &out_dist_sqr[0]);
+
+		ret_index.resize(num_results);
+		out_dist_sqr.resize(num_results);
+
+		double intensity = 0.0;
+		for(int i = 0; i < num_results; i++)
+		{
+			RGB col = RGBEtoRGB(g_GlobalPhotons.pts[ret_index[i]]->rgbe) / sqrt(out_dist_sqr[i]);
+			intensity += col.r + col.b + col.g;
+		}
+
+		retColor += Colors::red * intensity*10.0;
+	}
+	{
+		const Vec3& queryPoint = hitInfo.point;
+		size_t num_results = 1;
+		std::vector<uint32_t> ret_index(num_results);
+		std::vector<double> out_dist_sqr(num_results);
+
+		num_results = g_CausticPhotonMap->knnSearch(&queryPoint[0], num_results, &ret_index[0], &out_dist_sqr[0]);
+
+		ret_index.resize(num_results);
+		out_dist_sqr.resize(num_results);
+
+		double intensity = 0.0;
+		for(int i = 0; i < num_results; i++)
+		{
+			RGB col = RGBEtoRGB(g_CausticPhotons.pts[ret_index[i]]->rgbe) / sqrt(out_dist_sqr[i]);
+			intensity += col.r + col.b + col.g;
+		}
+
+		retColor += Colors::blue * intensity *100.0;
+	}
+
+	return retColor;
+	
+
+	///////
+
 	const BRDF* brdf = hitInfo.object->Brdf();
 	const double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
 
@@ -52,7 +101,7 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 	{
 		DirectIllumination(scene, hitInfo, colorBuffer);
 	}
-	/*
+	/**/
 	// Indirect lighting
 	if(brdf->IsDiffuse())
 	{
@@ -65,18 +114,20 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 		//add sampled color
 		colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
 	}
-	*/
+	/**/
 
 	// Refract + Reflect
 	if(brdf->IsTransparent())
 	{
 		const double n1 = 1.0;
 		const double n2 = brdf->IOR();
-		const double schlickCoeffOutside = SchlicksApprox(ray.Dir(), hitInfo.normal, n1, n2);
-		Ray refractRay(hitInfo.point, glm::refract(ray.Dir(), hitInfo.normal, n1 / n2));
+		const double schlickCoeffOutside = SchlicksApprox(-ray.Dir(), hitInfo.normal, n1, n2);
+		
+		Ray refractRay(hitInfo.point, TransmissiveRefract(hitInfo));
+		//Ray refractRay(hitInfo.point, glm::refract(ray.Dir(), hitInfo.normal, n1 / n2));
 		double refractCoeff = (1.0 - schlickCoeffOutside) * (1.0 - brdf->Opacity());
-
-
+		colorBuffer += refractCoeff * CastRay(scene, refractRay, depth + 1);
+		/*
 		HitInfo refractHit;
 		if(scene.Hit(refractRay, scene.Cam()->NearPlane(), scene.Cam()->FarPlane(), refractHit))
 		{
@@ -89,19 +140,19 @@ RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int dep
 				const double insideRefractCoeff = (1.0 - schlickCoeffInside);
 
 				//depth doesn't increase - "same ray"
-				RGB radiance = insideRefractCoeff * CastRay(scene, refractOutRay, depth);
+				RGB radiance = insideRefractCoeff * CastRay(scene, refractOutRay, depth + 1);
 				colorBuffer += refractCoeff * radiance * glm::dot(refractOutRay.Dir(), refractHit.normal);//brdf->DiffuseLighting(refractOutRay.Dir(), refractHit.normal, radiance);
 			}
 			else
 			{
-				colorBuffer += refractCoeff * TraceRay(scene, refractHit, refractRay, depth);
+				colorBuffer += refractCoeff * TraceRay(scene, refractHit, refractRay, depth + 1);
 			}
 		}
 		else
 		{
 			colorBuffer += scene.Background();
 		}
-
+		*/
 		//reflect the rest of the ray
 		Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
 		const double reflectCoeff = schlickCoeffOutside * (1.0 - brdf->Opacity());

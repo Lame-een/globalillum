@@ -71,6 +71,7 @@ void cornellBox()
 {
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
 	Viewport vp(640, 640);
+	//Viewport vp(250, 250);
 	Image img(vp.Width(), vp.Height());
 
 	BRDF brdf0(stringToRGB("#f0f0f0"), 1.0, 0.0, 0.0, 1.0);
@@ -78,18 +79,64 @@ void cornellBox()
 	BRDF brdf2(Colors::limegreen, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf3(Colors::blueviolet, 1.0, 0.0, 0.0, 1.0);
 	BRDF brdf4(Colors::white, 0.9, 0.0, 1.5, 0.0);
+	BRDF brdf5(Colors::white, 0.9, 0.0, 1.5, 0.0);
 	BRDF brdfEmissive(Colors::white, 0.0, 0.0, 0.0, 1.0, 4.0);
 
-	Quad floor(Vec3(-2, -2, -1), Vec3(2, -2, -1), Vec3(2, 2, -1), Vec3(-2, 2, -1), &brdf0);
-	Quad ceiling(Vec3(2, -2, 3), Vec3(-2, -2, 3), Vec3(-2, 2, 3), Vec3(2, 2, 3), &brdf0);
-	Quad leftWall(Vec3(-2, -2, -1), Vec3(-2, 2, -1), Vec3(-2, 2, 3), Vec3(-2, -2, 3), &brdf1);
-	Quad backWall(Vec3(-2, 2, -1), Vec3(2, 2, -1), Vec3(2, 2, 3), Vec3(-2, 2, 3), &brdf2);
-	Quad rightWall(Vec3(2, 2, -1), Vec3(2, -2, -1), Vec3(2, -2, 3), Vec3(2, 2, 3), &brdf3);
+	Quad floor(Vec3(-2, -2, -1),
+			   Vec3(2, -2, -1),
+			   Vec3(2, 2, -1),
+			   Vec3(-2, 2, -1), &brdf0);
+	Quad ceiling(Vec3(2, -2, 3),
+				 Vec3(-2, -2, 3),
+				 Vec3(-2, 2, 3),
+				 Vec3(2, 2, 3), &brdf0);
+	Quad leftWall(Vec3(-2, -2, -1),
+				  Vec3(-2, 2, -1),
+				  Vec3(-2, 2, 3),
+				  Vec3(-2, -2, 3), &brdf1);
+	Quad backWall(Vec3(-2, 2, -1),
+				  Vec3(2, 2, -1),
+				  Vec3(2, 2, 3),
+				  Vec3(-2, 2, 3), &brdf2);
+	Quad rightWall(Vec3(2, 2, -1),
+				   Vec3(2, -2, -1),
+				   Vec3(2, -2, 3),
+				   Vec3(2, 2, 3), &brdf3);
 	Quad emissiveQuad(Vec3(0.5, -0.5, 2.99), Vec3(-0.5, -0.5, 2.99), Vec3(-0.5, 0.5, 2.99), Vec3(0.5, 0.5, 2.99), &brdfEmissive);
 
 	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 1, &brdf1);
-	Sphere sphere1(Vec3(-1, -1, -0.5), 0.5, &brdf4);
+	Sphere sphere1(Vec3(0.5, -1, -0.5), 0.5, &brdf4);
 
+	/*Vec3(-1.25, -0.75, -1),
+					  Vec3(-0.75, -0.75, -1),
+					  Vec3(-0.75, -1.25, -1),
+					  Vec3(-1.25, -1.25, -1),
+					  Vec3(-1.25, -0.75, 0.5),
+					  Vec3(-0.75, -0.75, 0.5),
+					  Vec3(-0.75, -1.25, 0.5),
+					  Vec3(-1.25, -1.25, 0.5)}*/
+
+	TriangleMesh box(std::vector<Vec3>{Vec3(-1.25, -0.75, -1),
+					 Vec3(-1, -1, -1),
+					 Vec3(-1.25, -1.25, -1),
+					 Vec3(-1.5, -1, -1),
+					 Vec3(-1.25, -0.75, 0),
+					 Vec3(-1, -1, 0),
+					 Vec3(-1.25, -1.25, 0),
+					 Vec3(-1.5, -1, 0)},
+					 std::vector<Vec3i>{Vec3i(0, 1, 2),
+					 Vec3i(2, 3, 0),
+					 Vec3i(0, 1, 5),
+					 Vec3i(5, 4, 0),
+					 Vec3i(1, 2, 6),
+					 Vec3i(6, 5, 1),
+					 Vec3i(3, 0, 4),
+					 Vec3i(4, 7, 3),
+					 Vec3i(4, 5, 6),
+					 Vec3i(6, 7, 4),
+					 Vec3i(2, 3, 7),
+					 Vec3i(7, 6, 2)
+	}, & brdf5);
 	PointLight light({0,0,2.5}, Colors::white, 6);
 	RectLight lightArea({0,0,2.90}, {0,1,0}, {1,0,0}, {1,1}, Colors::white, 2);
 	PointLight light2({0,0,-0.9}, Colors::white, 1);
@@ -99,8 +146,8 @@ void cornellBox()
 	//scene.SetBackground(Colors::white);
 	scene.SetCamera(&cam);
 
-	//scene.AddLight(&light);
-	scene.AddLight(&lightArea);
+	scene.AddLight(&light);
+	//scene.AddLight(&lightArea);
 	//scene.AddLight(&light2);
 
 	scene.AddObject(&floor);
@@ -108,16 +155,14 @@ void cornellBox()
 	scene.AddObject(&leftWall);
 	scene.AddObject(&rightWall);
 	scene.AddObject(&backWall);
-	scene.AddObject(&emissiveQuad);
-	scene.AddObject(&sphere0);
+	//scene.AddObject(&emissiveQuad);
+	//scene.AddObject(&sphere0);
 	scene.AddObject(&sphere1);
+	scene.AddObject(&box);
 
 	scene.ConstructBvh();
 
-	for(int i = 0; i < 1000; i++)
-	{
-		MapPhotons(scene);
-	}
+	MapPhotons(scene);
 
 	/*
 	{
@@ -141,9 +186,9 @@ void cornellBox()
 		std::cout << glm::distance2(g_GlobalPhotons.pts[ret_index[0]]->position, Vec3(0., 0., 0.)) << std::endl;
 	}
 	*/
+	RayTracer(vp, scene);
 	ClearMaps();
 	return;
-	RayTracer(vp, scene);
 }
 
 /*

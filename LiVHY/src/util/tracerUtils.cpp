@@ -8,9 +8,9 @@ Vec3 TransmissiveRefract(const HitInfo& hitInfo)
 {
 	const double airIOR = 1.0;
 	Vec3 normal = hitInfo.normal; //copy normal
-	Vec3 view = -hitInfo.ray.Dir();
+	Vec3 view = hitInfo.ray.Dir();
 	double eta;
-	double cosTheta = glm::dot(view, normal);
+	double cosTheta = glm::dot(-view, normal);
 
 	if(cosTheta < 0)
 	{
@@ -108,4 +108,9 @@ Vec2 PointInUnitCircle()	//this appreas faster than rejection?
 	double theta = lameutil::g_RandGen.getDouble() * 2 * M_PI;
 	double r = sqrt(lameutil::g_RandGen.getDouble());
 	return Vec2(r * cos(theta), r * sin(theta));
+}
+
+Vec3 GetDisplacedPoint(const HitInfo& hitInfo)
+{
+	return hitInfo.point + hitInfo.normal * c_Epsilon;
 }

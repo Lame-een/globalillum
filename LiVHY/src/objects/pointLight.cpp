@@ -101,7 +101,7 @@ RGB PointLight::Reflection(const HitInfo& hitInfo) const
 
 void PointLight::LightReflection(const Scene& scene, const HitInfo& hitInfo, RGB& color) const
 {
-	if(!scene.OcclusionTest(hitInfo.point, m_Pos))
+	if(!scene.OcclusionTest(GetDisplacedPoint(hitInfo), m_Pos))
 	{
 		color += Reflection(hitInfo);
 	}

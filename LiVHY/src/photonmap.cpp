@@ -32,7 +32,7 @@ void AddPhoton(RGB photon, std::vector<Photon*>& photonStorage, const HitInfo& h
 
 void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& photonStorage, PhotonType type, int photonCount)
 {
-	//do not store first bounce in a caustic map
+	//do not store first caustic hit
 	bool store = (type != PhotonType::Caustic);
 	HitInfo hitInfo;
 
@@ -48,10 +48,11 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 		const BRDF& brdf = *hitInfo.object->Brdf();
 		const double cosTheta = glm::dot(hitInfo.normal, -hitInfo.ray.Dir());
 
-		//diffuse interraction - don't store first caustic hit
+		//diffuse interraction
 		if(brdf.IsDiffuse() && store)
 		{
 			AddPhoton(photon, photonStorage, hitInfo, type);
+			//store = false;
 		}
 
 		double reflCoeff = 0;
@@ -62,15 +63,13 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 
 		//generate probabilities for each bounce
 		double maxRGBVal = maxChannelValue(photon);
-		double probDiffuse = maxChannelValue(brdf.Color() * photon) / maxRGBVal;
-
-		//double probTransmission = probDiffuse; //not using seperate color for transmission
-		//double probSpecular = probDiffuse + reflCoeff * probTransmission;
-		//probTransmission *= (1.0 - reflCoeff);
-		double probTransmission = probDiffuse * (1.0 - reflCoeff); //slight optimization due to using a single color
-		double probSpecular = probDiffuse + reflCoeff * probDiffuse;
+		double probDiffuse = maxChannelValue(brdf.Color() * photon) * brdf.Opacity() / maxRGBVal;
+		double probTransmission = brdf.IsTransparent() * maxChannelValue(brdf.Color() * photon) / maxRGBVal; //not using seperate color for transmission
+		double probSpecular =  brdf.IsSpecular() * maxChannelValue(brdf.Color() * photon) / maxRGBVal + reflCoeff * probTransmission;
+		probTransmission *= (1.0 - reflCoeff);
 
 		double probTerminate = c_RayAbsorptionProbability;
+		//double probTotal = probDiffuse + probTransmission + probTerminate;
 		double probTotal = probDiffuse + probSpecular + probTransmission + probTerminate;
 
 		//scaling down to 1.0, if less than 1.0 the rest is implicit absorption
@@ -82,6 +81,7 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 
 		Vec3 sampledDir;
 
+		//TODO fix transmission and caustics?
 		//bounce and redo
 		if(r < probDiffuse)
 		{
@@ -90,10 +90,8 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 			{
 				break;
 			}
-			else
-			{
-				store = true;	//always store global photons
-			}
+
+			store = true;	//always store global photons
 
 			sampledDir = DiffuseSample(hitInfo.normal);
 
@@ -106,12 +104,9 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 			{
 				store = true;
 			}
+
 			//exact refraction
-
-			Vec3 exactDir = TransmissiveRefract(hitInfo);
-
-			//importance sampled refraction
-			sampledDir = SpecularSample(exactDir, brdf.Shininess(), cosTheta);
+			Vec3 sampledDir = TransmissiveRefract(hitInfo);
 
 			photon *= (1.0 - reflCoeff) * brdf.Color() / probTransmission;
 		}
@@ -122,12 +117,11 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 			{
 				store = true;
 			}
-
 			//exact reflection
-			Vec3 exactDir = glm::reflect(ray.Dir(), hitInfo.normal);
+			sampledDir = glm::reflect(ray.Dir(), hitInfo.normal);
 			//importance sampled reflection
-			sampledDir = SpecularSample(exactDir, brdf.Shininess(), cosTheta);
-
+			//sampledDir = SpecularSample(exactDir, brdf.Shininess(), cosTheta);
+		
 			photon *= (brdf.Color() + reflCoeff * brdf.Color()) / probSpecular;
 		}
 		else
@@ -136,7 +130,7 @@ void TracePhoton(const Scene& scene, Ray ray, RGB photon, std::vector<Photon*>& 
 			break; //terminate the ray
 		}
 
-		ray.SetOrigin(hitInfo.point);	//not necessary to add epsilon due to minimum intersection being epsilon
+		ray.SetOrigin(GetDisplacedPoint(hitInfo));	//not necessary to add epsilon due to minimum intersection being epsilon
 		ray.SetDir(glm::normalize(sampledDir));
 	}
 }
@@ -201,7 +195,7 @@ void PhotonTracer(const Scene& scene, int globalNum, int causticNum, const std::
 	//caustic photon casting
 	for(int i = 0; i < scene.Lights().size(); i++)
 	{
-		EmitPhotons(scene, scene.Lights()[i], PhotonType::Caustic, (lightPowers[i] / totalPower) * (double)globalNum);
+		EmitPhotons(scene, scene.Lights()[i], PhotonType::Caustic, (lightPowers[i] / totalPower) * (double)causticNum);
 	}
 }
 
@@ -220,7 +214,7 @@ void MapPhotons(const Scene& scene)
 		lightPowers[i] *= lights[i]->Area();
 		if(lights[i]->type == LightType::Rect)
 		{
-			lightPowers[i] *= 4 * M_PI; //flux over hemisphere
+			lightPowers[i] *= 2 * M_PI; //flux over hemisphere
 		}
 		else
 		{
@@ -233,7 +227,8 @@ void MapPhotons(const Scene& scene)
 	int photonsPerThread = c_GlobalPhotonCount / c_ThreadCount;
 	int causticPhotonsPerThread = c_CausticPhotonCount / c_ThreadCount;
 
-#pragma omp parallel for //poor mans parallelization
+	//FIX TODO memory issues if parallelized - add mutexes
+//#pragma omp parallel for //poor mans parallelization
 	for(int i = 0; i < c_ThreadCount; i++)
 	{
 		PhotonTracer(scene, photonsPerThread, causticPhotonsPerThread, lightPowers, totalPower);
