@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "scene.h"
 
-Scene::Scene(const std::string& name)
+Scene::Scene()
+	: m_Name(Settings::imgName), m_BackgroundColor(Settings::bgColor)
+{
+}Scene::Scene(const std::string& name)
 	: m_Name(name)
 {
 }
@@ -46,29 +49,35 @@ const std::vector<Object*>& Scene::Objects() const
 	return m_Objects;
 }
 
-const std::vector<Light*>& Scene::Lights() const
+const std::vector<Object*>& Scene::SamplingTargets() const
 {
-	return m_Lights;
+	return m_Targets;
 }
 
 void Scene::AddObject(Object* obj)
 {
 	m_Objects.push_back(obj);
+	if(obj->GetMaterial()->IsEmissive() || obj->GetMaterial()->IsTransmissive() || obj->IsSamplingTarget()){
+		AddSamplingTarget(obj);
+	}
 }
 
 void Scene::AddObject(TriangleMesh* obj)
 {
 	m_Objects.insert(m_Objects.end(), obj->Triangles().begin(), obj->Triangles().end());
+	if(obj->GetMaterial()->IsEmissive() || obj->GetMaterial()->IsTransmissive() || obj->IsSamplingTarget()){
+		AddSamplingTarget(obj);
+	}
 }
 
-void Scene::AddLight(Light* light)
+void Scene::AddSamplingTarget(Object* tgt)
 {
-	m_Lights.push_back(light);
+	m_Targets.push_back(tgt);
 }
 
-void Scene::AddBrdf(BRDF* brdf)
+void Scene::AddSamplingTarget(TriangleMesh* tgt)
 {
-	m_Brdfs.push_back(brdf);
+	m_Targets.insert(m_Targets.end(), tgt->Triangles().begin(), tgt->Triangles().end());
 }
 
 void Scene::ConstructBvh()

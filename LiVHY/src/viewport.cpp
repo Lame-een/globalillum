@@ -6,10 +6,12 @@
 /// a pi/3 horizontal FOV.
 
 Viewport::Viewport()
+	: m_Width(Settings::imgWidth), m_Height(Settings::imgHeight), m_HorizFOV(Settings::fov), m_Aspect(1.0 * m_Width / m_Height)
 {
 }
 
-Viewport::Viewport(int w, int h, double fov) : m_Width(w), m_Height(h), m_HorizFOV(fov), m_Aspect(1.0 * w / h)
+Viewport::Viewport(int w, int h, double fov) 
+	: m_Width(w), m_Height(h), m_HorizFOV(fov), m_Aspect(1.0 * w / h)
 {
 	CalculateFOV();
 }

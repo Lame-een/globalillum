@@ -60,18 +60,49 @@ constexpr uint8_t charToHex(char c)
 	return 0;
 }
 
+constexpr char hexToChar(uint8_t hex)
+{
+	if(hex <= 9 && hex >= 0)
+	{
+		return ('0' + hex);
+	}
+	else if(hex <= 15)
+	{
+		return ('a' + hex - 10);
+	}
+	assert(!"Character isn't hex.");
+	return 0;
+}
+
 /// @brief Helper function converting a string into RGB.
 /// @param str 7 character long string representing a hex value (e.g. "#000000")
 /// @return Returns the equivalent RGB value of the string.
 constexpr RGB stringToRGB(const char str[8])
 {
-#ifdef _DEBUG
-	assert(str[0] == '#');
-#endif
-	int red = (charToHex(str[1]) << 4) + charToHex(str[2]);
-	int green = (charToHex(str[3]) << 4) + charToHex(str[4]);
-	int blue = (charToHex(str[5]) << 4) + charToHex(str[6]);
+	if(str[0] != '#'){
+		return Vec3(0);
+	}
+
+	uint8_t red = (charToHex(str[1]) << 4) + charToHex(str[2]);
+	uint8_t green = (charToHex(str[3]) << 4) + charToHex(str[4]);
+	uint8_t blue = (charToHex(str[5]) << 4) + charToHex(str[6]);
 	return intToRGB(red, green, blue);
+}
+
+inline std::string RGBtoString(const RGB& rgb)
+{
+	uint8_t red = (uint8_t)rgb.r * 255;
+	uint8_t green = (uint8_t)rgb.g * 255;
+	uint8_t blue = (uint8_t)rgb.b * 255;
+	std::string str;
+	str.push_back('#');
+	str.push_back(hexToChar((red & 240) >> 4));
+	str.push_back(hexToChar(red & 15));
+	str.push_back(hexToChar((green & 240) >> 4));
+	str.push_back(hexToChar(green & 15));
+	str.push_back(hexToChar((blue & 240) >> 4));
+	str.push_back(hexToChar(blue & 15));
+	return str;
 }
 
 /// @brief Namespace containing color constants.
@@ -145,16 +176,17 @@ inline void RGBtoRGBE(RGB& rgbSrc, unsigned char* rgbeTarget)
 // Convert color from Ward's packed char[4] RGBE format to an RGB class - code from ReillyBova
 inline RGB RGBEtoRGB(unsigned char* rgbeSrc)
 {
-  // Corner case for black
-  if (!rgbeSrc[3]) {
-    return Colors::black;
-  }
+	// Corner case for black
+	if(!rgbeSrc[3])
+	{
+		return Colors::black;
+	}
 
-  // Find inverse
-  double inverse = ldexp(1.0, ((int) rgbeSrc[3]) - 128 - 8);
+	// Find inverse
+	double inverse = ldexp(1.0, ((int)rgbeSrc[3]) - 128 - 8);
 
-  // Copy, scale, and return
-  RGB color(rgbeSrc[0], rgbeSrc[1], rgbeSrc[2]);
-  color *= inverse;
-  return color;
+	// Copy, scale, and return
+	RGB color(rgbeSrc[0], rgbeSrc[1], rgbeSrc[2]);
+	color *= inverse;
+	return color;
 }

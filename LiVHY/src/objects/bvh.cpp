@@ -58,7 +58,7 @@ BVHNode::BVHNode(const std::vector<Object*>& objects, size_t start, size_t end)
 /// The optimized ray intersect function.
 /// Only the leaves will do a complicated hit check as
 /// they are the only "true objects".
-bool BVHNode::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
+bool BVHNode::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const
 {
 	if(!m_BoundingBox.Hit(ray, tMin, tMax)) return false;
 

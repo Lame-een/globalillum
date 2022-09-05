@@ -12,7 +12,7 @@
 #include "util/types.h"
 #include "util/ray.h"
 #include "util/math.h"
-#include "util/tracerUtils.h"
+#include "util/settings.h"
 
 #include "glm/geometric.hpp"
 #include "glm/common.hpp"

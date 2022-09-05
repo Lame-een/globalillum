@@ -1,17 +1,13 @@
 #include "pch.h"
 #include "triangleMesh.h"
 
-TriangleMesh::TriangleMesh()
-{
-}
-
 /// faces should contain triples of indices describing a single triangle face.
-TriangleMesh::TriangleMesh(const std::vector<Vec3>& vertices, const std::vector<Vec3i> faces, const BRDF* brdf)
-	: Object(brdf)
+TriangleMesh::TriangleMesh(const std::vector<Vec3>& vertices, const std::vector<Vec3i> faces, const Material* material, bool cull, bool samplingTarget)
+	: Object(material, cull, samplingTarget)
 {
 	for(const Vec3i& face : faces)
 	{
-		m_Triangles.push_back(new Triangle(vertices[face[0]], vertices[face[1]], vertices[face[2]], brdf));
+		m_Triangles.push_back(new Triangle(vertices[face[0]], vertices[face[1]], vertices[face[2]], material, cull));
 	}
 }
 
@@ -28,7 +24,7 @@ const std::vector<Object*>& TriangleMesh::Triangles() const
 	return m_Triangles;
 }
 
-bool TriangleMesh::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
+bool TriangleMesh::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const
 {
 	HitInfo auxInfo;
 	bool hasHit = false;
@@ -70,4 +66,9 @@ bool TriangleMesh::BoundingBox(AABB& outputBox) const
 	}
 
 	return true;
+}
+
+TriangleMesh::TriangleMesh(const Material* material, bool cull, bool samplingTarget)
+	: Object(material, cull, samplingTarget)
+{
 }

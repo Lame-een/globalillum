@@ -3,8 +3,22 @@
 #include <fstream>
 #include <filesystem>
 
-// THIS IS TEMP
+//currently write only
+class Image{
+public:
+	Image(size_t width, size_t height);
+	~Image();	
 
+	void SetPixel(int x, int y, const RGB& color);
+
+	void WriteFile(const std::string& path);
+private:
+	size_t m_Width, m_Height;
+	double m_Gamma;
+
+	char* m_Bitmap = nullptr;
+};
+/*
 struct Image
 {
 	int nx, ny;
@@ -62,3 +76,4 @@ struct Image
 		file.close();
 	}
 };
+*/

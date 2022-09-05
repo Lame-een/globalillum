@@ -1,45 +1,48 @@
 #include "pch.h"
 #include "triangle.h"
+#include "camera.h"
 //#include "glm/geometric.hpp"
 //#include "util/math.h"
 
-Triangle::Triangle(const Vec3& a, const Vec3& b, const Vec3& c, const BRDF* brdf)
-	: Object(brdf)
+Triangle::Triangle(const Vec3& a, const Vec3& b, const Vec3& c, const Material* material, bool cull, bool samplingTarget)
+	: Object(material, cull, samplingTarget)
 {
 	m_Vertices[0] = a;
 	m_Vertices[1] = b;
 	m_Vertices[2] = c;
 
 	m_Normal = glm::normalize(glm::cross(b - a, c - a));
+	m_Area = glm::length(glm::cross(b - a, c - a)) / 2;
+#ifdef PRINT_NORMALS
+	std::cout << glm::to_string((a + b + c) / 3.0) << glm::to_string(m_Normal) << std::endl;
+#endif
 }
-Triangle::Triangle(const Vec3* arr, const BRDF* brdf)
-	: Object(brdf)
+Triangle::Triangle(const Vec3* arr, const Material* material, bool cull, bool samplingTarget)
+	: Object(material, cull, samplingTarget)
 {
 	m_Vertices[0] = arr[0];
 	m_Vertices[1] = arr[1];
 	m_Vertices[2] = arr[2];
 
 	m_Normal = glm::normalize(glm::cross(arr[1] - arr[0], arr[2] - arr[0]));
+	m_Area = glm::dot(arr[1] - arr[0], arr[2] - arr[0]);
 }
 
-bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
+bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const
 {
 	Vec3 ab = m_Vertices[1] - m_Vertices[0];
 	Vec3 ac = m_Vertices[2] - m_Vertices[0];
 	Vec3 pvec = glm::cross(ray.Dir(), ac);
 	double det = glm::dot(ab, pvec);
 
-#ifdef BACKFACE_CULL
-	if(det < c_DoubleEpsilon){
+	if((det < c_DoubleEpsilon) && m_Cull)
+	{
 		return false; //backface culling
 	}
-#else
-	if(abs(det) < c_DoubleEpsilon)
+	else if(abs(det) < c_DoubleEpsilon)
 	{
 		return false; //parallel to the triangle
 	}
-#endif
-
 
 	double invDet = 1 / det;
 
@@ -80,6 +83,37 @@ bool Triangle::BoundingBox(AABB& outputBox) const
 	return true;
 }
 
+Vec3 Triangle::Random(Vec3 point) const
+{
+	double r0 = lameutil::g_RandGen.getDouble();
+	double r1 = lameutil::g_RandGen.getDouble();
+
+	if(r0 + r1 >= 1)
+	{
+		r0 = 1 - r0;
+		r1 = 1 - r1;
+	}
+
+	Vec3 ab = m_Vertices[1] - m_Vertices[0];
+	Vec3 ac = m_Vertices[2] - m_Vertices[0];
+	Vec3 samplePoint = r0 * ab + r1 * ac + m_Vertices[0];
+	return samplePoint - point;
+}
+
+double Triangle::PdfValue(const Vec3& origin, const Vec3& dir) const
+{
+	HitInfo hitInfo;
+	if(!this->Hit(Ray(origin, dir), Camera::NearPlane(), Camera::FarPlane(), hitInfo))
+		return 0;
+
+	//double dist2 = hitInfo.t * hitInfo.t * glm::length2(dir);
+	//double cosine = glm::abs(glm::dot(dir, hitInfo.normal)) / glm::length(dir);
+	double dist2 = hitInfo.t * hitInfo.t;
+	double cosine = glm::abs(glm::dot(dir, hitInfo.normal));
+
+	return dist2 / (cosine * m_Area);
+}
+
 const Vec3* Triangle::Vertices() const
 {
 	return m_Vertices;
@@ -95,4 +129,9 @@ const Vec3& Triangle::Vertex(size_t index) const
 const Vec3& Triangle::Normal() const
 {
 	return m_Normal;
+}
+
+const double Triangle::Area() const
+{
+	return m_Area;
 }

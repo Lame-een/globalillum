@@ -3,7 +3,6 @@
 #include <vector>
 #include "util/types.h"
 #include "util/colors.h"
-#include "objects/light.h"
 #include "objects/object.h"
 #include "objects/triangleMesh.h"
 #include "util/ray.h"
@@ -14,7 +13,8 @@
 /// @brief Class encapsulating the rendered scene.
 class Scene{
 public:
-	Scene(const std::string& name = "render");
+	Scene();
+	Scene(const std::string& name);
 	~Scene();
 
 	/// @brief Ray intersection checker function
@@ -31,12 +31,12 @@ public:
     //bool BoundingBox(AABB& outputBox) const override;
 
 	const std::vector<Object*>& Objects() const;
-	const std::vector<Light*>& Lights() const;
+	const std::vector<Object*>& SamplingTargets() const;
 
 	void AddObject(Object* obj);
 	void AddObject(TriangleMesh* obj);
-	void AddLight(Light* light);
-	void AddBrdf(BRDF* brdf);
+	void AddSamplingTarget(Object* tgt);
+	void AddSamplingTarget(TriangleMesh* tgt);
 
 	/// @brief Constructs a BVH around the encapsulated objects.
 	void ConstructBvh();
@@ -57,8 +57,7 @@ private:
 
 	BVHNode* m_BVH = nullptr;
 	std::vector<Object*> m_Objects;
-	std::vector<Light*> m_Lights;
-	std::vector<BRDF*> m_Brdfs;
+	std::vector<Object*> m_Targets;
 
 	std::string m_Name;
 };

@@ -3,6 +3,7 @@
 
 #pragma once
 #include <utility>
+#include "util/types.h"
 
 /// @brief Quadratic equation solver function.
 /// @param[in] a The quadratic coefficient.
@@ -16,10 +17,34 @@ bool solveQuadratic(const double& a, const double& b, const double& c, double& x
 /// @brief Calculates the reflective coefficient using Schlick's approximation.
 /// @param incidentRay Incoming ray.
 /// @param normal Normal on surface.
-/// @param n1 Index of Refraction of outside medium.
 /// @param n2 Index of Refraction of inside medium.
+/// @param n1 Index of Refraction of outside medium - assumed to be air.
 /// @return 
-double SchlicksApprox(const Vec3& incidentRay, const Vec3& normal, double n1 = 1.0, double n2 = 1.0);
+double SchlicksApprox(const Vec3& incidentRay, const Vec3& normal, double n2, double n1 = 1.0);
+
+double SchlicksApprox(const double cosine, double n2, double n1 = 1.0);
+
+Vec3 RandomCosineDir();
+Vec3 RandomSpecularDir(double shininess);
+Vec3 PointInUnitSphere();
+Vec2 PointInUnitCircle();
+Vec3 PointInCone(double radius, double sqrDist);
+
+class ONB
+{
+public:
+	ONB(const Vec3& normal);
+
+	Vec3 operator[](int i) const;
+
+	Vec3 local(double a, double b, double c) const;
+
+	Vec3 local(const Vec3& a) const;
+public:
+	const Vec3 u = Vec3(0, 0, 0);
+	const Vec3 v = Vec3(0, 0, 0);
+	const Vec3 w;
+};
 
 /// @brief The main epsilon constant used for comparisons.
 constexpr double c_Epsilon = 1e-6;

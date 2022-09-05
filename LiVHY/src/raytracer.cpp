@@ -1,20 +1,9 @@
 #include "pch.h"
 #include "raytracer.h"
-#include "util/tracerConsts.h"
-#include "photonmap.h"
 
-// TODO add for area lights and emissive meshes
-void DirectIllumination(const Scene& scene, const HitInfo& hitInfo, RGB& color)
+RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 {
-	for(const Light* light : scene.Lights())
-	{
-		light->LightReflection(scene, hitInfo, color);
-	}
-}
-
-RGB CastRay(const Scene& scene, const Ray& ray, int depth)
-{
-	if(depth == c_MaxRaytracerDepth)
+	if(depth == Settings::raytracerDepth)
 	{
 		return Colors::black;
 	}
@@ -25,150 +14,35 @@ RGB CastRay(const Scene& scene, const Ray& ray, int depth)
 		return scene.Background();
 	}
 
-	return TraceRay(scene, hitInfo, ray, depth);
+	ScatterInfo scatterInfo;
+
+	RGB emitted = hitInfo.object->GetMaterial()->Emit(ray, hitInfo);
+
+	if(!hitInfo.object->GetMaterial()->Scatter(ray, hitInfo, scatterInfo))
+		return emitted;
+
+	if(scatterInfo.isSpecular)
+	{
+		return scatterInfo.color
+			* traceRay(scene, scatterInfo.bounceRay, depth + 1);
+	}
+
+	ObjectsPDF targetsPdf(hitInfo.point);
+	targetsPdf.AddObject(scene.SamplingTargets());
+	MixturePDF mixturePdf(scatterInfo.Pdf(), &targetsPdf);
+
+	Vec3 scatterDir = glm::normalize(mixturePdf.Generate());
+	Ray scatteredRay(hitInfo.point + scatterDir * c_Epsilon, scatterDir);
+
+	double pdfVal = mixturePdf.Value(scatteredRay.Dir());
+	if(pdfVal == 0.0) return Colors::black;
+
+	return emitted
+		+ scatterInfo.color * hitInfo.object->GetMaterial()->ScatterPDF(ray, hitInfo, scatteredRay)
+		* traceRay(scene, scatteredRay, depth + 1) / pdfVal;
 }
 
-RGB TraceRay(const Scene& scene, const HitInfo& hitInfo, const Ray& ray, int depth)
-{
-	RGB retColor = Colors::black;
-	/**/
-	{
-		const Vec3& queryPoint = hitInfo.point;
-		size_t num_results = 10;
-		std::vector<uint32_t> ret_index(num_results);
-		std::vector<double> out_dist_sqr(num_results);
-
-		num_results = g_GlobalPhotonMap->knnSearch(&queryPoint[0], num_results, &ret_index[0], &out_dist_sqr[0]);
-
-		ret_index.resize(num_results);
-		out_dist_sqr.resize(num_results);
-
-		double intensity = 0.0;
-		for(int i = 0; i < num_results; i++)
-		{
-			RGB col = RGBEtoRGB(g_GlobalPhotons.pts[ret_index[i]]->rgbe) / sqrt(out_dist_sqr[i]);
-			intensity += col.r + col.b + col.g;
-		}
-
-		retColor += Colors::red * intensity*10.0;
-	}
-	{
-		const Vec3& queryPoint = hitInfo.point;
-		size_t num_results = 1;
-		std::vector<uint32_t> ret_index(num_results);
-		std::vector<double> out_dist_sqr(num_results);
-
-		num_results = g_CausticPhotonMap->knnSearch(&queryPoint[0], num_results, &ret_index[0], &out_dist_sqr[0]);
-
-		ret_index.resize(num_results);
-		out_dist_sqr.resize(num_results);
-
-		double intensity = 0.0;
-		for(int i = 0; i < num_results; i++)
-		{
-			RGB col = RGBEtoRGB(g_CausticPhotons.pts[ret_index[i]]->rgbe) / sqrt(out_dist_sqr[i]);
-			intensity += col.r + col.b + col.g;
-		}
-
-		retColor += Colors::blue * intensity *100.0;
-	}
-
-	return retColor;
-	
-
-	///////
-
-	const BRDF* brdf = hitInfo.object->Brdf();
-	const double cosTheta = glm::dot(hitInfo.normal, -ray.Dir());
-
-	if(brdf->IsEmissive())
-	{
-		if(depth == 0)
-		{
-			//direct hit from viewport to emissive surface
-			return brdf->Emission() + brdf->Emission() * cosTheta;
-		}
-		else
-		{
-			return brdf->Emission() * cosTheta;
-		}
-	}
-
-	RGB colorBuffer = Colors::black;
-
-	// Direct illumination - explicit light sampling
-	if(brdf->IsDiffuse())
-	{
-		DirectIllumination(scene, hitInfo, colorBuffer);
-	}
-	/**/
-	// Indirect lighting
-	if(brdf->IsDiffuse())
-	{
-		RGB indirectColor = Colors::black;
-		//shoot rays and integrate diffuse lighting
-		Vec3 sampleVec = DiffuseSample(hitInfo.normal);
-		Ray indirectRay(hitInfo.point, sampleVec);
-		RGB radiance = CastRay(scene, indirectRay, depth + 1);
-
-		//add sampled color
-		colorBuffer += brdf->DiffuseLighting(sampleVec, hitInfo.normal, radiance);
-	}
-	/**/
-
-	// Refract + Reflect
-	if(brdf->IsTransparent())
-	{
-		const double n1 = 1.0;
-		const double n2 = brdf->IOR();
-		const double schlickCoeffOutside = SchlicksApprox(-ray.Dir(), hitInfo.normal, n1, n2);
-		
-		Ray refractRay(hitInfo.point, TransmissiveRefract(hitInfo));
-		//Ray refractRay(hitInfo.point, glm::refract(ray.Dir(), hitInfo.normal, n1 / n2));
-		double refractCoeff = (1.0 - schlickCoeffOutside) * (1.0 - brdf->Opacity());
-		colorBuffer += refractCoeff * CastRay(scene, refractRay, depth + 1);
-		/*
-		HitInfo refractHit;
-		if(scene.Hit(refractRay, scene.Cam()->NearPlane(), scene.Cam()->FarPlane(), refractHit))
-		{
-			//self-intersect check (only for spheres atm necessary)
-			if(hitInfo.object == refractHit.object)
-			{
-				const double schlickCoeffInside = SchlicksApprox(refractRay.Dir(), -refractHit.normal, n2, n1);
-
-				Ray refractOutRay(refractHit.point, glm::refract(refractRay.Dir(), -refractHit.normal, n2 / n1));
-				const double insideRefractCoeff = (1.0 - schlickCoeffInside);
-
-				//depth doesn't increase - "same ray"
-				RGB radiance = insideRefractCoeff * CastRay(scene, refractOutRay, depth + 1);
-				colorBuffer += refractCoeff * radiance * glm::dot(refractOutRay.Dir(), refractHit.normal);//brdf->DiffuseLighting(refractOutRay.Dir(), refractHit.normal, radiance);
-			}
-			else
-			{
-				colorBuffer += refractCoeff * TraceRay(scene, refractHit, refractRay, depth + 1);
-			}
-		}
-		else
-		{
-			colorBuffer += scene.Background();
-		}
-		*/
-		//reflect the rest of the ray
-		Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
-		const double reflectCoeff = schlickCoeffOutside * (1.0 - brdf->Opacity());
-		colorBuffer += reflectCoeff * CastRay(scene, specularRay, depth + 1);
-
-	}
-	else if(brdf->IsMetallic())	// Reflect only
-	{
-		Ray specularRay(hitInfo.point, glm::reflect(ray.Dir(), hitInfo.normal));
-		colorBuffer += brdf->Reflectivity() * CastRay(scene, specularRay, depth + 1);
-	}
-
-	return colorBuffer;
-}
-
-void RayTracer(const Viewport& vp, const Scene& scene)
+void rayTracer(const Viewport& vp, const Scene& scene)
 {
 	const Camera& cam = *scene.Cam();
 
@@ -176,17 +50,15 @@ void RayTracer(const Viewport& vp, const Scene& scene)
 
 	int i = 0;
 	int lim = vp.Height();
-	lameutil::LoadingBar bar(i, lim, "<");
+	lameutil::LoadingBar bar(i, lim, "<=");
 	for(; i < vp.Height(); i++)
 	{
 		bar.bar();
-
 #pragma omp parallel for
 		for(int j = 0; j < vp.Width(); j++)
 		{
-
 			RGB colorBuffer = Colors::black;
-			for(int s = 0; s < c_Samples; s++)
+			for(int s = 0; s < Settings::samplesPerPixel; s++)
 			{
 				double r1 = lameutil::g_RandGen.getDouble();
 				double r2 = lameutil::g_RandGen.getDouble();
@@ -196,16 +68,18 @@ void RayTracer(const Viewport& vp, const Scene& scene)
 				Ray ray(cam.Position(), x * cam.Right() + y * cam.Up() + cam.Dir());
 				ray.Normalize();
 
-				colorBuffer += CastRay(scene, ray);
+				colorBuffer += traceRay(scene, ray);
 			}
-			RGB color = colorBuffer * (1.0 / c_Samples);
+			colorBuffer *= (1.0 / Settings::samplesPerPixel);
 
-			img.bitmap[j + i * img.nx][0] = (char)(255 * std::max(0., std::min(1., color[0])));
-			img.bitmap[j + i * img.nx][1] = (char)(255 * std::max(0., std::min(1., color[1])));
-			img.bitmap[j + i * img.nx][2] = (char)(255 * std::max(0., std::min(1., color[2])));
+			img.SetPixel(j, i, colorBuffer);
+		}
+		if(Settings::continuousWrite)
+		{
+			img.WriteFile("./out/");
 		}
 	}
+	bar.bar();
 
-	img.write("./out/", scene.Name());
+	img.WriteFile("./out/");
 }
-

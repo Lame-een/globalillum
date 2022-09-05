@@ -28,7 +28,7 @@ public:
 	/// @param[in] tMax Maximum length of the ray.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit the node.
-	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) override;
+	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const override;
 	/// @brief Constructs a bounding box around the node.
     /// @param[out] outputBox The AABB of the node.
     /// @return Returns true if able to construct an AABB.

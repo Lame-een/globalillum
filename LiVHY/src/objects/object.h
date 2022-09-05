@@ -2,32 +2,17 @@
 #pragma once
 #include "util/types.h"
 #include "util/ray.h"
-#include "BRDF.h"
 #include "aabb.h"
-
-class Object;
-
-
-/// @struct HitInfo
-/// @brief Struct describing the Ray intersect.
-//NOTE: optimisation check maybe don't include point in hit calculation but instead calculate it from ray and t when necessary
-struct HitInfo{
-public:
-	Ray ray;
-	Vec3 point;
-	Vec3 normal;
-	Object* object = nullptr;
-	double t;
-	Vec2 uv;
-};
+#include "util/hitInfo.h"
+#include "material.h"
 
 /// @class Object
 /// @brief Base class for all objects.
 class Object
 {
 public:
-	Object();
-	Object(const BRDF* brdf);
+	Object(bool cull = true, bool samplingTarget = false);
+	Object(const Material* mat, bool cull = true, bool samplingTarget = false);
 
 	/// @brief Ray intersection checker function.
 	/// @param[in] ray Ray to check against.
@@ -35,13 +20,21 @@ public:
 	/// @param[in] tMax Maximum ray length.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit the object.
-	virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo){return true;}
+	virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const;
 	/// @brief Constructs a bounding box around the object.
-    /// @param[out] outputBox The AABB of the object.
-    /// @return Returns true if able to construct an AABB.
-	virtual bool BoundingBox(AABB& outputBox) const{return true;}
+	/// @param[out] outputBox The AABB of the object.
+	/// @return Returns true if able to construct an AABB.
+	virtual bool BoundingBox(AABB& outputBox) const;
 
-	const BRDF* Brdf() const;
+	virtual Vec3 Random(Vec3 point) const;
+	virtual double PdfValue(const Vec3& origin, const Vec3& dir) const;
+
+	bool IsSamplingTarget() const;
+
+	const Material* GetMaterial() const;
 protected:
-	const BRDF* m_Brdf = nullptr;
+	const Material* m_Mat = nullptr;
+
+	bool m_Cull;
+	bool m_SamplingTarget;
 };

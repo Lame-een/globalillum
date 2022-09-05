@@ -10,9 +10,9 @@ public:
 	/// @brief Constructor taking in seperate vertices, 
 	///        vertices should be in CCW order. 
 	/// @param brdf Brdf applied to the quad.
-	Quad(const Vec3& a,const Vec3& b,const Vec3& c, const Vec3& d, BRDF* brdf);
+	Quad(const Vec3& a,const Vec3& b,const Vec3& c, const Vec3& d, Material* material, bool cull = true, bool samplingTarget = false);
 	/// @brief Constructor which takes in an array of vertices.
 	/// @param verts Pointer to the verex array. Assumed to be of length 4.
 	/// @param brdf Brdf applied to the quad.
-	Quad(const Vec3* verts, BRDF* brdf);
+	Quad(const Vec3* verts, Material* material, bool cull = true, bool samplingTarget = false);
 };

@@ -1,0 +1,9 @@
+#pragma once
+#include "raytracer.h"
+#include "scene.h"
+#include "util/settings.h"
+#include "util/colors.h"
+#include "objects/triangle.h"
+#include "objects/sphere.h"
+#include "objects/triangleMesh.h"
+#include "objects/quad.h"
