@@ -10,6 +10,9 @@ Object::Object(bool cull, bool samplingTarget)
 Object::Object(const Material* mat, bool cull, bool samplingTarget)
 	: m_Mat(mat), m_Cull(cull), m_SamplingTarget(samplingTarget)
 {
+	if(mat->IsTransmissive()){
+		m_Cull = false;
+	}
 }
 
 

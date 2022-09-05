@@ -1,7 +1,7 @@
 #pragma once
 #include "demoIncludes.h"
 
-inline void cornellBoxDiffuse()
+inline void cornellBoxTransmissive()
 {
 	Viewport vp;
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
@@ -43,7 +43,22 @@ inline void cornellBoxDiffuse()
 					   Vec3(0.5, 0.5, 2.99),
 					   Vec3(1.5, 0.5, 2.99), &matEmissive);
 
-	Sphere sphere0(Vec3(0.0, 0.0, 0.0), 1.0, &matSphere0);
+
+	Transmissive glass(1.4);
+	TriangleMesh pyramid(std::vector<Vec3>{
+		Vec3(-1, 0, 1),
+			Vec3(0, -1, 1),
+			Vec3(1, 0, 1),
+			Vec3(0, 1, 1),
+			Vec3(0, 0, 0)},
+						 std::vector<Vec3i>{Vec3i(0, 1, 2),
+			Vec3i(2, 3, 0),
+			Vec3i(4, 1, 0),
+			Vec3i(4, 2, 1),
+			Vec3i(4, 3, 2),
+			Vec3i(4, 0, 3)
+		}, &glass);
+	//Sphere sphere0(Vec3(0.0, 0.0, 0.0), 1.0, &matSphere0);
 
 	Scene scene;
 	scene.SetCamera(&cam);
@@ -55,7 +70,8 @@ inline void cornellBoxDiffuse()
 	scene.AddObject(&backWall);
 	scene.AddObject(&emissiveQuad0);
 	scene.AddObject(&emissiveQuad1);
-	scene.AddObject(&sphere0);
+	scene.AddObject(&pyramid);
+	//scene.AddObject(&sphere0);
 
 	scene.ConstructBvh();
 

@@ -20,7 +20,6 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 
 	if(!hitInfo.object->GetMaterial()->Scatter(ray, hitInfo, scatterInfo))
 		return emitted;
-
 	if(scatterInfo.isSpecular)
 	{
 		return scatterInfo.color

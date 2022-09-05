@@ -35,13 +35,19 @@ bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) c
 	Vec3 pvec = glm::cross(ray.Dir(), ac);
 	double det = glm::dot(ab, pvec);
 
-	if((det < c_DoubleEpsilon) && m_Cull)
+	if(m_Cull)
 	{
-		return false; //backface culling
+		if((det < c_DoubleEpsilon))
+		{
+			return false; //backface culling
+		}
 	}
-	else if(abs(det) < c_DoubleEpsilon)
+	else
 	{
-		return false; //parallel to the triangle
+		if(abs(det) < c_DoubleEpsilon)
+		{
+			return false; //parallel to the triangle
+		}
 	}
 
 	double invDet = 1 / det;

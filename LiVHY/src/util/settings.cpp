@@ -32,7 +32,7 @@ void Settings::PrintHelp()
 		<< "  Raytracing options:\n";
 	printOption("\t-help", "Display the help screen.\n", 20);
 	printOption("\t-s, -samples ", "Set the samples per pixel. (default 2048)\n", 20);
-	printOption("\t-depth ", "Set maximum recursion depth. (default 4)\n", 20);
+	printOption("\t-depth ", "Set maximum recursion depth. (default 25)\n", 20);
 	printOption("\t-w, -width ", "Set the viewport width. (default 640)\n", 20);
 	printOption("\t-h, -height ", "Set the viewport height. (default 640)\n", 20);
 	printOption("\t-fov ", "Set the camera Field Of View (in degrees). (default 60)\n", 20);

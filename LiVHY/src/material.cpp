@@ -173,9 +173,9 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 	scatterInfo.isSpecular = true;
 	scatterInfo.SetPdf(nullptr);
 	scatterInfo.color = Colors::white;
-	scatterInfo.bounceRay.SetOrigin(hitInfo.point);
+	//scatterInfo.bounceRay.SetOrigin(hitInfo.point);
 
-	Vec3 normal = hitInfo.normal; //copy normal
+	Vec3 normal = hitInfo.normal;
 	Vec3 view = hitInfo.ray.Dir();
 	double cosTheta = glm::dot(-view, normal);
 	double eta;
@@ -184,7 +184,7 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 	{
 		//leaving material
 		eta = m_IOR;
-		normal = -normal; //flipping normal
+		normal = -normal;
 		cosTheta = -cosTheta;
 	}
 	else
@@ -193,22 +193,23 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 		eta = 1.0 / m_IOR;
 	}
 
+
 	double theta = acos(cosTheta);
 	double sinPhi = eta * sin(theta);
 
-	//total internal reflection check and Fresnell reflection check
-	if((sinPhi < -1.0 || 1.0 < sinPhi) || SchlicksApprox(cosTheta, eta) > lameutil::g_RandGen.getDouble())
+	//total internal reflection check and Fresnell reflection check (choose randomly)
+	if((sinPhi < -1.0) || (1.0 < sinPhi) || (SchlicksApprox(cosTheta, eta) > lameutil::g_RandGen.getDouble()))
 	{
 		// Return reflection direction
-		scatterInfo.bounceRay.SetDir(glm::reflect(view, normal));
+		Vec3 reflVec = glm::reflect(view, normal);
+		scatterInfo.bounceRay.SetDir(reflVec);
+		scatterInfo.bounceRay.SetOrigin(hitInfo.point + reflVec * c_Epsilon);
 		return true;
 	}
 
-	//return refraction direction
-	double phi = asin(sinPhi);
-	Vec3 viewParallel = glm::normalize(view + normal * cosTheta);
-
-	scatterInfo.bounceRay.SetDir(glm::normalize(viewParallel * tan(phi) - normal));
+	Vec3 refrVec = glm::refract(view, normal, eta);
+	scatterInfo.bounceRay.SetDir(refrVec);
+	scatterInfo.bounceRay.SetOrigin(hitInfo.point + refrVec * c_Epsilon);
 	return true;
 }
 
