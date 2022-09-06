@@ -1,4 +1,4 @@
-This software includes third party open source software components: GLEW, GLFW, stb_image, imgui, glm, chromium/cubicbezier and FastNoiseLite. Each of these software components have their own license. See the belonging files or in ./licenses
+This software includes third party open source software components: stb_image, glm, nanoflann. Each of these software components have their own license. See the belonging files or in ./licenses
 
 The rest of the software is licensed under:
 MIT License
