@@ -26,19 +26,19 @@
 //#include "glm/gtx/norm.hpp"
 //#include "lame/benchmark.h"
 
-void cornellBox()
+void cornellBoxExperimental()
 {
 	Viewport vp(Settings::imgWidth, Settings::imgHeight, Settings::fov);
-	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
+	Camera cam({0,-6,1}, glm::normalize(Vec3(0,1,0)), {0,0,1});
 
 	Diffuse matDiffGray(stringToRGB("#f0f0f0"));
 	Transmissive glass(1.4);
 	Diffuse matDiffGreen(Colors::limegreen);
 	Diffuse matDiffBlue(Colors::blue);
 	Diffuse matDiffWhite(Colors::white);
-	Specular matSpecular(Colors::lightgray, 0.2);
+	Specular matSpecular(Colors::lightgray, 0.01);
 	Diffuse matDiffCrimson(Colors::crimson);
-	Light matEmissive(Colors::white, 50);
+	Light matEmissive(Colors::white, 20);
 	Quad floor(Vec3(-2, -2, -1),
 			   Vec3(2, -2, -1),
 			   Vec3(2, 2, -1),
@@ -130,7 +130,6 @@ void cornellBox()
 
 	Scene scene;
 	scene.SetCamera(&cam);
-
 	scene.AddObject(&floor);
 	scene.AddObject(&ceiling);
 	scene.AddObject(&leftWall);
@@ -145,7 +144,37 @@ void cornellBox()
 	//scene.AddObject(&sphere1);
 	//scene.AddObject(&glassSphere);
 	//scene.AddObject(&ssphere);
-	scene.AddObject(&pyramid);
+	//scene.AddObject(&pyramid);
+
+	scene.ConstructBvh();
+
+	rayTracer(vp, scene);
+	return;
+}
+
+void sandbox()
+{
+	Viewport vp(Settings::imgWidth, Settings::imgHeight, Settings::fov);
+	Camera cam({0,-5,1}, {0,1,0}, {0,0,1});
+
+	Diffuse matGround(Colors::navy);
+	Diffuse matSphere(Colors::crimson);
+	Light matEmissive(Colors::white, 1);
+	Transmissive matGlass(1.4);
+	Quad floor(Vec3(-20, -20, 0),
+			   Vec3(20, -20, 0),
+			   Vec3(20, 20, 0),
+			   Vec3(-20, 20, -0), &matGround);
+
+	Sphere sphereOrigin(Vec3(0.0, 0.0, 1.0), 1.0, &matGlass);
+	//Sphere sphereOrigin(Vec3(0.0, 0.0, 1.0), 1.0, &matSphere);
+	//Sphere sphereLight(Vec3(0.0, 0.0, 2.0), 0.5, &matEmissive);
+
+	Scene scene;
+	scene.SetCamera(&cam);
+	scene.AddObject(&floor);
+	scene.AddObject(&sphereOrigin);
+	//scene.AddObject(&sphereLight);
 
 	scene.ConstructBvh();
 
@@ -167,7 +196,6 @@ int main(int argc, char* argv[])
 	}
 
 	lameutil::g_TimerPrecision = lameutil::TimerType::SEC;
-	std::cout << "\nRendering..." << std::endl;
 	{
 		lameutil::BenchTimer timer;
 		if(Settings::demoIndex != -1)
@@ -176,10 +204,7 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			//cornellBoxTransmissive();
-			cornellBox();
-
-			//simpleTest();
+			sandbox();
 		}
 	}
 	return 0;

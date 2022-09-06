@@ -11,7 +11,7 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 	HitInfo hitInfo;
 	if(!scene.Hit(ray, scene.Cam()->NearPlane(), scene.Cam()->FarPlane(), hitInfo))
 	{
-		return scene.Background();
+		return scene.Background(ray.Dir());
 	}
 
 	ScatterInfo scatterInfo;
@@ -26,14 +26,27 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 			* traceRay(scene, scatterInfo.bounceRay, depth + 1);
 	}
 
-	ObjectsPDF targetsPdf(hitInfo.point);
-	targetsPdf.AddObject(scene.SamplingTargets());
-	MixturePDF mixturePdf(scatterInfo.Pdf(), &targetsPdf);
+	Ray scatteredRay;
+	double pdfVal = 0.0;
 
-	Vec3 scatterDir = glm::normalize(mixturePdf.Generate());
-	Ray scatteredRay(hitInfo.point + scatterDir * c_Epsilon, scatterDir);
+	if(scene.SamplingTargets().size() > 0)
+	{
+		ObjectsPDF targetsPdf(hitInfo.point);
+		targetsPdf.AddObject(scene.SamplingTargets());
+		MixturePDF mixturePdf(scatterInfo.Pdf(), &targetsPdf);
 
-	double pdfVal = mixturePdf.Value(scatteredRay.Dir());
+		Vec3 scatterDir = glm::normalize(mixturePdf.Generate());
+		scatteredRay = Ray(hitInfo.point + scatterDir * c_Epsilon, scatterDir);
+
+		pdfVal = mixturePdf.Value(scatteredRay.Dir());
+	}
+	else
+	{
+		Vec3 scatterDir = glm::normalize(scatterInfo.Pdf()->Generate());
+		scatteredRay = Ray(hitInfo.point + scatterDir * c_Epsilon, scatterDir);
+
+		pdfVal = scatterInfo.Pdf()->Value(scatteredRay.Dir());
+	}
 	if(pdfVal == 0.0) return Colors::black;
 
 	return emitted
@@ -43,6 +56,7 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 
 void rayTracer(const Viewport& vp, const Scene& scene)
 {
+	std::cout << "\nRendering..." << std::endl;
 	const Camera& cam = *scene.Cam();
 
 	Image img(vp.Width(), vp.Height());

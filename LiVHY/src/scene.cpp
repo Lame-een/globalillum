@@ -2,16 +2,33 @@
 #include "scene.h"
 
 Scene::Scene()
-	: m_Name(Settings::imgName), m_BackgroundColor(Settings::bgColor)
+	: m_BackgroundSolid(!Settings::bgIsImage),
+	m_BackgroundColor(Settings::bgColor),
+	m_CubeMap(nullptr),
+	m_Name(Settings::imgName)
 {
-}Scene::Scene(const std::string& name)
-	: m_Name(name)
+	if(!m_BackgroundSolid)
+	{
+		m_CubeMap = new CubeMap("./cubemaps/" + Settings::bgType + "/");
+	}
+}
+
+Scene::Scene(const std::string& name)
+	: m_BackgroundSolid(!Settings::bgIsImage),
+	m_BackgroundColor(Settings::bgColor),
+	m_CubeMap(nullptr),
+	m_Name(name)
 {
+	if(!m_BackgroundSolid)
+	{
+		m_CubeMap = new CubeMap("./cubemaps/" + Settings::bgType + "/");
+	}
 }
 
 Scene::~Scene()
 {
 	delete m_BVH;
+	delete m_CubeMap;
 }
 
 
@@ -57,7 +74,8 @@ const std::vector<Object*>& Scene::SamplingTargets() const
 void Scene::AddObject(Object* obj)
 {
 	m_Objects.push_back(obj);
-	if(obj->GetMaterial()->IsEmissive() || obj->GetMaterial()->IsTransmissive() || obj->IsSamplingTarget()){
+	if(obj->GetMaterial()->IsEmissive())
+	{// || obj->GetMaterial()->IsTransmissive() || obj->IsSamplingTarget()){
 		AddSamplingTarget(obj);
 	}
 }
@@ -65,7 +83,8 @@ void Scene::AddObject(Object* obj)
 void Scene::AddObject(TriangleMesh* obj)
 {
 	m_Objects.insert(m_Objects.end(), obj->Triangles().begin(), obj->Triangles().end());
-	if(obj->GetMaterial()->IsEmissive() || obj->GetMaterial()->IsTransmissive() || obj->IsSamplingTarget()){
+	if(obj->GetMaterial()->IsEmissive())
+	{// || obj->GetMaterial()->IsTransmissive() || obj->IsSamplingTarget()){
 		AddSamplingTarget(obj);
 	}
 }
@@ -91,14 +110,30 @@ const BVHNode* Scene::BVHRoot() const
 	return m_BVH;
 }
 
-const RGB& Scene::Background() const
+RGB Scene::Background(const Vec3& dir) const
 {
-	return m_BackgroundColor;
+	if(m_BackgroundSolid || !m_CubeMap->Loaded())
+	{
+		return m_BackgroundColor;
+	}
+	else
+	{
+		return m_CubeMap->Sample(dir);
+	}
 }
 
 void Scene::SetBackground(const RGB& rgb)
 {
-	m_BackgroundColor = rgb;
+	Settings::bgColor = rgb;
+	m_BackgroundColor = rgb;	//redundant
+}
+
+void Scene::SetBackground(const std::string& type)
+{
+	m_BackgroundSolid = false;
+
+	delete m_CubeMap;
+	m_CubeMap = new CubeMap("./cubemaps/" + type + "/");
 }
 
 Camera* Scene::Cam() const
@@ -121,12 +156,12 @@ bool Scene::OcclusionTest(const Vec3& point, const Vec3& lightPoint) const
 
 	if(Hit(occlusionRay, Cam()->NearPlane(), distToLight, occlusionHit))
 	{
-		if((occlusionHit.t*occlusionHit.t < distToLight))
+		if((occlusionHit.t * occlusionHit.t < distToLight))
 		{
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 

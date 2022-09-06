@@ -8,6 +8,7 @@
 #include "util/ray.h"
 #include "objects/bvh.h"
 #include "camera.h"
+#include "cubemap.h"
 
 /// @class Scene
 /// @brief Class encapsulating the rendered scene.
@@ -42,8 +43,9 @@ public:
 	void ConstructBvh();
 	const BVHNode* BVHRoot() const;
 
-	const RGB& Background() const;
+	RGB Background(const Vec3& dir) const;
 	void SetBackground(const RGB& rgb);
+	void SetBackground(const std::string& type);
 
 	Camera* Cam() const;
 	void SetCamera(Camera* cam);
@@ -52,7 +54,10 @@ public:
 
 	const std::string& Name() const;
 private:
+	bool m_BackgroundSolid = true;
 	RGB m_BackgroundColor = Colors::black;
+	CubeMap* m_CubeMap;
+
 	Camera* m_Camera = nullptr;
 
 	BVHNode* m_BVH = nullptr;

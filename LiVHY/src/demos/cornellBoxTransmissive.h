@@ -4,10 +4,10 @@
 inline void cornellBoxTransmissive()
 {
 	Viewport vp;
-	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
+	Camera cam({0,-6,2}, {0,1,-0.3}, {0,0,1});
 	Image img(vp.Width(), vp.Height());
 
-	Diffuse matUpDown(stringToRGB("#f0f0f0"));
+	Diffuse matUpDown(stringToRGB("#808080"));
 	Diffuse matLeft(Colors::crimson);
 	Diffuse matRight(Colors::blueviolet);
 	Diffuse matBack(Colors::forestgreen);
@@ -58,7 +58,7 @@ inline void cornellBoxTransmissive()
 			Vec3i(4, 3, 2),
 			Vec3i(4, 0, 3)
 		}, &glass);
-	//Sphere sphere0(Vec3(0.0, 0.0, 0.0), 1.0, &matSphere0);
+	Sphere sphere0(Vec3(1.0, -1.5, -0.3), 0.5, &glass);
 
 	Scene scene;
 	scene.SetCamera(&cam);
@@ -71,7 +71,7 @@ inline void cornellBoxTransmissive()
 	scene.AddObject(&emissiveQuad0);
 	scene.AddObject(&emissiveQuad1);
 	scene.AddObject(&pyramid);
-	//scene.AddObject(&sphere0);
+	scene.AddObject(&sphere0);
 
 	scene.ConstructBvh();
 

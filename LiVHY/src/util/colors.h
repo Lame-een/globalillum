@@ -91,9 +91,9 @@ constexpr RGB stringToRGB(const char str[8])
 
 inline std::string RGBtoString(const RGB& rgb)
 {
-	uint8_t red = (uint8_t)rgb.r * 255;
-	uint8_t green = (uint8_t)rgb.g * 255;
-	uint8_t blue = (uint8_t)rgb.b * 255;
+	uint8_t red = (uint8_t)(rgb.r * 255);
+	uint8_t green = (uint8_t)(rgb.g * 255);
+	uint8_t blue = (uint8_t)(rgb.b * 255);
 	std::string str;
 	str.push_back('#');
 	str.push_back(hexToChar((red & 240) >> 4));

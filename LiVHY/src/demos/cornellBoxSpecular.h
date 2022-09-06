@@ -1,7 +1,7 @@
 #pragma once
 #include "demoIncludes.h"
 
-inline void cornellBoxDiffuse()
+inline void cornellBoxSpecular()
 {
 	Viewport vp;
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
@@ -9,10 +9,9 @@ inline void cornellBoxDiffuse()
 
 	Diffuse matUpDown(stringToRGB("#808080"));
 	Diffuse matLeft(Colors::crimson);
-	Diffuse matRight(Colors::navy);
-	Diffuse matBack(Colors::forestgreen);
-	Diffuse matSphere0(Colors::lightblue);
-	Diffuse matBox0(Colors::orangered);
+	Diffuse matRight(Colors::blueviolet);
+	Specular matSpecular0(Colors::lightgray, 0.01);
+	Specular matSpecular1(Colors::lightgray, 0.5);
 	Light matEmissive(Colors::white, 10);
 
 	Quad floor(Vec3(-2, -2, -1),
@@ -30,7 +29,7 @@ inline void cornellBoxDiffuse()
 	Quad backWall(Vec3(-2, 2, -1),
 				  Vec3(2, 2, -1),
 				  Vec3(2, 2, 3),
-				  Vec3(-2, 2, 3), &matBack);
+				  Vec3(-2, 2, 3), &matSpecular0);
 	Quad rightWall(Vec3(2, 2, -1),
 				   Vec3(2, -2, -1),
 				   Vec3(2, -2, 3),
@@ -44,7 +43,8 @@ inline void cornellBoxDiffuse()
 					   Vec3(0.5, 0.5, 2.99),
 					   Vec3(1.5, 0.5, 2.99), &matEmissive);
 
-	Sphere sphere0(Vec3(1.0, -1.5, -0.5), 0.5, &matSphere0);
+	Sphere sphere0(Vec3(1.0, -1.0, -0.5), 0.5, &matSpecular1);
+
 	TriangleMesh box(std::vector<Vec3>{
 		Vec3(-1.70711, 0.0, -1),
 			Vec3(-1.0, -0.707107, -1),
@@ -67,7 +67,7 @@ inline void cornellBoxDiffuse()
 			Vec3i(6, 7, 4),
 			Vec3i(2, 3, 7),
 			Vec3i(7, 6, 2)
-	}, &matBox0);
+	}, &matSpecular0);
 
 	Scene scene;
 	scene.SetCamera(&cam);

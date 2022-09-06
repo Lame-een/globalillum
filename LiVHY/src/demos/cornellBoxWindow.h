@@ -1,7 +1,8 @@
 #pragma once
+#pragma once
 #include "demoIncludes.h"
 
-inline void cornellBoxDiffuse()
+inline void cornellBoxWindow()
 {
 	Viewport vp;
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
@@ -9,40 +10,31 @@ inline void cornellBoxDiffuse()
 
 	Diffuse matUpDown(stringToRGB("#808080"));
 	Diffuse matLeft(Colors::crimson);
-	Diffuse matRight(Colors::navy);
+	Diffuse matRight(Colors::lightblue);
 	Diffuse matBack(Colors::forestgreen);
-	Diffuse matSphere0(Colors::lightblue);
-	Diffuse matBox0(Colors::orangered);
-	Light matEmissive(Colors::white, 10);
+	Diffuse matSphere0(Colors::navy);
+	Diffuse matBox0(Colors::darkred);
 
-	Quad floor(Vec3(-2, -2, -1),
-			   Vec3(2, -2, -1),
+	Quad floor(Vec3(-2, -8, -1),
+			   Vec3(2, -8, -1),
 			   Vec3(2, 2, -1),
 			   Vec3(-2, 2, -1), &matUpDown);
-	Quad ceiling(Vec3(-2, -2, 3),
+	Quad ceiling(Vec3(-2, -8, 3),
 				 Vec3(-2, 2, 3),
 				 Vec3(2, 2, 3),
-				 Vec3(2, -2, 3), &matUpDown);
-	Quad leftWall(Vec3(-2, -2, -1),
+				 Vec3(2, -8, 3), &matUpDown);
+	Quad leftWall(Vec3(-2, -8, -1),
 				  Vec3(-2, 2, -1),
 				  Vec3(-2, 2, 3),
-				  Vec3(-2, -2, 3), &matLeft);
+				  Vec3(-2, -8, 3), &matLeft);
 	Quad backWall(Vec3(-2, 2, -1),
 				  Vec3(2, 2, -1),
 				  Vec3(2, 2, 3),
 				  Vec3(-2, 2, 3), &matBack);
-	Quad rightWall(Vec3(2, 2, -1),
-				   Vec3(2, -2, -1),
-				   Vec3(2, -2, 3),
-				   Vec3(2, 2, 3), &matRight);
-	Quad emissiveQuad0(Vec3(-0.5, -0.5, 2.99),
-					   Vec3(-1.5, -0.5, 2.99),
-					   Vec3(-1.5, 0.5, 2.99),
-					   Vec3(-0.5, 0.5, 2.99), &matEmissive);
-	Quad emissiveQuad1(Vec3(1.5, -0.5, 2.99),
-					   Vec3(0.5, -0.5, 2.99),
-					   Vec3(0.5, 0.5, 2.99),
-					   Vec3(1.5, 0.5, 2.99), &matEmissive);
+	Quad frontWall(Vec3(2, 2, 3),
+				   Vec3(-2, 2, -1),
+				  Vec3(2, 2, -1),
+				  Vec3(-2, 2, 3), &matBack);
 
 	Sphere sphere0(Vec3(1.0, -1.5, -0.5), 0.5, &matSphere0);
 	TriangleMesh box(std::vector<Vec3>{
@@ -69,16 +61,39 @@ inline void cornellBoxDiffuse()
 			Vec3i(7, 6, 2)
 	}, &matBox0);
 
+	TriangleMesh rightWindowWall(std::vector<Vec3>{
+		Vec3(2,2,-1),		//0
+		Vec3(2,-1.4,-1),	//1
+		Vec3(2,-1.4,0.333),	//2
+		Vec3(2,0.4,0.333),	//3
+		Vec3(2,2,0.333),	//4
+		Vec3(2,0.4,1.666),	//5
+		Vec3(2,2,1.666),	//6
+		Vec3(2,-1.4,1.666),	//7
+		Vec3(2,-1.4,3),		//8
+		Vec3(2,2,3),		//9
+		Vec3(2,-8,-1),		//10
+		Vec3(2,-8,3)		//11
+	}, std::vector<Vec3i>{
+		Vec3i(0,1,2),
+		Vec3i(0,2,4),
+		Vec3i(4,3,5),
+		Vec3i(4,5,6),
+		Vec3i(6,7,8),
+		Vec3i(6,8,9),
+		Vec3i(1,10,11),
+		Vec3i(1,11,8)
+	}, &matRight);
+
+
 	Scene scene;
 	scene.SetCamera(&cam);
 
 	scene.AddObject(&floor);
 	scene.AddObject(&ceiling);
 	scene.AddObject(&leftWall);
-	scene.AddObject(&rightWall);
+	scene.AddObject(&rightWindowWall);
 	scene.AddObject(&backWall);
-	scene.AddObject(&emissiveQuad0);
-	scene.AddObject(&emissiveQuad1);
 	scene.AddObject(&sphere0);
 	scene.AddObject(&box);
 
