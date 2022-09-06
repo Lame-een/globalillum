@@ -8,15 +8,14 @@ project "GlobalIllumination"
    language "C++"
    cppdialect "C++17"
 
-   location "./LIVHY/"
-
-   pchheader "pch.h"
-   pchsource "pch.cpp"
+   location "./LiVHY/"
+   pchheader("pch.h")
+   pchsource("./LiVHY/src/pch.cpp")
 
    targetdir "bin/x64/%{cfg.buildcfg}"
    objdir "bin/intermediates/%{cfg.buildcfg}"
 
-   files { "**.h", "**.cpp" }
+   files { "./LiVHY/src/**.h", "./LiVHY/src/**.cpp" }
    includedirs {"LiVHY/vendor", "LiVHY/src", "LiVHY/vendor/glm", "LiVHY/vendor/nanoflann-1.4.3", }
 
    filter "configurations:Debug"
