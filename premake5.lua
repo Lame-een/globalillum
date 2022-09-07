@@ -1,7 +1,7 @@
 workspace "BACC_Global_Illumination"
    architecture "x64"
    systemversion "latest"
-   configurations { "Debug", "Release" }
+   configurations { "Release", "Debug" }
 
 project "GlobalIllumination"
    kind "ConsoleApp"
@@ -29,3 +29,5 @@ project "GlobalIllumination"
       runtime "Release"
       optimize "On"
       openmp "On"
+      filter {"system:linux", "action:gmake"}
+         linkoptions {"-fopenmp"}

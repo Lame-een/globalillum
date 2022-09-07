@@ -7,11 +7,28 @@ This project is meant as an implementation of a global illumination raytracer as
 
 # Getting started
 
+## Dependencies
+This project uses `premake5` for automatic configuration building.
+`OpenMP` is necessary to run the release build of the program.
+
+## Downloading
+Cloning the repository can be done with `git clone --recursive https://github.com/Lame-een/livhy`.
+
+If the repository was cloned non-recursively previously, use `git submodule update --init` to clone the necessary submodules.
+
 ## Installing
-This project uses `premake5` for automatic configuration building. 
-To install the program run the premake5.lua file with premake and then either open the resulting solution file in Visual Studio or run `make` on the output makefile.
+
+### Windows
+Run premake5 alongside the premake5.lua file with the `vs2022` argument to create a Visual Studio solution.
+
+### Linux
+Run premake5 alongside the premake5.lua file with the `gmake` argument to create a Makefile, which can be used to compile the program. 
+
+The default configuration should produce a release build. The configuration can be chosen by setting the make's config argument to either `config=release` or `config=debug`.
 
 ## Running the program
+By default the application will be built in the `./bin/x64/%configuration%` directory.
+
 The program can be run in the CLI using the following arguments:
 
 ```
