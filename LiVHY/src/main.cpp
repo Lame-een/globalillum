@@ -29,7 +29,7 @@
 void cornellBoxExperimental()
 {
 	Viewport vp(Settings::imgWidth, Settings::imgHeight, Settings::fov);
-	Camera cam({0,-6,1}, glm::normalize(Vec3(0,1,0)), {0,0,1});
+	Camera cam({0,-6,1}, Vec3(0,1,0), {0,0,1});
 
 	Diffuse matDiffGray(stringToRGB("#f0f0f0"));
 	Transmissive glass(1.4);
@@ -125,8 +125,8 @@ void cornellBoxExperimental()
 
 	Glossy gloss(Colors::crimson, 0.5, 50);
 
-	//Sphere ssphere(Vec3(0, 0, 0), 1, &gloss);
-	Sphere ssphere(Vec3(1, -1, 0), 0.5, &glass);
+	Sphere ssphere(Vec3(0, 0, 0), 1, &gloss, true, true);
+	//Sphere ssphere(Vec3(1, -1, 0), 0.5, &glass);
 
 	Scene scene;
 	scene.SetCamera(&cam);
@@ -143,7 +143,7 @@ void cornellBoxExperimental()
 	scene.AddObject(&emissiveQuad2);
 	//scene.AddObject(&sphere1);
 	//scene.AddObject(&glassSphere);
-	//scene.AddObject(&ssphere);
+	scene.AddObject(&ssphere);
 	//scene.AddObject(&pyramid);
 
 	scene.ConstructBvh();
@@ -155,7 +155,7 @@ void cornellBoxExperimental()
 void sandbox()
 {
 	Viewport vp(Settings::imgWidth, Settings::imgHeight, Settings::fov);
-	Camera cam({0,-5,1}, {0,1,0}, {0,0,1});
+	Camera cam({0,-5,1}, {1,1,0}, {0,0,1});
 
 	Diffuse matGround(Colors::navy);
 	Diffuse matSphere(Colors::crimson);
@@ -204,6 +204,7 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
+			//cornellBoxExperimental();
 			sandbox();
 		}
 	}

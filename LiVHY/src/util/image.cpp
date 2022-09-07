@@ -57,8 +57,8 @@ RGB Image::GetPixel(int x, int y)
 
 RGB Image::GetPixel(double u, double v)
 {
-	int x = (int)(1.0 - u) * m_Dimensions.x;
-	int y = (int)(1.0 - v) * m_Dimensions.y;
+	int x = static_cast<int>((1.0 - u) * m_Dimensions.x);
+	int y = static_cast<int>((1.0 - v) * m_Dimensions.y);
 	int index = (x + y * m_Dimensions.x)*3;
 	RGB ret(m_Bitmap[index], m_Bitmap[index + 1], m_Bitmap[index + 2]);
 	ret /= 255.0;
