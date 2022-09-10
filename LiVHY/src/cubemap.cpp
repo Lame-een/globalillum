@@ -51,8 +51,8 @@ Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 	{
 		if(absX >= absY && absX >= absZ)
 		{
-			// u (0 to 1) goes from +z to -z
-			// v (0 to 1) goes from -y to +y
+			// u (0 to 1) goes from -y to +y
+			// v (0 to 1) goes from -z to +z
 			maxAxis = absX;
 			uc = dir.y;
 			vc = dir.z;
@@ -63,8 +63,8 @@ Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 	{
 		if(absX >= absY && absX >= absZ)
 		{
-			// u (0 to 1) goes from -z to +z
-			// v (0 to 1) goes from -y to +y
+			// u (0 to 1) goes from +y to -y
+			// v (0 to 1) goes from -z to +z
 			maxAxis = absX;
 			uc = -dir.y;
 			vc = dir.z;
@@ -76,8 +76,8 @@ Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 	{
 		if(absY >= absX && absY >= absZ)
 		{
-			// u (0 to 1) goes from -x to +x
-			// v (0 to 1) goes from +z to -z
+			// u (0 to 1) goes from +x to -x
+			// v (0 to 1) goes from -z to +z
 			maxAxis = absY;
 			uc = -dir.x;
 			vc = dir.z;
@@ -101,8 +101,8 @@ Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 	{
 		if(absZ >= absX && absZ >= absY)
 		{
-			// u (0 to 1) goes from -x to +x
-			// v (0 to 1) goes from -y to +y
+			// u (0 to 1) goes from +x to -x
+			// v (0 to 1) goes from +y to -y
 			maxAxis = absZ;
 			uc = -dir.x;
 			vc = -dir.y;
@@ -113,8 +113,8 @@ Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 	{
 		if(absZ >= absX && absZ >= absY)
 		{
-			// u (0 to 1) goes from +x to -x
-			// v (0 to 1) goes from -y to +y
+			// u (0 to 1) goes from -x to +x
+			// v (0 to 1) goes from +y to -y
 			maxAxis = absZ;
 			uc = dir.x;
 			vc = -dir.y;
