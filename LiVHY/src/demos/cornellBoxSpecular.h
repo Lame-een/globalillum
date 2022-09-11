@@ -10,9 +10,9 @@ inline void cornellBoxSpecular()
 	Diffuse matUpDown(stringToRGB("#808080"));
 	Diffuse matLeft(Colors::crimson);
 	Diffuse matRight(Colors::blueviolet);
-	Specular matSpecular0(Colors::lightgray, 0.01);
-	Specular matSpecular1(Colors::lightgray, 0.5);
-	Light matEmissive(Colors::white, 10);
+	Specular matSpecular0(Colors::lightgray, 0.01f);
+	Specular matSpecular1(Colors::lightgray, 0.5f);
+	Light matEmissive(Colors::white, 10.0f);
 
 	Quad floor(Vec3(-2, -2, -1),
 			   Vec3(2, -2, -1),

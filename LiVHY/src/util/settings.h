@@ -2,6 +2,7 @@
 #include <string>
 #include "types.h"
 #include "colors.h"
+#include "math.h"
 
 namespace Settings
 {
@@ -9,14 +10,14 @@ namespace Settings
 
 	inline int samplesPerPixel = 1024;
 	inline int raytracerDepth = 100;
-	inline double fov = M_PI / 3;
+	inline float fov = c_Pi / 3.0f;
 	inline RGB bgColor = Colors::darkgray;
 	inline std::string bgType = "day";
 	inline bool bgIsImage = false;
 
 	inline int imgWidth = 640;
 	inline int imgHeight = 640;
-	inline double gamma = 2.2;
+	inline float gamma = 2.2f;
 
 	inline std::string imgName = "untitled";
 

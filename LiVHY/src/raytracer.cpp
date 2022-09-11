@@ -27,7 +27,7 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 	}
 
 	Ray scatteredRay;
-	double pdfVal = 0.0;
+	float pdfVal = 0.0f;
 
 	if(scene.SamplingTargets().size() > 0)
 	{
@@ -47,7 +47,7 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 
 		pdfVal = scatterInfo.Pdf()->Value(scatteredRay.Dir());
 	}
-	if(pdfVal == 0.0) return Colors::black;
+	if(pdfVal == 0.0f) return Colors::black;
 
 	return emitted
 		+ scatterInfo.color * hitInfo.object->GetMaterial()->ScatterPDF(ray, hitInfo, scatteredRay)
@@ -73,17 +73,17 @@ void rayTracer(const Viewport& vp, const Scene& scene)
 			RGB colorBuffer = Colors::black;
 			for(int s = 0; s < Settings::samplesPerPixel; s++)
 			{
-				double r1 = lameutil::g_RandGen.getDouble();
-				double r2 = lameutil::g_RandGen.getDouble();
-				double x = (2.0 * (j + r1) / vp.Width() - 1.0) * tan(vp.HFOV() / 2.f) * vp.AspectRatio();
-				double y = (1 - 2.0 * (i + r2) / vp.Height()) * tan(vp.HFOV() / 2.f);
+				float r1 = lameutil::g_RandGen.getFloat();	//TODO make float fnc
+				float r2 = lameutil::g_RandGen.getFloat();
+				float x = (2.0f * (j + r1) / vp.Width() - 1.0f) * tan(vp.HFOV() / 2.0f) * vp.AspectRatio();
+				float y = (1 - 2.0f * (i + r2) / vp.Height()) * tan(vp.HFOV() / 2.0f);
 
 				Ray ray(cam.Position(), x * cam.Right() + y * cam.Up() + cam.Dir());
 				ray.Normalize();
 
 				colorBuffer += traceRay(scene, ray);
 			}
-			colorBuffer *= (1.0 / Settings::samplesPerPixel);
+			colorBuffer *= (1.0f / Settings::samplesPerPixel);
 
 			img.SetPixel(j, i, colorBuffer);
 		}

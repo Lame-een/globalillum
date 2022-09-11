@@ -44,7 +44,7 @@ inline void cornellBoxTransmissive()
 					   Vec3(1.5, 0.5, 2.99), &matEmissive);
 
 
-	Transmissive glass(1.4);
+	Transmissive glass(1.4f);
 	TriangleMesh pyramid(std::vector<Vec3>{
 		Vec3(-1, 0, 1),
 			Vec3(0, -1, 1),

@@ -13,7 +13,7 @@ public:
 	virtual RGB Emit(const Ray& incidentRay, const HitInfo& hitInfo) const;
 
 	virtual bool Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo& scatterInfo) const;
-	virtual double ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const;
+	virtual float ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const;
 
 	static const Material* Default();
 
@@ -33,7 +33,7 @@ public:
 	Diffuse(const RGB& color);
 
 	bool Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo& scatterInfo) const override;
-	double ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const override;
+	float ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const override;
 
 	RGB Color() const;
 	void SetColor(const RGB& color);
@@ -45,65 +45,65 @@ private:
 class Glossy : public Material
 {
 public:
-	Glossy(const RGB& color, double gloss, double shininess);
+	Glossy(const RGB& color, float gloss, float shininess);
 
 	bool Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo& scatterInfo) const override;
-	double ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const override;
+	float ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const override;
 
 	RGB Color() const;
 	void SetColor(const RGB& color);
 
-	double Shininess() const;
-	void SetShininess(double shininess);
+	float Shininess() const;
+	void SetShininess(float shininess);
 
-	double Gloss() const;
-	void SetGloss(double gloss);
+	float Gloss() const;
+	void SetGloss(float gloss);
 
 private:
 	RGB m_Color;
-	double m_Gloss;
-	double m_Shininess;
+	float m_Gloss;
+	float m_Shininess;
 };
 
 
 class Specular : public Material
 {
 public:
-	Specular(const RGB& color, double roughness);
+	Specular(const RGB& color, float roughness);
 
 	bool Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo& scatterInfo) const override;
 
-	double Roughness() const;
-	void SetRoughness(double roughness);
+	float Roughness() const;
+	void SetRoughness(float roughness);
 
 	RGB Color() const;
 	void SetColor(const RGB& color);
 
 private:
 	RGB m_Color;
-	double m_Roughness;
+	float m_Roughness;
 };
 
 
 class Transmissive : public Material
 {
 public:
-	Transmissive(double ior);
+	Transmissive(float ior);
 
 	bool Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo& scatterInfo) const override;
 
-	double IOR() const;
-	void SetIOR(double ior);
+	float IOR() const;
+	void SetIOR(float ior);
 
 private:
-	double m_IOR; //index of refraction
+	float m_IOR; //index of refraction
 };
 
 
 class Light : public Material
 {
 public:
-	Light(RGB color, double intensity = 1.0);
+	Light(RGB color, float intensity = 1.0f);
 
 	virtual RGB Emit(const Ray& incidentRay, const HitInfo& hitInfo) const override;
 

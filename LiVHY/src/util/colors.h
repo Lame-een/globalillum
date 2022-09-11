@@ -3,7 +3,7 @@
 #include "types.h"
 #include "glm/common.hpp"
 
-constexpr double maxChannelValue(const RGB& rgb)
+constexpr float maxChannelValue(const RGB& rgb)
 {
 	if(rgb.r > rgb.b)
 	{
@@ -36,7 +36,7 @@ constexpr double maxChannelValue(const RGB& rgb)
 /// @return Returns an RGB type of the 
 constexpr RGB intToRGB(uint8_t red, uint8_t green, uint8_t blue)
 {
-	return RGB(1.0 * red / 255, 1.0 * green / 255, 1.0 * blue / 255);
+	return RGB(1.0f * red / 255, 1.0f * green / 255, 1.0f * blue / 255);
 }
 
 /// @brief Helper function converting a character into a hex value.
@@ -80,7 +80,7 @@ constexpr char hexToChar(uint8_t hex)
 constexpr RGB stringToRGB(const char str[8])
 {
 	if(str[0] != '#'){
-		return Vec3(0);
+		return Vec3(0.0f);
 	}
 
 	uint8_t red = (charToHex(str[1]) << 4) + charToHex(str[2]);
@@ -157,36 +157,4 @@ namespace Colors
 	constexpr RGB violet = stringToRGB("#ee82ee");
 	constexpr RGB white = stringToRGB("#ffffff");
 	constexpr RGB yellow = stringToRGB("#ffff00");
-}
-
-// Convert color from RGB to Ward's packed RGBE format; copies result into char[4]
-// array - code from ReillyBova
-inline void RGBtoRGBE(RGB& rgbSrc, unsigned char* rgbeTarget)
-{
-	double max = maxChannelValue(rgbSrc);
-
-	int exponent;
-	double mantissa = frexp(max, &exponent);
-	rgbeTarget[0] = (unsigned char)(256.0 * rgbSrc.r / max * mantissa);
-	rgbeTarget[1] = (unsigned char)(256.0 * rgbSrc.g / max * mantissa);
-	rgbeTarget[2] = (unsigned char)(256.0 * rgbSrc.b / max * mantissa);
-	rgbeTarget[3] = (unsigned char)(exponent + 128);
-}
-
-// Convert color from Ward's packed char[4] RGBE format to an RGB class - code from ReillyBova
-inline RGB RGBEtoRGB(unsigned char* rgbeSrc)
-{
-	// Corner case for black
-	if(!rgbeSrc[3])
-	{
-		return Colors::black;
-	}
-
-	// Find inverse
-	double inverse = ldexp(1.0, ((int)rgbeSrc[3]) - 128 - 8);
-
-	// Copy, scale, and return
-	RGB color(rgbeSrc[0], rgbeSrc[1], rgbeSrc[2]);
-	color *= inverse;
-	return color;
 }

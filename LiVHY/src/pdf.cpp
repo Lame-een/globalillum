@@ -7,7 +7,7 @@ ObjectsPDF::ObjectsPDF(const Vec3& origin)
 {
 }
 
-double ObjectsPDF::Value(const Vec3& dir) const
+float ObjectsPDF::Value(const Vec3& dir) const
 {
 	size_t size = m_Objects.size();
 	assert(size != 0 && "No pdfs allocated.");
@@ -17,8 +17,8 @@ double ObjectsPDF::Value(const Vec3& dir) const
 		return m_Objects[0]->PdfValue(m_Origin, dir);
 	}
 
-	double acc = 0.0;
-	double inv = 1.0 / size;
+	float acc = 0.0f;
+	float inv = 1.0f / size;
 	for(size_t i = 0; i < size; i++)
 	{
 		acc += inv * m_Objects[i]->PdfValue(m_Origin, dir);
@@ -68,9 +68,9 @@ MixturePDF::~MixturePDF()
 	}
 }
 
-double MixturePDF::Value(const Vec3& dir) const
+float MixturePDF::Value(const Vec3& dir) const
 {
-	return 0.5 * m_MaterialPdf->Value(dir) + 0.5 * m_TargetsPdf->Value(dir);
+	return 0.5f * m_MaterialPdf->Value(dir) + 0.5f * m_TargetsPdf->Value(dir);
 }
 
 Vec3 MixturePDF::Generate() const
@@ -93,10 +93,10 @@ CosinePDF::CosinePDF(const Vec3& normal)
 {
 }
 
-double CosinePDF::Value(const Vec3& dir) const
+float CosinePDF::Value(const Vec3& dir) const
 {
-	double cosine = glm::dot(dir, m_Base.w);
-	return (cosine <= 0) ? 0 : cosine * M_1_PI;
+	float cosine = glm::dot(dir, m_Base.w);
+	return (cosine <= 0) ? 0 : cosine * c_1_Pi;
 }
 
 Vec3 CosinePDF::Generate() const
@@ -112,16 +112,16 @@ const ONB& CosinePDF::Base()
 
 
 
-SpecularPDF::SpecularPDF(const Vec3& normal, double shininess)
+SpecularPDF::SpecularPDF(const Vec3& normal, float shininess)
 	: m_Base(normal), m_Shininess(shininess)
 {
 }
 
-double SpecularPDF::Value(const Vec3& dir) const
+float SpecularPDF::Value(const Vec3& dir) const
 {
 	Vec3 exact = glm::reflect(dir, m_Base.w);
-	double cosNAlpha = pow(glm::dot(dir, exact), m_Shininess);
-	return (cosNAlpha <= 0) ? 0 : (m_Shininess + 1) * cosNAlpha * M_2_PI;
+	float cosNAlpha = pow(glm::dot(dir, exact), m_Shininess);
+	return (cosNAlpha <= 0) ? 0 : (m_Shininess + 1) * cosNAlpha * c_2_Pi;
 }
 
 Vec3 SpecularPDF::Generate() const

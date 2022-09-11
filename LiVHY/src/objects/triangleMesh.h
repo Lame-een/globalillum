@@ -22,7 +22,7 @@ public:
 	
 	/// @deprecated This function should not be used as it checks every triangle.
 	///				Use Hit implemented in BVHNode.
-	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const override;
+	bool Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const override;
 	/// @deprecated Not of practical use. Use BoundingBox in combination with BVHNode.
     bool BoundingBox(AABB& outputBox) const override;
 

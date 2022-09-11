@@ -25,24 +25,24 @@ public:
 	/// @param[in] tMax Maximum ray length.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit the triangle.
-	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const override;
+	bool Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const override;
 	/// @brief Constructs a bounding box around the triangle.
 	/// @param[out] outputBox The AABB of the triangle.
 	/// @return Returns true if able to construct an AABB.
 	bool BoundingBox(AABB& outputBox) const override;
 
 	Vec3 Random(Vec3 point) const override;
-	double PdfValue(const Vec3& origin, const Vec3& dir) const override;
+	float PdfValue(const Vec3& origin, const Vec3& dir) const override;
 
 	const Vec3* Vertices() const;
 	const Vec3& Vertex(size_t index) const;
 
 	const Vec3& Normal() const;
-	const double Area() const;
+	const float Area() const;
 
 private:
 
 	Vec3 m_Vertices[3];
 	Vec3 m_Normal;
-	double m_Area;
+	float m_Area;
 };

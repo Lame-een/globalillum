@@ -14,6 +14,6 @@ public:
 	Vec3 point;
 	Vec3 normal;
 	const Object* object = nullptr;
-	double t;
+	float t;
 	Vec2 uv;
 };

@@ -108,6 +108,25 @@ namespace lameutil
 			return distrib(generator);
 		}
 
+		float getFloat(float min, float max)
+		{
+			std::uniform_real_distribution<float> distrib;
+			setDistributionf(distrib, min, max);
+			return distrib(generator);
+		}
+		float getFloat(float max)
+		{
+			std::uniform_real_distribution<float> distrib;
+			setDistributionf(distrib, 0.0f, max);
+			return distrib(generator);
+		}
+		float getFloat()
+		{
+			std::uniform_real_distribution<float> distrib;
+			setDistributionf(distrib, 0.0f, 1.0f);
+			return distrib(generator);
+		}
+
 	private:
 		void setDistributioni(std::uniform_int_distribution<int>& distrib, int min, int max)
 		{
@@ -116,6 +135,10 @@ namespace lameutil
 		void setDistributiond(std::uniform_real_distribution<double>& distrib, double min, double max)
 		{
 			distrib.param(std::uniform_real_distribution<double>::param_type(min, max));
+		}
+		void setDistributionf(std::uniform_real_distribution<float>& distrib, float min, float max)
+		{
+			distrib.param(std::uniform_real_distribution<float>::param_type(min, max));
 		}
 
 	};

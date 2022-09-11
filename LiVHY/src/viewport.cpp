@@ -6,12 +6,12 @@
 /// a pi/3 horizontal FOV.
 
 Viewport::Viewport()
-	: m_Width(Settings::imgWidth), m_Height(Settings::imgHeight), m_HorizFOV(Settings::fov), m_Aspect(1.0 * m_Width / m_Height)
+	: m_Width(Settings::imgWidth), m_Height(Settings::imgHeight), m_HorizFOV(Settings::fov), m_Aspect(1.0f * m_Width / m_Height)
 {
 }
 
-Viewport::Viewport(int w, int h, double fov) 
-	: m_Width(w), m_Height(h), m_HorizFOV(fov), m_Aspect(1.0 * w / h)
+Viewport::Viewport(int w, int h, float fov) 
+	: m_Width(w), m_Height(h), m_HorizFOV(fov), m_Aspect(1.0f * w / h)
 {
 	CalculateFOV();
 }
@@ -25,16 +25,16 @@ const int Viewport::Height() const
 	return m_Height;
 }
 
-const double Viewport::HFOV() const
+const float Viewport::HFOV() const
 {
 	return m_HorizFOV;
 }
-const double Viewport::VFOV() const
+const float Viewport::VFOV() const
 {
 	return m_VertFOV;
 }
 
-const double Viewport::AspectRatio() const
+const float Viewport::AspectRatio() const
 {
 	return m_Aspect;
 }
@@ -45,7 +45,7 @@ void Viewport::Resize(int w, int h)
 	m_Height = h;
 }
 
-void Viewport::SetFOV(double hfov)
+void Viewport::SetFOV(float hfov)
 {
 	m_HorizFOV = hfov;
 	CalculateFOV();
@@ -54,5 +54,5 @@ void Viewport::SetFOV(double hfov)
 void Viewport::CalculateFOV()
 {
 
-	m_VertFOV = 2.0 * atan(tan(m_HorizFOV / 2.0) * m_Height / m_Width);
+	m_VertFOV = 2.0f * atan(tan(m_HorizFOV / 2.0f) * m_Height / m_Width);
 }

@@ -6,14 +6,14 @@
 #include "stbimage/stb_image.h"
 
 Image::Image(size_t width, size_t height)
-	: m_Dimensions(width, height), m_Gamma(1.0 / Settings::gamma), m_Loaded(false)
+	: m_Dimensions(width, height), m_Gamma(1.0f / Settings::gamma), m_Loaded(false)
 {
 	m_Bitmap = new unsigned char[3 * width * height];
 	memset(m_Bitmap, 0, 3 * width * height);
 }
 
 Image::Image(const std::string& path)
-	: m_Gamma(1.0 / Settings::gamma), m_Loaded(true)
+	: m_Gamma(1.0f / Settings::gamma), m_Loaded(true)
 {
 	int channels;
 	m_Bitmap = stbi_load(path.c_str(), &m_Dimensions.x, &m_Dimensions.y, &channels, 3);
@@ -40,9 +40,9 @@ void Image::SetPixel(int x, int y, const RGB& color)
 {
 	size_t index = (y * m_Dimensions.x + x) * 3;
 
-	m_Bitmap[index] = static_cast<char>(255 * std::clamp(pow(color.r, m_Gamma), 0.0, 1.0));
-	m_Bitmap[index + 1] = static_cast<char>(255 * std::clamp(pow(color.g, m_Gamma), 0.0, 1.0));
-	m_Bitmap[index + 2] = static_cast<char>(255 * std::clamp(pow(color.b, m_Gamma), 0.0, 1.0));
+	m_Bitmap[index] = static_cast<char>(255 * std::clamp(pow(color.r, m_Gamma), 0.0f, 1.0f));
+	m_Bitmap[index + 1] = static_cast<char>(255 * std::clamp(pow(color.g, m_Gamma), 0.0f, 1.0f));
+	m_Bitmap[index + 2] = static_cast<char>(255 * std::clamp(pow(color.b, m_Gamma), 0.0f, 1.0f));
 }
 
 RGB Image::GetPixel(int x, int y)
@@ -51,17 +51,17 @@ RGB Image::GetPixel(int x, int y)
 	y %= m_Dimensions.y;
 	int index = (x + y * m_Dimensions.x)*3;
 	RGB ret(m_Bitmap[index], m_Bitmap[index + 1], m_Bitmap[index + 2]);
-	ret /= 255.0;
+	ret /= 255.0f;
 	return ret;
 }
 
-RGB Image::GetPixel(double u, double v)
+RGB Image::GetPixel(float u, float v)
 {
-	int x = static_cast<int>((1.0 - u) * m_Dimensions.x);
-	int y = static_cast<int>((1.0 - v) * m_Dimensions.y);
+	int x = static_cast<int>((1.0f - u) * m_Dimensions.x);
+	int y = static_cast<int>((1.0f - v) * m_Dimensions.y);
 	int index = (x + y * m_Dimensions.x)*3;
 	RGB ret(m_Bitmap[index], m_Bitmap[index + 1], m_Bitmap[index + 2]);
-	ret /= 255.0;
+	ret /= 255.0f;
 	return ret;
 }
 
@@ -85,7 +85,7 @@ void Image::WriteFile(const std::string& path)
 	std::filesystem::create_directory(path);
 	std::string outPath;
 	outPath.reserve(path.size() + path.size() + 4);
-	if((path.back() != '\\') || (path.back() != '/'))
+	if((path.back() != '\\') && (path.back() != '/'))
 	{
 		outPath = path + '/' + Settings::imgName + ".png";
 	}

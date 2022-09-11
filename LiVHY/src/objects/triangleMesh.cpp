@@ -24,11 +24,11 @@ const std::vector<Object*>& TriangleMesh::Triangles() const
 	return m_Triangles;
 }
 
-bool TriangleMesh::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const
+bool TriangleMesh::Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const
 {
 	HitInfo auxInfo;
 	bool hasHit = false;
-	double hitDist = tMax;
+	float hitDist = tMax;
 
 	for(const auto& obj : m_Triangles)
 	{

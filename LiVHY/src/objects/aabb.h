@@ -32,12 +32,12 @@ public:
 	/// @param[in] tMin Minimum ray length.
 	/// @param[in] tMax Maximum ray length.
 	/// @return Returns true if the ray hits the boundary box.
-	bool Hit(const Ray& r, double tMin, double tMax) const;
+	bool Hit(const Ray& r, float tMin, float tMax) const;
 	/// @brief The calling AABB surrounds the passed box.
 	/// @param[in] box Box which should be surrounded.
 	void Surround(const AABB& box);
 
 private:
-	Vec3 m_Min = Vec3(0);
-	Vec3 m_Max = Vec3(0);
+	Vec3 m_Min = Vec3(0.0f);
+	Vec3 m_Max = Vec3(0.0f);
 };

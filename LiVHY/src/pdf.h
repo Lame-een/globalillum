@@ -7,7 +7,7 @@ class Object;
 class PDF
 {
 public:
-	virtual double Value(const Vec3& dir) const = 0;
+	virtual float Value(const Vec3& dir) const = 0;
 	virtual Vec3 Generate() const = 0;
 };
 
@@ -15,7 +15,7 @@ class CosinePDF : public PDF {
     public:
         CosinePDF(const Vec3& normal);
 
-        double Value(const Vec3& dir) const override;
+        float Value(const Vec3& dir) const override;
 
         Vec3 Generate() const override;
 
@@ -26,16 +26,16 @@ class CosinePDF : public PDF {
 
 class SpecularPDF : public PDF {
     public:
-        SpecularPDF(const Vec3& normal, double shininess);
+        SpecularPDF(const Vec3& normal, float shininess);
 
-        double Value(const Vec3& dir) const override;
+        float Value(const Vec3& dir) const override;
 
         Vec3 Generate() const override;
 
 		const ONB& Base();
     private:
         ONB m_Base;
-        double m_Shininess;
+        float m_Shininess;
 };
 
 class ObjectsPDF : public PDF
@@ -43,7 +43,7 @@ class ObjectsPDF : public PDF
 public:
 	ObjectsPDF(const Vec3& origin);
 
-	double Value(const Vec3& dir) const override;
+	float Value(const Vec3& dir) const override;
 	Vec3 Generate() const override;
 
 	void AddObject(const Object* obj);
@@ -60,7 +60,7 @@ public:
 	MixturePDF(const PDF* material, const PDF* tgt, bool cleanup = false);
 	~MixturePDF();
 
-	double Value(const Vec3& dir) const override;
+	float Value(const Vec3& dir) const override;
 
 	Vec3 Generate() const override;
 

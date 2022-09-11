@@ -3,20 +3,20 @@
 
 /// Quadratic equation solver with catastrophic cancelation avoidance
 /// for more info see https://math.stackexchange.com/questions/866331
-bool solveQuadratic(const double& a, const double& b, const double& c, double& x0, double& x1)
+bool solveQuadratic(const float& a, const float& b, const float& c, float& x0, float& x1)
 {
-	double D = b * b - 4 * a * c;
-	if(D < 0)
+	float D = b * b - 4.0f * a * c;
+	if(D < 0.0f)
 	{
 		return false;	//no real solutions
 	}
-	else if(D == 0)
+	else if(D == 0.0f)
 	{
-		x0 = x1 = -0.5 * b / a;
+		x0 = x1 = -0.5f * b / a;
 	}
 	else
 	{
-		double q = (b > 0) ? -0.5 * (b + sqrt(D)) : -0.5 * (b - sqrt(D));
+		float q = (b > 0.0f) ? -0.5f * (b + sqrtf(D)) : -0.5f * (b - sqrtf(D));
 		x0 = q / a;
 		x1 = c / q;
 	}
@@ -25,43 +25,43 @@ bool solveQuadratic(const double& a, const double& b, const double& c, double& x
 	return true;
 }
 
-double SchlicksApprox(const Vec3& incidentRay, const Vec3& normal, const double n2, const double n1)
+float SchlicksApprox(const Vec3& incidentRay, const Vec3& normal, const float n2, const float n1)
 {
-	double R0 = glm::pow((n1 - n2) / (n1 + n2), 2.0);
-	double cosine = abs(glm::dot(normal, incidentRay));
+	float R0 = std::pow((n1 - n2) / (n1 + n2), 2.0f);
+	float cosine = abs(glm::dot(normal, incidentRay));
 
-	return R0 + (1 - R0) * glm::pow((1 - cosine), 5.0);
+	return R0 + (1 - R0) * std::pow((1 - cosine), 5.0f);
 }
 
-double SchlicksApprox(const double cosine, double n2, double n1)
+float SchlicksApprox(const float cosine, float n2, float n1)
 {
-	double R0 = glm::pow((n1 - n2) / (n1 + n2), 2.0);
+	float R0 = glm::pow((n1 - n2) / (n1 + n2), 2.0f);
 
-	return R0 + (1 - R0) * glm::pow((1 - cosine), 5.0);
+	return R0 + (1.0f - R0) * std::pow((1 - cosine), 5.0f);
 }
 
 Vec3 RandomCosineDir()
 {
-	double r0 = lameutil::g_RandGen.getDouble();
-	double r1 = lameutil::g_RandGen.getDouble();
-	double z = sqrt(1 - r1);
+	float r0 = lameutil::g_RandGen.getFloat();
+	float r1 = lameutil::g_RandGen.getFloat();
+	float z = std::sqrt(1.0f - r1);
 
-	double phi = 2 * M_PI * r0;
-	double x = cos(phi) * sqrt(r1);
-	double y = sin(phi) * sqrt(r1);
+	float phi = 2 * c_Pi * r0;
+	float x = std::cos(phi) * std::sqrt(r1);
+	float y = std::sin(phi) * std::sqrt(r1);
 
 	return Vec3(x, y, z);
 }
 
-Vec3 RandomSpecularDir(double shininess)
+Vec3 RandomSpecularDir(float shininess)
 {
-	double r0 = lameutil::g_RandGen.getDouble();
-	double r1 = lameutil::g_RandGen.getDouble();
-	double z = pow(r1, 1.0 / (shininess + 1));
+	float r0 = lameutil::g_RandGen.getFloat();
+	float r1 = lameutil::g_RandGen.getFloat();
+	float z = std::pow(r1, 1.0f / (shininess + 1.0f));
 
-	double phi = 2 * M_PI * r0;
-	double x = cos(phi) * sqrt(1.0 - z*z);
-	double y = sin(phi) * sqrt(1.0 - z*z);
+	float phi = 2 * c_Pi * r0;
+	float x = std::cos(phi) * std::sqrt(1.0f - z*z);
+	float y = std::sin(phi) * std::sqrt(1.0f - z*z);
 
 	return Vec3(x, y, z);
 }
@@ -72,29 +72,29 @@ Vec3 PointInUnitSphere()
 	do
 	{
 		// Sample direction in sphere
-		ret.x = lameutil::g_RandGen.getDouble() * 2.0 - 1.0;
-		ret.y = lameutil::g_RandGen.getDouble() * 2.0 - 1.0;
-		ret.z = lameutil::g_RandGen.getDouble() * 2.0 - 1.0;
-	} while(ret.x * ret.x + ret.y * ret.y + ret.z * ret.z > 1.0);
+		ret.x = lameutil::g_RandGen.getFloat() * 2.0f - 1.0f;
+		ret.y = lameutil::g_RandGen.getFloat() * 2.0f - 1.0f;
+		ret.z = lameutil::g_RandGen.getFloat() * 2.0f - 1.0f;
+	} while(ret.x * ret.x + ret.y * ret.y + ret.z * ret.z > 1.0f);
 	return ret;
 }
 
 Vec2 PointInUnitCircle()	//this appreas faster than rejection?
 {
-	double theta = lameutil::g_RandGen.getDouble() * 2 * M_PI;
-	double r = sqrt(lameutil::g_RandGen.getDouble());
-	return Vec2(r * cos(theta), r * sin(theta));
+	float theta = lameutil::g_RandGen.getFloat() * 2.0f * c_Pi;
+	float r = std::sqrt(lameutil::g_RandGen.getFloat());
+	return Vec2(r * std::cos(theta), r * std::sin(theta));
 }
 
-Vec3 PointInCone(double sqrRadius, double sqrDist)
+Vec3 PointInCone(float sqrRadius, float sqrDist)
 {
-	double r1 = lameutil::g_RandGen.getDouble();
-	double r2 = lameutil::g_RandGen.getDouble();
-	double z = 1 + r2 * (sqrt(1 - sqrRadius / sqrDist) - 1);
+	float r1 = lameutil::g_RandGen.getFloat();
+	float r2 = lameutil::g_RandGen.getFloat();
+	float z = 1.0f + r2 * (std::sqrt(1.0f - sqrRadius / sqrDist) - 1.0f);
 
-	double phi = 2 * M_PI * r1;
-	double x = cos(phi) * sqrt(1 - z * z);
-	double y = sin(phi) * sqrt(1 - z * z);
+	float phi = 2 * c_Pi * r1;
+	float x = std::cos(phi) * std::sqrt(1.0f - z * z);
+	float y = std::sin(phi) * std::sqrt(1.0f - z * z);
 
 	return Vec3(x, y, z);
 }
@@ -108,10 +108,10 @@ ONB::ONB(const Vec3& normal)
 	Vec3* uptr = (Vec3*)&u;	//BAD
 
 	//branchless ONB construction - pixar paper
-	double sign = copysign(1.0, normal.z);
-	const double a = -1.0 / (sign + normal.z);
-	const double b = normal.x * normal.y * a;
-	*vptr = Vec3(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x);
+	float sign = std::copysign(1.0f, normal.z);
+	const float a = -1.0f / (sign + normal.z);
+	const float b = normal.x * normal.y * a;
+	*vptr = Vec3(1.0f + sign * normal.x * normal.x * a, sign * b, -sign * normal.x);
 	*uptr = Vec3(b, sign + normal.y * normal.y * a, -normal.y);
 }
 
@@ -131,7 +131,7 @@ Vec3 ONB::operator[](int i) const
 	}
 }
 
-Vec3 ONB::local(double a, double b, double c) const
+Vec3 ONB::local(float a, float b, float c) const
 {
 	return a * u + b * v + c * w;
 }

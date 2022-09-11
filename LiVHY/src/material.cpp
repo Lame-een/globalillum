@@ -16,9 +16,9 @@ bool Material::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterIn
 	return false;
 }
 
-double Material::ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const
+float Material::ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const
 {
-	return 0.0;
+	return 0.0f;
 }
 
 const Material* Material::Default()
@@ -49,10 +49,10 @@ bool Diffuse::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInf
 	return true;
 }
 
-double Diffuse::ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const
+float Diffuse::ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const
 {
-	double cosine = glm::dot(hitInfo.normal, scatterRay.Dir());
-	return (cosine < 0) ? 0 : cosine * M_1_PI;
+	float cosine = glm::dot(hitInfo.normal, scatterRay.Dir());
+	return (cosine < 0.0f) ? 0.0f : cosine * c_1_Pi;
 }
 
 RGB Diffuse::Color() const
@@ -64,7 +64,7 @@ void Diffuse::SetColor(const RGB& color)
 	m_Color = color;
 }
 
-Glossy::Glossy(const RGB& color, double gloss, double exp)
+Glossy::Glossy(const RGB& color, float gloss, float exp)
 	: m_Color(color), m_Gloss(gloss), m_Shininess(exp)
 {
 }
@@ -76,10 +76,10 @@ bool Glossy::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo
 	scatterInfo.SetPdf(new MixturePDF(new SpecularPDF(hitInfo.normal, m_Shininess), new CosinePDF(hitInfo.normal), true));
 	return true;
 }
-double Glossy::ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const
+float Glossy::ScatterPDF(const Ray& incidentRay, const HitInfo& hitInfo, const Ray& scatterRay) const
 {
-	double cosNAlpha = pow(glm::dot(hitInfo.normal, scatterRay.Dir()), m_Shininess + 1);
-	return cosNAlpha < 0 ? 0 : (m_Shininess + 1) * cosNAlpha * M_2_PI;
+	float cosNAlpha = std::pow(glm::dot(hitInfo.normal, scatterRay.Dir()), m_Shininess + 1.0f);
+	return cosNAlpha < 0.0f ? 0.0f : (m_Shininess + 1.0f) * cosNAlpha * c_2_Pi;
 }
 
 RGB Glossy::Color() const
@@ -91,29 +91,29 @@ void Glossy::SetColor(const RGB& color)
 	m_Color = color;
 }
 
-double Glossy::Shininess() const
+float Glossy::Shininess() const
 {
 	return m_Shininess;
 }
-void Glossy::SetShininess(double shininess)
+void Glossy::SetShininess(float shininess)
 {
 	m_Shininess = shininess;
 }
 
-double Glossy::Gloss() const
+float Glossy::Gloss() const
 {
 	return m_Gloss;
 }
 
-void Glossy::SetGloss(double gloss)
+void Glossy::SetGloss(float gloss)
 {
 	m_Gloss = gloss;
 }
 
 
 
-Specular::Specular(const RGB& color, double roughness)
-	: m_Color(color), m_Roughness(std::clamp(roughness, 0.0, 1.0))
+Specular::Specular(const RGB& color, float roughness)
+	: m_Color(color), m_Roughness(std::clamp(roughness, 0.0f, 1.0f))
 {
 }
 
@@ -127,11 +127,11 @@ bool Specular::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterIn
 	return true;
 }
 
-double Specular::Roughness() const
+float Specular::Roughness() const
 {
 	return m_Roughness;
 }
-void Specular::SetRoughness(double roughness)
+void Specular::SetRoughness(float roughness)
 {
 	m_Roughness = roughness;
 }
@@ -147,24 +147,24 @@ void Specular::SetColor(const RGB& color)
 
 
 
-Transmissive::Transmissive(double ior)
+Transmissive::Transmissive(float ior)
 	: Material(false, true), m_IOR(ior)
 {
 }
 
-double reflectance(double cosine, double ref_idx)
+float reflectance(float cosine, float ref_idx)
 {
 	// Use Schlick's approximation for reflectance.
-	auto r0 = (1 - ref_idx) / (1 + ref_idx);
+	auto r0 = (1.0f - ref_idx) / (1.0f + ref_idx);
 	r0 = r0 * r0;
-	return r0 + (1 - r0) * pow((1 - cosine), 5);
+	return r0 + (1.0f - r0) * std::pow((1.0f - cosine), 5.0f);
 }
 
-Vec3 refract(const Vec3& uv, const Vec3& n, double etai_over_etat)
+Vec3 refract(const Vec3& uv, const Vec3& n, float etai_over_etat)
 {
-	auto cos_theta = glm::min(dot(-uv, n), 1.0);
+	auto cos_theta = glm::min(dot(-uv, n), 1.0f);
 	Vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
-	Vec3 r_out_parallel = -sqrt(abs(1.0 - glm::length2(r_out_perp))) * n;
+	Vec3 r_out_parallel = -sqrt(abs(1.0f - glm::length2(r_out_perp))) * n;
 	return r_out_perp + r_out_parallel;
 }
 
@@ -177,10 +177,10 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 
 	Vec3 normal = hitInfo.normal;
 	Vec3 view = hitInfo.ray.Dir();
-	double cosTheta = glm::dot(-view, normal);
-	double eta;
+	float cosTheta = glm::dot(-view, normal);
+	float eta;
 
-	if(cosTheta < 0)
+	if(cosTheta < 0.0f)
 	{
 		//leaving material
 		eta = m_IOR;
@@ -190,15 +190,15 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 	else
 	{
 		//entering material
-		eta = 1.0 / m_IOR;
+		eta = 1.0f / m_IOR;
 	}
 
 
-	double theta = acos(cosTheta);
-	double sinPhi = eta * sin(theta);
+	float theta = acos(cosTheta);
+	float sinPhi = eta * sin(theta);
 
 	//total internal reflection check and Fresnell reflection check (choose randomly)
-	if((sinPhi < -1.0) || (1.0 < sinPhi) || (SchlicksApprox(cosTheta, eta) > lameutil::g_RandGen.getDouble()))
+	if((sinPhi < -1.0f) || (1.0f < sinPhi) || (SchlicksApprox(cosTheta, eta) > lameutil::g_RandGen.getDouble()))
 	{
 		// Return reflection direction
 		Vec3 reflVec = glm::reflect(view, normal);
@@ -213,19 +213,19 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 	return true;
 }
 
-double Transmissive::IOR() const
+float Transmissive::IOR() const
 {
 	return m_IOR;
 }
 
-void Transmissive::SetIOR(double ior)
+void Transmissive::SetIOR(float ior)
 {
 	m_IOR = ior;
 }
 
 
 
-Light::Light(RGB color, double intensity)
+Light::Light(RGB color, float intensity)
 	: Material(true), m_Color(color* intensity)
 {
 }
