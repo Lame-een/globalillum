@@ -20,14 +20,14 @@ public:
 	/// @param[in] tMax Maximum ray length.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit the object.
-	virtual bool Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const;
+	virtual bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const;
 	/// @brief Constructs a bounding box around the object.
 	/// @param[out] outputBox The AABB of the object.
 	/// @return Returns true if able to construct an AABB.
 	virtual bool BoundingBox(AABB& outputBox) const;
 
 	virtual Vec3 Random(Vec3 point) const;
-	virtual float PdfValue(const Vec3& origin, const Vec3& dir) const;
+	virtual double PdfValue(const Vec3& origin, const Vec3& dir) const;
 
 	bool IsSamplingTarget() const;
 

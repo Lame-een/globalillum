@@ -29,64 +29,64 @@
 void cornellBoxExperimental()
 {
 	Viewport vp(Settings::imgWidth, Settings::imgHeight, Settings::fov);
-	Camera cam({0.0f,-6.0f,1.0f}, Vec3(0.0f,1.0f,0.0f), {0.0f,0.0f,1.0f});
+	Camera cam({0,-6,1}, Vec3(0,1,0), {0,0,1});
 
 	Diffuse matDiffGray(stringToRGB("#f0f0f0"));
-	Transmissive glass(1.4f);
+	Transmissive glass(1.4);
 	Diffuse matDiffGreen(Colors::limegreen);
 	Diffuse matDiffBlue(Colors::blue);
 	Diffuse matDiffWhite(Colors::white);
-	Specular matSpecular(Colors::lightgray, 0.01f);
+	Specular matSpecular(Colors::lightgray, 0.01);
 	Diffuse matDiffCrimson(Colors::crimson);
-	Light matEmissive(Colors::white, 20.0f);
-	Quad floor(Vec3(-2.0f, -2.0f, -1.0f),
-			   Vec3(2.0f, -2.0f, -1.0f),
-			   Vec3(2.0f, 2.0f, -1.0f),
-			   Vec3(-2.0f, 2.0f, -1.0f), &matDiffGray);
-	Quad ceiling(Vec3(-2.0f, -2.0f, 3.0f),
-				 Vec3(-2.0f, 2.0f, 3.0f), Vec3(2.0f, 2.0f, 3.0f),
-				 Vec3(2.0f, -2.0f, 3.0f), &matDiffGray);
-	Quad leftWall(Vec3(-2.0f, -2.0f, -1.0f),
-				  Vec3(-2.0f, 2.0f, -1.0f),
-				  Vec3(-2.0f, 2.0f, 3.0f),
-				  Vec3(-2.0f, -2.0f, 3.0f), &matDiffCrimson);
-	Quad backWall(Vec3(-2.0f, 2.0f, -1.0f),
-				  Vec3(2.0f, 2.0f, -1.0f),
-				  Vec3(2.0f, 2.0f, 3.0f),
-				  Vec3(-2.0f, 2.0f, 3.0f), &matDiffGreen);
-	Quad rightWall(Vec3(2.0f, 2.0f, -1.0f),
-				   Vec3(2.0f, -2.0f, -1.0f),
-				   Vec3(2.0f, -2.0f, 3.0f),
-				   Vec3(2.0f, 2.0f, 3.0f), &matDiffBlue);
-	Quad emissiveQuad(Vec3(0.5f, -0.5f, 3.0f),
-					  Vec3(-0.5f, -0.5f, 3.0f),
-					  Vec3(-0.5f, 0.5f, 3.0f),
-					  Vec3(0.5f, 0.5f, 3.0f), &matEmissive);
-	Quad emissiveQuad1(Vec3(0.5f - 1.0f, -0.5f, 3.0f),
-					   Vec3(-0.5f - 1.0f, -0.5f, 3.0f),
-					   Vec3(-0.5f - 1.0f, 0.5f, 3.0f),
-					   Vec3(0.5f - 1.0f, 0.5f, 3.0f), &matEmissive);
-	Quad emissiveQuad2(Vec3(0.5f + 1.0f, -0.5f, 3.0f),
-					   Vec3(-0.5f + 1.0f, -0.5f, 3.0f),
-					   Vec3(-0.5f + 1.0f, 0.5f, 3.0f),
-					   Vec3(0.5f + 1.0f, 0.5f, 3.0f), &matEmissive);
-	Triangle emissiveTri(Vec3(0.5f, -0.5f, 3.0f),
-						 Vec3(-0.5f, -0.5f, 3.0f),
-						 Vec3(-0.5f, 0.5f, 3.0f), &matEmissive);
+	Light matEmissive(Colors::white, 20);
+	Quad floor(Vec3(-2, -2, -1),
+			   Vec3(2, -2, -1),
+			   Vec3(2, 2, -1),
+			   Vec3(-2, 2, -1), &matDiffGray);
+	Quad ceiling(Vec3(-2, -2, 3),
+				 Vec3(-2, 2, 3), Vec3(2, 2, 3),
+				 Vec3(2, -2, 3), &matDiffGray);
+	Quad leftWall(Vec3(-2, -2, -1),
+				  Vec3(-2, 2, -1),
+				  Vec3(-2, 2, 3),
+				  Vec3(-2, -2, 3), &matDiffCrimson);
+	Quad backWall(Vec3(-2, 2, -1),
+				  Vec3(2, 2, -1),
+				  Vec3(2, 2, 3),
+				  Vec3(-2, 2, 3), &matDiffGreen);
+	Quad rightWall(Vec3(2, 2, -1),
+				   Vec3(2, -2, -1),
+				   Vec3(2, -2, 3),
+				   Vec3(2, 2, 3), &matDiffBlue);
+	Quad emissiveQuad(Vec3(0.5, -0.5, 3),
+					  Vec3(-0.5, -0.5, 3),
+					  Vec3(-0.5, 0.5, 3),
+					  Vec3(0.5, 0.5, 3), &matEmissive);
+	Quad emissiveQuad1(Vec3(0.5 - 1, -0.5, 3),
+					   Vec3(-0.5 - 1, -0.5, 3),
+					   Vec3(-0.5 - 1, 0.5, 3),
+					   Vec3(0.5 - 1, 0.5, 3), &matEmissive);
+	Quad emissiveQuad2(Vec3(0.5 + 1, -0.5, 3),
+					   Vec3(-0.5 + 1, -0.5, 3),
+					   Vec3(-0.5 + 1, 0.5, 3),
+					   Vec3(0.5 + 1, 0.5, 3), &matEmissive);
+	Triangle emissiveTri(Vec3(0.5, -0.5, 3),
+						 Vec3(-0.5, -0.5, 3),
+						 Vec3(-0.5, 0.5, 3), &matEmissive);
 
 
-	Sphere sphere0(Vec3(0.5f, 0.5f, 0.0f), 0.5f, &matDiffCrimson);
+	Sphere sphere0(Vec3(0.5, 0.5, 0.0), 0.5, &matDiffCrimson);
 	//Sphere sphere0(Vec3(0, 0, 0), 0.5, &mat1);
-	Sphere sphere1(Vec3(0.5f, -1.0f, -0.5f), 0.5f, &matEmissive);
+	Sphere sphere1(Vec3(0.5, -1, -0.5), 0.5, &matEmissive);
 
-	TriangleMesh box(std::vector<Vec3>{Vec3(-1.25f, -0.75f, -1.0f),
-					 Vec3(-1.0f, -1.0f, -1.0f),
-					 Vec3(-1.25f, -1.25f, -1.0f),
-					 Vec3(-1.5f, -1.0f, -1.0f),
-					 Vec3(-1.25f, -0.75f, 0.0f),
-					 Vec3(-1.0f, -1.0f, 0.0f),
-					 Vec3(-1.25f, -1.25f, 0.0f),
-					 Vec3(-1.5f, -1.0f, 0.0f)},
+	TriangleMesh box(std::vector<Vec3>{Vec3(-1.25, -0.75, -1),
+					 Vec3(-1, -1, -1),
+					 Vec3(-1.25, -1.25, -1),
+					 Vec3(-1.5, -1, -1),
+					 Vec3(-1.25, -0.75, 0),
+					 Vec3(-1, -1, 0),
+					 Vec3(-1.25, -1.25, 0),
+					 Vec3(-1.5, -1, 0)},
 					 std::vector<Vec3i>{Vec3i(0, 1, 2),
 					 Vec3i(2, 3, 0),
 					 Vec3i(5, 1, 0),
@@ -101,11 +101,11 @@ void cornellBoxExperimental()
 					 Vec3i(2, 6, 7)}, &matSpecular);
 
 	TriangleMesh pyramid(std::vector<Vec3>{
-		Vec3(-1.0f, 0.0f, 1.0f),
-			Vec3(0.0f, -1.0f, 1.0f),
-			Vec3(1.0f, 0.0f, 1.0f),
-			Vec3(0.0f, 1.0f, 1.0f),
-			Vec3(0.0f, 0.0f, 0.0f)},
+		Vec3(-1, 0, 1),
+			Vec3(0, -1, 1),
+			Vec3(1, 0, 1),
+			Vec3(0, 1, 1),
+			Vec3(0, 0, 0)},
 						 std::vector<Vec3i>{Vec3i(0, 1, 2),
 			Vec3i(2, 3, 0),
 			Vec3i(4, 1, 0),
@@ -114,18 +114,18 @@ void cornellBoxExperimental()
 			Vec3i(4, 0, 3)
 		}, &glass);
 
-	Quad frontWall0(Vec3(-4.0f, -2.1f, 0.0f),
-				  Vec3(4.0f, -2.1f, 0.0f),
-				  Vec3(4.0f, -2.1f, 2.0f),
-				  Vec3(-4.0f, -2.1, 2.0f), &glass);
-	Quad frontWall1(Vec3(4.0f, -2.0f, 2.0f),
-					Vec3(4.0f, -2.0f, 0.0f),
-					Vec3(-4.0f, -2.0f, 0.0f),
-					Vec3(-4.0f, -2.0f, 2.0f), &glass);
+	Quad frontWall0(Vec3(-4, -2.1, 0),
+				  Vec3(4, -2.1, 0),
+				  Vec3(4, -2.1, 2),
+				  Vec3(-4, -2.1, 2), &glass);
+	Quad frontWall1(Vec3(4, -2, 2),
+					Vec3(4, -2, 0),
+					Vec3(-4, -2, 0),
+					Vec3(-4, -2, 2), &glass);
 
 	Glossy gloss(Colors::crimson, 0.5, 50);
 
-	Sphere ssphere(Vec3(0.0f, 0.0f, 0.0f), 1.0f, &gloss, true, true);
+	Sphere ssphere(Vec3(0, 0, 0), 1, &gloss, true, true);
 	//Sphere ssphere(Vec3(1, -1, 0), 0.5, &glass);
 
 	Scene scene;
@@ -160,7 +160,7 @@ void sandbox()
 	Diffuse matGround(Colors::navy);
 	Diffuse matSphere(Colors::crimson);
 	Light matEmissive(Colors::white, 1);
-	Transmissive matGlass(1.4f);
+	Transmissive matGlass(1.4);
 	Quad floor(Vec3(-20, -20, 0),
 			   Vec3(20, -20, 0),
 			   Vec3(20, 20, 0),

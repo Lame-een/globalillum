@@ -30,13 +30,13 @@ const void AABB::Set(const Vec3& min, const Vec3& max)
 //Andrew Kensler implementation of the ray intercept function
 //TODO: check the Roman Winche (medium article) implementation
 //      for a possible speed boost.
-bool AABB::Hit(const Ray& ray, float tMin, float tMax) const
+bool AABB::Hit(const Ray& ray, double tMin, double tMax) const
 {
 	for (int axis = 0; axis < 3; axis++) {
-        float invD = 1.0f / ray.Dir()[axis];
-        float t0 = (m_Min[axis] - ray.Origin()[axis]) * invD;
-        float t1 = (m_Max[axis] - ray.Origin()[axis]) * invD;
-        if (invD < 0.0f)
+        double invD = 1.0 / ray.Dir()[axis];
+        double t0 = (m_Min[axis] - ray.Origin()[axis]) * invD;
+        double t1 = (m_Max[axis] - ray.Origin()[axis]) * invD;
+        if (invD <= 0.0)
             std::swap(t0, t1);
         tMin = t0 > tMin ? t0 : tMin;
         tMax = t1 < tMax ? t1 : tMax;

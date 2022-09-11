@@ -41,11 +41,11 @@ bool CubeMap::Loaded() const
 
 Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 {
-	float absX = abs(dir.x);
-	float absY = abs(dir.y);
-	float absZ = abs(dir.z);
+	double absX = abs(dir.x);
+	double absY = abs(dir.y);
+	double absZ = abs(dir.z);
 
-	float maxAxis, uc, vc;
+	double maxAxis, uc, vc;
 
 	if(dir.x > 0)
 	{
@@ -123,5 +123,5 @@ Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 	}
 
 	// Convert range from -1 to 1 to 0 to 1
-	return Vec2(0.5f * (uc / maxAxis + 1.0f), 0.5f * (vc / maxAxis + 1.0f));
+	return Vec2(0.5 * (uc / maxAxis + 1.0), 0.5 * (vc / maxAxis + 1.0));
 }

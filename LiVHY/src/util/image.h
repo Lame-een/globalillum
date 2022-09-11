@@ -12,7 +12,7 @@ public:
 
 	void SetPixel(int x, int y, const RGB& color);
 	RGB GetPixel(int x, int y);
-	RGB GetPixel(float u, float v);
+	RGB GetPixel(double u, double v);
 
 	const Vec2i& Dimensions();
 	bool IsLoaded() const;
@@ -21,7 +21,7 @@ public:
 	void WriteFile(const std::string& path);
 private:
 	Vec2i m_Dimensions;
-	float m_Gamma;
+	double m_Gamma;
 	bool m_Loaded;
 
 	unsigned char* m_Bitmap = nullptr;

@@ -98,7 +98,7 @@ int Settings::ArgParser(int argc, char* argv[])
 		else if(!strcmp(argv[i], "-fov"))
 		{
 			i++;
-			fov = c_Pi * std::max(0.1f, std::stof(argv[i])) / 180.0f;
+			fov = M_PI * std::max(0.1, std::stod(argv[i])) / 180.0;
 		}
 		else if(!strcmp(argv[i], "-bg") || !strcmp(argv[i], "-background"))
 		{
@@ -133,7 +133,7 @@ int Settings::ArgParser(int argc, char* argv[])
 		else if(!strcmp(argv[i], "-gamma"))
 		{
 			i++;
-			gamma = std::max(0.1f, std::stof(argv[i]));
+			gamma = std::max(0.1, std::stod(argv[i]));
 		}
 		//flags
 		else if(!strcmp(argv[i], "-continuous"))

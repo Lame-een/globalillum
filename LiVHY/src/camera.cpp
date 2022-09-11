@@ -46,7 +46,7 @@ const Vec3& Camera::Right() const
 void Camera::LookAt(const Vec3& tgt)
 {
 	m_Dir = glm::normalize(tgt - m_Position);
-	m_Right = glm::normalize(glm::cross(m_Dir, Vec3(0.0f, 0.0f, 1.0f)));
+	m_Right = glm::normalize(glm::cross(m_Dir, Vec3(0.0, 0.0, 1.0)));
 	m_Up = glm::normalize(glm::cross(m_Right, m_Dir));
 }
 
@@ -58,20 +58,20 @@ void Camera::RecalculateVectors()
 }
 
 
-void Camera::SetPlanes(float nearPlane, float farPlane)
+void Camera::SetPlanes(double nearPlane, double farPlane)
 {
 	m_NearPlane = nearPlane;
 	m_FarPlane = farPlane;
 }
 
-float Camera::NearPlane()
+double Camera::NearPlane()
 {
 	return Camera::m_NearPlane;
 }
-float Camera::FarPlane()
+double Camera::FarPlane()
 {
 	return Camera::m_FarPlane;
 }
 
-float Camera::m_NearPlane = c_Epsilon;
-float Camera::m_FarPlane = 10000.0f;
+double Camera::m_NearPlane = c_Epsilon;
+double Camera::m_FarPlane = 10000.0;

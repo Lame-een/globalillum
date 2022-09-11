@@ -36,21 +36,21 @@ public:
 private:
 	void RecalculateVectors();
 
-	Vec3 m_Position = Vec3(0.0f, 0.0f, 0.0f);
-	Vec3 m_Dir = Vec3(0.0f, 1.0f, 0.0f);
-	Vec3 m_Up = Vec3(0.0f, 0.0f, 1.0f);
-	Vec3 m_Right = Vec3(1.0f, 0.0f, 0.0f);
+	Vec3 m_Position = Vec3(0.0, 0.0, 0.0);
+	Vec3 m_Dir = Vec3(0.0, 1.0, 0.0);
+	Vec3 m_Up = Vec3(0.0, 0.0, 1.0);
+	Vec3 m_Right = Vec3(1.0, 0.0, 0.0);
 
 public:
 	///@brief Set the clipping planes of the cammera
 	///@param[in] nearPlane The minimum distance at which the 
 	///@param[in] farPlane
-	static void SetPlanes(float nearPlane, float farPlane);
+	static void SetPlanes(double nearPlane, double farPlane);
 
-	static float NearPlane();
-	static float FarPlane();
+	static double NearPlane();
+	static double FarPlane();
 
 private:
-	static float m_NearPlane;
-	static float m_FarPlane;
+	static double m_NearPlane;
+	static double m_FarPlane;
 };

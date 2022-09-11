@@ -33,9 +33,9 @@ Scene::~Scene()
 
 
 //O(N) implementation which bruteforces the check against every object.
-//bool Scene::Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo)
+//bool Scene::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo)
 //{
-//	hitInfo.t = std::numeric_limits<float>::max();
+//	hitInfo.t = std::numeric_limits<double>::max();
 //	HitInfo auxInfo = hitInfo;
 //	bool hit = false;
 //	for(auto obj : m_Objects)
@@ -51,7 +51,7 @@ Scene::~Scene()
 
 /// The function uses the BVH to quickly check if the ray hits any objects in
 /// the scene.
-bool Scene::Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const
+bool Scene::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const
 {
 	return m_BVH->Hit(ray, tMin, tMax, hitInfo);
 }
@@ -148,7 +148,7 @@ void Scene::SetCamera(Camera* cam)
 
 bool Scene::OcclusionTest(const Vec3& point, const Vec3& lightPoint) const
 {
-	float distToLight = glm::distance2(point, lightPoint);
+	double distToLight = glm::distance2(point, lightPoint);
 
 	Ray occlusionRay(point, lightPoint - point);
 	occlusionRay.Normalize();

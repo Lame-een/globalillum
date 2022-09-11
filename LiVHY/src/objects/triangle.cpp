@@ -28,37 +28,37 @@ Triangle::Triangle(const Vec3* arr, const Material* material, bool cull, bool sa
 	m_Area = glm::dot(arr[1] - arr[0], arr[2] - arr[0]);
 }
 
-bool Triangle::Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const
+bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const
 {
 	Vec3 ab = m_Vertices[1] - m_Vertices[0];
 	Vec3 ac = m_Vertices[2] - m_Vertices[0];
 	Vec3 pvec = glm::cross(ray.Dir(), ac);
-	float det = glm::dot(ab, pvec);
+	double det = glm::dot(ab, pvec);
 
 	if(m_Cull)
 	{
-		if((det < c_Epsilon))
+		if((det < c_DoubleEpsilon))
 		{
 			return false; //backface culling
 		}
 	}
 	else
 	{
-		if(abs(det) < c_Epsilon)
+		if(abs(det) < c_DoubleEpsilon)
 		{
 			return false; //parallel to the triangle
 		}
 	}
 
-	float invDet = 1 / det;
+	double invDet = 1 / det;
 
 	Vec3 tvec = ray.Origin() - m_Vertices[0];
-	float& u = hitInfo.uv[0];
+	double& u = hitInfo.uv[0];
 	u = glm::dot(tvec, pvec) * invDet;
 	if(u < -c_Epsilon || u > 1 + c_Epsilon) return false;	//added epsilon to reduce gaps in meshes
 
 	Vec3 qvec = glm::cross(tvec, ab);
-	float& v = hitInfo.uv[1];
+	double& v = hitInfo.uv[1];
 	v = glm::dot(ray.Dir(), qvec) * invDet;
 	if(v < -c_Epsilon || u + v > 1 + c_Epsilon) return false;
 
@@ -91,8 +91,8 @@ bool Triangle::BoundingBox(AABB& outputBox) const
 
 Vec3 Triangle::Random(Vec3 point) const
 {
-	float r0 = lameutil::g_RandGen.getFloat();
-	float r1 = lameutil::g_RandGen.getFloat();
+	double r0 = lameutil::g_RandGen.getDouble();
+	double r1 = lameutil::g_RandGen.getDouble();
 
 	if(r0 + r1 >= 1)
 	{
@@ -106,16 +106,16 @@ Vec3 Triangle::Random(Vec3 point) const
 	return samplePoint - point;
 }
 
-float Triangle::PdfValue(const Vec3& origin, const Vec3& dir) const
+double Triangle::PdfValue(const Vec3& origin, const Vec3& dir) const
 {
 	HitInfo hitInfo;
 	if(!this->Hit(Ray(origin, dir), Camera::NearPlane(), Camera::FarPlane(), hitInfo))
-		return 0.0f;
+		return 0;
 
-	//float dist2 = hitInfo.t * hitInfo.t * glm::length2(dir);
-	//float cosine = glm::abs(glm::dot(dir, hitInfo.normal)) / glm::length(dir);
-	float dist2 = hitInfo.t * hitInfo.t;
-	float cosine = glm::abs(glm::dot(dir, hitInfo.normal));
+	//double dist2 = hitInfo.t * hitInfo.t * glm::length2(dir);
+	//double cosine = glm::abs(glm::dot(dir, hitInfo.normal)) / glm::length(dir);
+	double dist2 = hitInfo.t * hitInfo.t;
+	double cosine = glm::abs(glm::dot(dir, hitInfo.normal));
 
 	return dist2 / (cosine * m_Area);
 }
@@ -137,7 +137,7 @@ const Vec3& Triangle::Normal() const
 	return m_Normal;
 }
 
-const float Triangle::Area() const
+const double Triangle::Area() const
 {
 	return m_Area;
 }

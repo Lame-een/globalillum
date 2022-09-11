@@ -24,7 +24,7 @@ public:
 	/// @param[in] tMax Maximum ray length.
 	/// @param[out] hitInfo Reference to the information about the hit.
 	/// @return Returns true if the ray hit an object in the scene.
-	bool Hit(const Ray& ray, float tMin, float tMax, HitInfo& hitInfo) const;
+	bool Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) const;
 
     // @brief Constructs a bounding box around the objects.
     // @param[out] outputBox The AABB of all the objects in the scene.
