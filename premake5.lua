@@ -29,5 +29,5 @@ project "GlobalIllumination"
       runtime "Release"
       optimize "On"
       openmp "On"
-      filter {"system:linux", "action:gmake"}
+      filter {"action:gmake"}
          linkoptions {"-fopenmp"}
