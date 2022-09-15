@@ -20,6 +20,7 @@ docs/
 *.userprefs
 
 # Build results
+*.exe
 # [Dd]ebug/
 intermediates/
 [Dd]ebugPublic/
