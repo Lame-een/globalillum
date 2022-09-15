@@ -40,9 +40,9 @@ void Image::SetPixel(int x, int y, const RGB& color)
 {
 	size_t index = (y * m_Dimensions.x + x) * 3;
 
-	m_Bitmap[index] = static_cast<char>(255 * std::clamp(pow(color.r, m_Gamma), 0.0, 1.0));
-	m_Bitmap[index + 1] = static_cast<char>(255 * std::clamp(pow(color.g, m_Gamma), 0.0, 1.0));
-	m_Bitmap[index + 2] = static_cast<char>(255 * std::clamp(pow(color.b, m_Gamma), 0.0, 1.0));
+	m_Bitmap[index] = static_cast<unsigned char>(255 * std::clamp(std::pow(color.r, m_Gamma), 0.0, 1.0));
+	m_Bitmap[index + 1] = static_cast<unsigned char>(255 * std::clamp(std::pow(color.g, m_Gamma), 0.0, 1.0));
+	m_Bitmap[index + 2] = static_cast<unsigned char>(255 * std::clamp(std::pow(color.b, m_Gamma), 0.0, 1.0));
 }
 
 RGB Image::GetPixel(int x, int y)
@@ -57,8 +57,8 @@ RGB Image::GetPixel(int x, int y)
 
 RGB Image::GetPixel(double u, double v)
 {
-	int x = static_cast<int>((1.0 - u) * m_Dimensions.x);
-	int y = static_cast<int>((1.0 - v) * m_Dimensions.y);
+	int x = static_cast<int>((1.0 - u) * (m_Dimensions.x - 1));
+	int y = static_cast<int>((1.0 - v) * (m_Dimensions.y - 1));
 	int index = (x + y * m_Dimensions.x)*3;
 	RGB ret(m_Bitmap[index], m_Bitmap[index + 1], m_Bitmap[index + 2]);
 	ret /= 255.0;

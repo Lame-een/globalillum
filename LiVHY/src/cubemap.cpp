@@ -41,9 +41,9 @@ bool CubeMap::Loaded() const
 
 Vec2 CubeMap::VecToUV(const Vec3& dir, int& imgIndex) const
 {
-	double absX = abs(dir.x);
-	double absY = abs(dir.y);
-	double absZ = abs(dir.z);
+	double absX = std::abs(dir.x);
+	double absY = std::abs(dir.y);
+	double absZ = std::abs(dir.z);
 
 	double maxAxis, uc, vc;
 

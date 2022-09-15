@@ -21,16 +21,16 @@ docs/
 
 # Build results
 # [Dd]ebug/
+intermediates/
 [Dd]ebugPublic/
-[Rr]elease/
+#[Rr]elease/
 [Rr]eleases/
-x64/
+#x64/
 x86/
 bld/
-[Bb]in/
+# [Bb]in/
 [Oo]bj/
 [Ll]og/
-bin/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
