@@ -8,7 +8,7 @@ inline void cornellBoxWindow()
 	Camera cam({0,-6,1}, {0,1,0}, {0,0,1});
 	Image img(vp.Width(), vp.Height());
 
-	Diffuse matUpDown(stringToRGB("#808080"));
+	Diffuse matUpDown(StringToRGB("#808080"));
 	Diffuse matLeft(Colors::crimson);
 	Diffuse matRight(Colors::lightblue);
 	Diffuse matBack(Colors::forestgreen);
@@ -99,6 +99,6 @@ inline void cornellBoxWindow()
 
 	scene.ConstructBvh();
 
-	rayTracer(vp, scene);
+	RayTracer(vp, scene);
 	return;
 }

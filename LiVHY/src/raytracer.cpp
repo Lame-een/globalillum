@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "raytracer.h"
 
-RGB traceRay(const Scene& scene, const Ray& ray, int depth)
+RGB TraceRay(const Scene& scene, const Ray& ray, int depth)
 {
 	if(depth == Settings::raytracerDepth)
 	{
@@ -23,7 +23,7 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 	if(scatterInfo.isSpecular)
 	{
 		return scatterInfo.color
-			* traceRay(scene, scatterInfo.bounceRay, depth + 1);
+			* TraceRay(scene, scatterInfo.bounceRay, depth + 1);
 	}
 
 	Ray scatteredRay;
@@ -51,10 +51,10 @@ RGB traceRay(const Scene& scene, const Ray& ray, int depth)
 
 	return emitted
 		+ scatterInfo.color * hitInfo.object->GetMaterial()->ScatterPDF(ray, hitInfo, scatteredRay)
-		* traceRay(scene, scatteredRay, depth + 1) / pdfVal;
+		* TraceRay(scene, scatteredRay, depth + 1) / pdfVal;
 }
 
-void rayTracer(const Viewport& vp, const Scene& scene)
+void RayTracer(const Viewport& vp, const Scene& scene)
 {
 	std::cout << "\nRendering..." << std::endl;
 	const Camera& cam = *scene.Cam();
@@ -81,7 +81,7 @@ void rayTracer(const Viewport& vp, const Scene& scene)
 				Ray ray(cam.Position(), x * cam.Right() + y * cam.Up() + cam.Dir());
 				ray.Normalize();
 
-				colorBuffer += traceRay(scene, ray);
+				colorBuffer += TraceRay(scene, ray);
 			}
 			colorBuffer *= (1.0 / Settings::samplesPerPixel);
 

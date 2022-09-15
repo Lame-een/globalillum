@@ -41,6 +41,4 @@ private:
 	Object* m_Left = nullptr;
 	Object* m_Right = nullptr;
 	AABB m_BoundingBox;
-
-	lameutil::EasyRandom m_RandGenerator;
 };

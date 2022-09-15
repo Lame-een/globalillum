@@ -103,7 +103,7 @@ int Settings::ArgParser(int argc, char* argv[])
 		else if(!strcmp(argv[i], "-bg") || !strcmp(argv[i], "-background"))
 		{
 			i++;
-			bgColor = stringToRGB(argv[i]);
+			bgColor = StringToRGB(argv[i]);
 		}
 		else if(!strcmp(argv[i], "-bgimg") || !strcmp(argv[i], "-background-image"))
 		{

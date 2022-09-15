@@ -60,12 +60,12 @@ namespace lameutil
 			std::random_device rd;
 			generator = std::default_random_engine(rd());
 		}
-		EasyRandom(std::seed_seq& seed)
+		EasyRandom(const std::seed_seq& seed)
 		{
 			setSeed(seed);
 		}
 
-		void setSeed(std::seed_seq& seed)
+		void setSeed(const std::seed_seq& seed)
 		{
 			generator.seed(seed);
 		}

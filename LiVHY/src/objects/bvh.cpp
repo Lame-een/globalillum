@@ -32,7 +32,7 @@ BVHNode::BVHNode(const std::vector<Object*>& objects, size_t start, size_t end)
 	}
 	std::vector<Object*> objs = objects; //create a modifiable copy
 
-	int axis = m_RandGenerator.getInt(0, 2 + 1);
+	int axis = lameutil::g_RandGen.getInt(0, 2 + 1);
 	size_t span = end - start;
 
 	if(span == 1)	//doing a manual check for a single element

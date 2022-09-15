@@ -5,6 +5,6 @@
 #include "scene.h"
 #include "pdf.h"
 
-RGB traceRay(const Scene& scene, const Ray& ray, int depth = 0);
+RGB TraceRay(const Scene& scene, const Ray& ray, int depth = 0);
 
-void rayTracer(const Viewport& vp, const Scene& scene);
+void RayTracer(const Viewport& vp, const Scene& scene);

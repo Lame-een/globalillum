@@ -8,7 +8,7 @@ inline void threeMetals()
 	Image img(vp.Width(), vp.Height());
 
 	Light matEmissive(Colors::white, 10);
-	Specular matBlue(stringToRGB("#4a7cd7"), 0.1);
+	Specular matBlue(StringToRGB("#4a7cd7"), 0.1);
 	Specular silver(RGB(0.508273, 0.508273, 0.508273), 0.05);
 	Specular copper(RGB(0.580594, 0.223257, 0.0695701), 0.15);
 	Specular gold(RGB(0.797357, 0.723991, 0.208006), 0.0);
@@ -37,6 +37,6 @@ inline void threeMetals()
 
 	scene.ConstructBvh();
 
-	rayTracer(vp, scene);
+	RayTracer(vp, scene);
 	return;
 }

@@ -20,7 +20,6 @@
 #include "camera.h"
 #include "viewport.h"
 
-#include "nanoflann.hpp"
 #include <iomanip>
 
 //#include "glm/gtx/norm.hpp"
@@ -31,7 +30,7 @@ void cornellBoxExperimental()
 	Viewport vp(Settings::imgWidth, Settings::imgHeight, Settings::fov);
 	Camera cam({0,-6,1}, Vec3(0,1,0), {0,0,1});
 
-	Diffuse matDiffGray(stringToRGB("#f0f0f0"));
+	Diffuse matDiffGray(StringToRGB("#f0f0f0"));
 	Transmissive glass(1.4);
 	Diffuse matDiffGreen(Colors::limegreen);
 	Diffuse matDiffBlue(Colors::blue);
@@ -148,7 +147,7 @@ void cornellBoxExperimental()
 
 	scene.ConstructBvh();
 
-	rayTracer(vp, scene);
+	RayTracer(vp, scene);
 	return;
 }
 
@@ -178,7 +177,7 @@ void sandbox()
 
 	scene.ConstructBvh();
 
-	rayTracer(vp, scene);
+	RayTracer(vp, scene);
 	return;
 }
 

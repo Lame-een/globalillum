@@ -119,8 +119,9 @@ Specular::Specular(const RGB& color, double roughness)
 
 bool Specular::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, ScatterInfo& scatterInfo) const
 {
-	Vec3 reflected = glm::reflect(incidentRay.Dir(), hitInfo.normal);
-	scatterInfo.bounceRay = Ray(hitInfo.point, reflected + m_Roughness * PointInUnitSphere());
+	Vec3 reflected = glm::reflect(incidentRay.Dir(), hitInfo.normal)+ m_Roughness * PointInUnitSphere();
+	scatterInfo.bounceRay.SetDir(reflected);
+	scatterInfo.bounceRay.SetOrigin(hitInfo.point + reflected * c_Epsilon);
 	scatterInfo.color = m_Color;
 	scatterInfo.isSpecular = true;
 	scatterInfo.SetPdf(nullptr);
