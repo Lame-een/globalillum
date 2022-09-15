@@ -9,7 +9,7 @@ This project is meant as an implementation of a global illumination raytracer as
 # Getting started
 
 ## Dependencies
-* This project uses `premake5` for automatic configuration building.
+* This project uses [`premake5`](https://premake.github.io/) for automatic configuration building.
 * `OpenMP` is necessary to run the release build of the program.
 * [`GLM`](https://github.com/g-truc/glm) is used for it's powerful vectors, matrices and corresponding functions.
 * Helper classes and functions are taken from [my tiny utility library]().
@@ -26,6 +26,8 @@ If the repository was cloned non-recursively previously, use `git submodule upda
 Run premake5 alongside the premake5.lua file with the `vs2022` argument to create a Visual Studio solution.
 
 ### Linux
+Make sure that `OpenMP` is installed, if it isn't it can be installed by running `sudo apt install libomp-dev`.
+
 Run premake5 alongside the premake5.lua file with the `gmake` argument to create a Makefile, which can be used to compile the program. 
 
 The default configuration should produce a release build. The configuration can be chosen by setting the make's config argument to either `config=release` or `config=debug`.
@@ -133,7 +135,7 @@ I want to thank:
 
 # Gallery
 
-..pics here
+...pics here
 
 # References
 
