@@ -129,8 +129,6 @@ I want to thank:
 
 * *Peter Shirley* and his team for the book on ["Fundamentals of Computer Graphics"][2] as well as the ["Raytracer in Weekend"](https://raytracing.github.io/) series.
 
-* [*Reilly Bova*](https://github.com/ReillyBova) for the initial inspiration on the topic with his photon map raytracer.
-
 * My mentor on this project ** for introducing me into the field of 3D computer graphics as well as helping me with his mentorship around the project.
 
 # Gallery
