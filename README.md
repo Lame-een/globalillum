@@ -16,7 +16,7 @@ This project is meant as an implementation of a global illumination raytracer as
 * [stbimage's](https://github.com/nothings/stb) headers for image loading and writing are used for image file handling.
 
 ## Downloading
-Cloning the repository can be done with `git clone --recursive https://github.com/Lame-een/livhy`.
+Cloning the repository can be done with `git clone --recursive https://github.com/Lame-een/GIrt`.
 
 If the repository was cloned non-recursively previously, use `git submodule update --init` to clone the necessary submodules.
 
@@ -38,7 +38,7 @@ By default the application will be built in the `./bin/x64/%configuration%` dire
 The program can be run in the CLI using the following arguments:
 
 ```
-LiVHY.exe [OPTIONS] output_image_name
+GIrt.exe [OPTIONS] output_image_name
 ```
 
 The program settings can be set by adding `OPTIONS` flags. Here's a breakdown of all of them:
@@ -60,9 +60,9 @@ The program settings can be set by adding `OPTIONS` flags. Here's a breakdown of
 
 
 Example usage:
-* `$ LiVHY.exe -help` -- displays all of the possible CLI arguments.
+* `$ GIrt.exe -help` -- displays all of the possible CLI arguments.
 
-* `$ LiVHY.exe -w 250 -h 250 -demo 0 demo_0_render` -- sets the width and height to 250px, and starts rendering the demo #0 while saving it as "demo_0_render.png".
+* `$ GIrt.exe -w 250 -h 250 -demo 0 demo_0_render` -- sets the width and height to 250px, and starts rendering the demo #0 while saving it as "demo_0_render.png".
 
 # How it works
 The program is a raytracer which uses Monte Carlo integration for approximation luminance. As with a standard raytracer, rays are sent out from a point which simulates a camera sensor or the eye's retina.
@@ -114,14 +114,19 @@ namespace ExampleNamespace{
 ```
 
 ## Code organisation
-All source files must be *cameCase*. They must be in the `./LiVHY/src` directory and their corresponding header files much be next to them in the same directory.
-Helper classes, functions and other objects should be in the `./LiVHY/src/util` directory.
+All source files must be *cameCase*. They must be in the `./GIrt/src` directory and their corresponding header files much be next to them in the same directory.
+Helper classes, functions and other objects should be in the `./GIrt/src/util` directory.
 
-Vendor files and other dependencies *must* be in the `./LiVHY/vendor` directory.
+Vendor files and other dependencies *must* be in the `./GIrt/vendor` directory.
 
 # Licenses
 
-GLM license can be found [here](https://github.com/g-truc/glm/blob/master/copying.txt) as well as in the `./licenses` directory.
+GLM license can be found [here](https://github.com/g-truc/glm/blob/master/copying.txt).
+
+stb_image license can be found [here](https://github.com/nothings/stb/blob/master/LICENSE).
+
+The project includes 2 cubemaps from Emil Persson (a.k.a Humus) which are licensed under
+Creative Commons Attribution 3.0 Unported License. For further info, see [here](http://www.humus.name/index.php?page=Textures).
 
 # Credits and acknowledgments
 I want to thank:

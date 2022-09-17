@@ -11,26 +11,26 @@ ifndef verbose
 endif
 
 ifeq ($(config),release)
-  GlobalIllumination_config = release
+  GIrt_config = release
 endif
 ifeq ($(config),debug)
-  GlobalIllumination_config = debug
+  GIrt_config = debug
 endif
 
-PROJECTS := GlobalIllumination
+PROJECTS := GIrt
 
 .PHONY: all clean help $(PROJECTS) 
 
 all: $(PROJECTS)
 
-GlobalIllumination:
-ifneq (,$(GlobalIllumination_config))
-	@echo "==== Building GlobalIllumination ($(GlobalIllumination_config)) ===="
-	@${MAKE} --no-print-directory -C LiVHY -f Makefile config=$(GlobalIllumination_config)
+GIrt:
+ifneq (,$(GIrt_config))
+	@echo "==== Building GIrt ($(GIrt_config)) ===="
+	@${MAKE} --no-print-directory -C GIrt -f Makefile config=$(GIrt_config)
 endif
 
 clean:
-	@${MAKE} --no-print-directory -C LiVHY -f Makefile clean
+	@${MAKE} --no-print-directory -C GIrt -f Makefile clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
@@ -42,6 +42,6 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
-	@echo "   GlobalIllumination"
+	@echo "   GIrt"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

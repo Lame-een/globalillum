@@ -1,4 +1,4 @@
-This software includes third party open source software components: stb_image, glm, nanoflann. Each of these software components have their own license. See the belonging files or in ./licenses
+This software includes third party open source software components: stb_image, glm. Each of these software components have their own license. See the README.md file for further info about their licenses.
 
 The rest of the software is licensed under:
 MIT License

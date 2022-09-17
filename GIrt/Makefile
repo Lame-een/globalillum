@@ -13,7 +13,7 @@ endif
 ifeq ($(config),release)
   RESCOMP = windres
   TARGETDIR = ../bin/x64/Release
-  TARGET = $(TARGETDIR)/GlobalIllumination.exe
+  TARGET = $(TARGETDIR)/GIrt.exe
   OBJDIR = ../bin/intermediates/Release
   PCH = src/pch.h
   GCH = $(OBJDIR)/$(notdir $(PCH)).gch
@@ -42,7 +42,7 @@ endif
 ifeq ($(config),debug)
   RESCOMP = windres
   TARGETDIR = ../bin/x64/Debug
-  TARGET = $(TARGETDIR)/GlobalIllumination.exe
+  TARGET = $(TARGETDIR)/GIrt.exe
   OBJDIR = ../bin/intermediates/Debug
   PCH = src/pch.h
   GCH = $(OBJDIR)/$(notdir $(PCH)).gch
@@ -100,7 +100,7 @@ ifeq (.exe,$(findstring .exe,$(ComSpec)))
 endif
 
 $(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)
-	@echo Linking GlobalIllumination
+	@echo Linking GIrt
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -123,7 +123,7 @@ else
 endif
 
 clean:
-	@echo Cleaning GlobalIllumination
+	@echo Cleaning GIrt
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(OBJDIR)
