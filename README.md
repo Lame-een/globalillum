@@ -12,11 +12,11 @@ This project is meant as an implementation of a global illumination raytracer as
 * This project uses [`premake5`](https://premake.github.io/) for automatic configuration building.
 * `OpenMP` is necessary to run the release build of the program.
 * [`GLM`](https://github.com/g-truc/glm) is used for it's powerful vectors, matrices and corresponding functions.
-* Helper classes and functions are taken from [my tiny utility library]().
+* Helper classes and functions are taken from [my tiny utility library](https://github.com/Lame-een/LameUtil).
 * [stbimage's](https://github.com/nothings/stb) headers for image loading and writing are used for image file handling.
 
 ## Downloading
-Cloning the repository can be done with `git clone --recursive https://github.com/Lame-een/GIrt`.
+Cloning the repository can be done with `git clone --recursive https://github.com/Lame-een/globalillum`.
 
 If the repository was cloned non-recursively previously, use `git submodule update --init` to clone the necessary submodules.
 
