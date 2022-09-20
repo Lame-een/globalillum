@@ -62,7 +62,7 @@ bool Triangle::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) c
 	v = glm::dot(ray.Dir(), qvec) * invDet;
 	if(v < -c_Epsilon || u + v > 1 + c_Epsilon) return false;
 
-	hitInfo.ray = ray;
+	//hitInfo.ray = ray;
 	hitInfo.t = glm::dot(ac, qvec) * invDet;
 	if(hitInfo.t < tMin) return false;
 

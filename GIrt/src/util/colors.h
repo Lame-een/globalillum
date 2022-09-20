@@ -3,32 +3,6 @@
 #include "types.h"
 #include "glm/common.hpp"
 
-constexpr double MaxChannelValue(const RGB& rgb)
-{
-	if(rgb.r > rgb.b)
-	{
-		if(rgb.r > rgb.g)
-		{
-			return rgb.r;
-		}
-		else
-		{
-			return rgb.g;
-		}
-	}
-	else
-	{
-		if(rgb.b > rgb.g)
-		{
-			return rgb.b;
-		}
-		else
-		{
-			return rgb.g;
-		}
-	}
-}
-
 /// @brief Helper function that converts 3 ints into a RGB.
 /// @param[in] red Red value of the RGB
 /// @param[in] green Green value of the RGB

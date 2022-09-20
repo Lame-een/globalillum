@@ -10,7 +10,6 @@ class Object;
 struct HitInfo
 {
 public:
-	Ray ray;
 	Vec3 point;
 	Vec3 normal;
 	const Object* object = nullptr;

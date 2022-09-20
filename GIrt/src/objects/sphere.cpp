@@ -43,8 +43,8 @@ bool Sphere::Hit(const Ray& ray, double tMin, double tMax, HitInfo& hitInfo) con
 		hitInfo.t = t0;
 	}
 
-	hitInfo.uv = Vec2(-1.0); //TEMP not implemented UV mapping
-	hitInfo.ray = ray;
+	//hitInfo.uv = Vec2(-1.0); //TEMP not implemented UV mapping
+	//hitInfo.ray = ray;
 	hitInfo.normal = glm::normalize(L + hitInfo.t * ray.Dir());
 	hitInfo.object = this;
 	hitInfo.point = ray.Origin() + ray.Dir() * hitInfo.t;

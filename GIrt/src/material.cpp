@@ -177,7 +177,7 @@ bool Transmissive::Scatter(const Ray& incidentRay, const HitInfo& hitInfo, Scatt
 	//scatterInfo.bounceRay.SetOrigin(hitInfo.point);
 
 	Vec3 normal = hitInfo.normal;
-	Vec3 view = hitInfo.ray.Dir();
+	Vec3 view = incidentRay.Dir();
 	double cosTheta = glm::dot(-view, normal);
 	double eta;
 
