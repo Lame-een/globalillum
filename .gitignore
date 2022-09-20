@@ -5,7 +5,20 @@
 
 ## Temporarily ignore
 out/
-docs/
+
+# Tex ignore
+_minted-*
+*.out
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.run.xml
+*.synctex.gz
+*.fls
+*.toc
+*blx.bib
+
 
 # User-specific files
 *.suo

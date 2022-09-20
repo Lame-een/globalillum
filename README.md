@@ -138,7 +138,20 @@ I want to thank:
 
 # Gallery
 
-...pics here
+### Difuse interactions demo
+![Difuse demo](./docs/gallery/demo0.png "Difuse interactions demo")
+
+### Transmissive interactions demo
+![Transmissive demo](./docs/gallery/demo1.png "Transmissive interactions demo")
+
+### Specular interactions demo with roughness values of 0.01 and 0.5
+![Specular demo](./docs/gallery/demo2.png "Specular interactions demo with roughness values of 0.01 and 0.5")
+
+### Global illumination from the cubemap with light coming through a window.
+![Window global ilumination demo](./docs/gallery/demo3.png "Global illumination from the cubemap with light coming through a window.")
+
+### Three metal spheres demo - specular reflections of the cubemap
+![Three metal spheres demo](./docs/gallery/demo4.png "Three metal spheres demo - specular reflections of the cubemap")
 
 # References
 
