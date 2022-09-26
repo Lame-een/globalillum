@@ -5,6 +5,8 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <sstream>
+#include <fstream>
 #include <cstring>
 #include <filesystem>
 

@@ -44,14 +44,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 
-![Bb]in/x64
-[Bb]in/x64/*
-![Bb]in/x64/[Dd]ebug
-![Bb]in/x64/[Rr]elease
-[Bb]in/x64/[Dd]ebug/*
-[Bb]in/x64/[Rr]elease/*
-![Bb]in/x64/[Dd]ebug/cubemaps
-![Bb]in/x64/[Rr]elease/cubemaps
+!GIrt/assets
+!GIrt/assets/models
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -91,7 +85,7 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
+# *.obj
 *.iobj
 *.pch
 *.pdb

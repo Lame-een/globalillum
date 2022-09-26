@@ -11,6 +11,50 @@ TriangleMesh::TriangleMesh(const std::vector<Vec3>& vertices, const std::vector<
 	}
 }
 
+TriangleMesh::TriangleMesh(const std::string& objectName, const Material* material, bool cull, bool samplingTarget)
+	: Object(material, cull, samplingTarget)
+{
+	std::ifstream in;
+	in.open("./assets/models/" + objectName + ".obj", std::ifstream::in);
+	if(in.fail())
+		return;
+
+	std::vector<Vec3i> faces;
+	std::vector<Vec3> verts;
+
+	std::string line;
+
+	while(!in.eof())
+	{
+		std::getline(in, line);
+		std::istringstream iss(line.c_str());
+		std::string trash;
+		if(!line.compare(0, 2, "v "))
+		{
+			iss >> trash;
+			Vec3 v;
+			for(int i = 0; i < 3; i++)
+			{
+				iss >> v[i];
+			}
+			verts.push_back(v);
+		}
+		else if(!line.compare(0, 2, "f "))
+		{
+			int a, b, c;
+			iss >> trash >> a >> trash >> b >> trash >> c >> trash;
+			a--; // in wavefront obj all indices start at 1, not zero
+			b--;
+			c--;
+			faces.push_back({a,b,c});
+		}
+	}
+	for(const Vec3i& face : faces)
+	{
+		m_Triangles.push_back(new Triangle(verts[face[0]], verts[face[1]], verts[face[2]], material, cull));
+	}
+}
+
 TriangleMesh::~TriangleMesh()
 {
 	for(Object*& obj : m_Triangles)

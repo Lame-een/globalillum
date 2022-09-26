@@ -16,6 +16,7 @@ public:
 	/// @param brdf Brdf applied to the triangle.
 	//TODO: add check if data in faces is correct
 	TriangleMesh(const std::vector<Vec3>& vertices, const std::vector<Vec3i> faces, const Material* material = Material::Default(), bool cull = true, bool samplingTarget = false);
+	TriangleMesh(const std::string& objectName, const Material* material = Material::Default(), bool cull = true, bool samplingTarget = false);
 	~TriangleMesh();
 	
 	const std::vector<Object*>& Triangles() const;

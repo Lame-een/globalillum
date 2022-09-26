@@ -9,7 +9,7 @@ Scene::Scene()
 {
 	if(!m_BackgroundSolid)
 	{
-		m_CubeMap = new CubeMap("./cubemaps/" + Settings::bgType + "/");
+		m_CubeMap = new CubeMap("./assets/cubemaps/" + Settings::bgType + "/");
 	}
 }
 
@@ -21,7 +21,7 @@ Scene::Scene(const std::string& name)
 {
 	if(!m_BackgroundSolid)
 	{
-		m_CubeMap = new CubeMap("./cubemaps/" + Settings::bgType + "/");
+		m_CubeMap = new CubeMap("./assets/cubemaps/" + Settings::bgType + "/");
 	}
 }
 
